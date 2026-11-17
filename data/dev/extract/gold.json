@@ -1,0 +1,205 @@
+{
+  "description": "Human reference for four original English passages. Gold is not model input. Restatements in the later paragraphs are the same claims, not extra ones.",
+  "articles": [
+    {
+      "id": "harbor",
+      "path": "harbor.txt",
+      "claims": [
+        {
+          "id": "g1",
+          "source_quote": "Harbor Lab posted its Harbor-Math report on March 4, 2024.",
+          "normalized_claim": "Harbor Lab posted its Harbor-Math report on March 4, 2024.",
+          "category": "checkable_fact",
+          "missing_context": [],
+          "required": ["March 4, 2024", "Harbor-Math"]
+        },
+        {
+          "id": "g2",
+          "source_quote": "Model X scored 62% on Harbor-Math",
+          "normalized_claim": "Model X scored 62% on Harbor-Math.",
+          "category": "checkable_fact",
+          "missing_context": [],
+          "required": ["62%", "Harbor-Math"]
+        },
+        {
+          "id": "g3",
+          "source_quote": "the March 2024 standard tier costs $5 per million tokens",
+          "normalized_claim": "On the March 2024 list, the standard tier costs $5 per million tokens.",
+          "category": "checkable_fact",
+          "missing_context": [],
+          "required": ["March 2024", "standard tier", "$5"]
+        },
+        {
+          "id": "g4",
+          "source_quote": "The same report lists the human baseline for that exam at 55%.",
+          "normalized_claim": "The human baseline for Harbor-Math is 55%.",
+          "category": "checkable_fact",
+          "missing_context": [],
+          "required": ["55%", "Harbor-Math"]
+        },
+        {
+          "id": "g5",
+          "source_quote": "the paper does not report results on other reasoning tasks",
+          "normalized_claim": "The paper does not report results on other reasoning tasks.",
+          "category": "checkable_fact",
+          "missing_context": [],
+          "required": ["other reasoning tasks"]
+        },
+        {
+          "id": "g6",
+          "source_quote": "I think Harbor-Math is the only benchmark that matters this year.",
+          "normalized_claim": "The writer thinks Harbor-Math is the only benchmark that matters this year.",
+          "category": "opinion",
+          "missing_context": [],
+          "required": ["only benchmark"]
+        },
+        {
+          "id": "g7",
+          "source_quote": "By 2027, Model X will outperform every graduate program on campus.",
+          "normalized_claim": "By 2027, Model X will outperform every graduate program on campus.",
+          "category": "prediction",
+          "missing_context": [],
+          "required": ["2027"]
+        },
+        {
+          "id": "g8",
+          "source_quote": "A few headlines called the gain \"twice as good,\" but the report never names the system that phrase is comparing against.",
+          "normalized_claim": "Headlines called the gain twice as good, but the report does not name the comparison system.",
+          "category": "needs_context",
+          "missing_context": ["which system the gain is compared with"],
+          "required": ["twice as good"]
+        }
+      ]
+    },
+    {
+      "id": "acme_price",
+      "path": "acme_price.txt",
+      "claims": [
+        {
+          "id": "g1",
+          "source_quote": "On November 1, 2024, Acme's public price list set the standard-tier API at $8 per million tokens.",
+          "normalized_claim": "On November 1, 2024, Acme's standard-tier API was listed at $8 per million tokens.",
+          "category": "checkable_fact",
+          "missing_context": [],
+          "required": ["November 1, 2024", "standard-tier", "$8"]
+        },
+        {
+          "id": "g2",
+          "source_quote": "the batch tier remained $3 per million tokens on that date",
+          "normalized_claim": "On November 1, 2024, Acme's batch tier remained $3 per million tokens.",
+          "category": "checkable_fact",
+          "missing_context": [],
+          "required": ["batch tier", "$3"]
+        },
+        {
+          "id": "g3",
+          "source_quote": "the change is still cheaper than before",
+          "normalized_claim": "The author says the change is cheaper than before, without stating the earlier price.",
+          "category": "needs_context",
+          "missing_context": ["the previous standard-tier price"],
+          "required": ["cheaper than before"]
+        },
+        {
+          "id": "g4",
+          "source_quote": "I find the standard tier too expensive for student projects.",
+          "normalized_claim": "The writer finds the standard tier too expensive for student projects.",
+          "category": "opinion",
+          "missing_context": [],
+          "required": ["too expensive"]
+        },
+        {
+          "id": "g5",
+          "source_quote": "Acme will cut the standard tier below $1 per million tokens in 2026.",
+          "normalized_claim": "Acme will cut the standard tier below $1 per million tokens in 2026.",
+          "category": "prediction",
+          "missing_context": [],
+          "required": ["2026", "$1"]
+        }
+      ]
+    },
+    {
+      "id": "payments_team",
+      "path": "payments_team.txt",
+      "claims": [
+        {
+          "id": "g1",
+          "source_quote": "40% of pull requests on the payments team were drafted by the assistant",
+          "normalized_claim": "In Q2 2025, 40% of pull requests on the payments team were drafted by the assistant.",
+          "category": "checkable_fact",
+          "missing_context": [],
+          "required": ["40%", "payments team", "Q2 2025"]
+        },
+        {
+          "id": "g2",
+          "source_quote": "12% of incidents on that team were opened by the assistant during Q2 2025",
+          "normalized_claim": "During Q2 2025, 12% of incidents on the payments team were opened by the assistant.",
+          "category": "checkable_fact",
+          "missing_context": [],
+          "required": ["12%", "incidents", "Q2 2025"]
+        },
+        {
+          "id": "g3",
+          "source_quote": "human engineers are no longer needed",
+          "normalized_claim": "The writer concludes that human engineers are no longer needed.",
+          "category": "opinion",
+          "missing_context": [],
+          "required": ["no longer needed"]
+        },
+        {
+          "id": "g4",
+          "source_quote": "Next year, the assistant will draft 90% of pull requests across the whole company.",
+          "normalized_claim": "Next year, the assistant will draft 90% of pull requests across the whole company.",
+          "category": "prediction",
+          "missing_context": [],
+          "required": ["90%", "whole company"]
+        }
+      ]
+    },
+    {
+      "id": "clinic_policy",
+      "path": "clinic_policy.txt",
+      "claims": [
+        {
+          "id": "g1",
+          "source_quote": "On January 15, 2025, Lumen Clinic published a policy that requires a human clinician to review any medical answer from its chatbot before the answer is sent to a patient.",
+          "normalized_claim": "On January 15, 2025, Lumen Clinic required a human clinician to review any medical answer its chatbot would send to a patient.",
+          "category": "checkable_fact",
+          "missing_context": [],
+          "required": ["January 15, 2025", "human clinician", "patient"]
+        },
+        {
+          "id": "g2",
+          "source_quote": "The policy applies to the patient-facing chatbot named Lumen Guide.",
+          "normalized_claim": "The policy applies to the patient-facing chatbot named Lumen Guide.",
+          "category": "checkable_fact",
+          "missing_context": [],
+          "required": ["Lumen Guide"]
+        },
+        {
+          "id": "g3",
+          "source_quote": "accuracy rose by 10 points",
+          "normalized_claim": "The page says accuracy rose by 10 points, without naming the test or the earlier score.",
+          "category": "needs_context",
+          "missing_context": ["which test", "the earlier score", "the unit of the points"],
+          "required": ["10 points"]
+        },
+        {
+          "id": "g4",
+          "source_quote": "I believe the review rule is the right tradeoff.",
+          "normalized_claim": "The writer believes the review rule is the right tradeoff.",
+          "category": "opinion",
+          "missing_context": [],
+          "required": ["right tradeoff"]
+        },
+        {
+          "id": "g5",
+          "source_quote": "Regulators will ban unreviewed medical chatbots in 2026.",
+          "normalized_claim": "Regulators will ban unreviewed medical chatbots in 2026.",
+          "category": "prediction",
+          "missing_context": [],
+          "required": ["2026"]
+        }
+      ]
+    }
+  ]
+}

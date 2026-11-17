@@ -1,0 +1,23 @@
+{
+  "article_id": "harbor",
+  "claim_id": "g2",
+  "evidence_as_of": "2026-11-15",
+  "sources": [
+    {
+      "id": "src_harbor",
+      "canonical_url": "https://example.org/harbor-2024",
+      "title": "Harbor-Math report",
+      "published_at": "2024-03-04",
+      "retrieved_at": "2026-11-15T00:00:00Z",
+      "extraction_status": "ok",
+      "text": "Harbor Lab posted its Harbor-Math report on March 4, 2024. The report says Model X scored 62% on Harbor-Math. The paper does not report results on other reasoning tasks."
+    }
+  ],
+  "passages": [
+    {
+      "id": "ev_score",
+      "source_id": "src_harbor",
+      "quote": "Model X scored 62% on Harbor-Math"
+    }
+  ]
+}
