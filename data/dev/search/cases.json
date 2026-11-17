@@ -1,0 +1,24 @@
+{
+  "written_before_run": true,
+  "note": "Human labels were fixed from pages already read. They are not model input. Search snippets are not evidence.",
+  "cases": [
+    {
+      "id": "search_cern",
+      "claim": "http://info.cern.ch is the home of the first website.",
+      "human_label": "supported",
+      "human_basis": "The CERN page says: http://info.cern.ch - home of the first website."
+    },
+    {
+      "id": "search_rfc",
+      "claim": "RFC 2606 states that top level domain names are not reserved for use in documentation.",
+      "human_label": "refuted",
+      "human_basis": "RFC 2606 says a few top level domain names are reserved for use in private testing, as examples in documentation."
+    },
+    {
+      "id": "search_example",
+      "claim": "example.com states that this domain is for use in documentation examples without needing permission.",
+      "human_label": "supported",
+      "human_basis": "The example.com page states that sentence."
+    }
+  ]
+}
