@@ -1,0 +1,27 @@
+{
+  "written_before_run": true,
+  "note": "Labels were fixed from the fetched page text before the model run. They were not used to edit the prompt.",
+  "cases": [
+    {
+      "id": "page_cern_support",
+      "url": "https://info.cern.ch/",
+      "claim": "http://info.cern.ch is the home of the first website.",
+      "human_label": "supported",
+      "human_basis": "The page says: http://info.cern.ch - home of the first website. The dash and the words state the same assertion."
+    },
+    {
+      "id": "page_rfc_conflict",
+      "url": "https://www.rfc-editor.org/rfc/rfc2606.txt",
+      "claim": "RFC 2606 states that top level domain names are not reserved for use in documentation.",
+      "human_label": "refuted",
+      "human_basis": "The RFC says a few top level domain names are reserved for use in private testing, as examples in documentation. That is incompatible with the claim that it says they are not reserved for that use."
+    },
+    {
+      "id": "page_moby_missing",
+      "url": "https://httpbin.org/html",
+      "claim": "Herman Melville - Moby-Dick was published in 1851.",
+      "human_label": "insufficient_evidence",
+      "human_basis": "The page heading names Herman Melville - Moby-Dick and does not state a publication year. A missing year is not a refutation."
+    }
+  ]
+}

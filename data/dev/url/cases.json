@@ -1,0 +1,54 @@
+{
+  "written_before_run": true,
+  "note": "Labels were fixed from the fetched example.com text before this run. They are not model input.",
+  "page": {
+    "url": "https://example.com",
+    "title": "Example Domain",
+    "body": "This domain is for use in documentation examples without needing permission. This is not a service; avoid relying on it for testing and monitoring purposes."
+  },
+  "cases": [
+    {
+      "id": "url_supported",
+      "url": "https://example.com",
+      "claim": "This domain is for use in documentation examples without needing permission.",
+      "human_label": "supported",
+      "human_basis": "The page states this sentence."
+    },
+    {
+      "id": "url_advertising",
+      "url": "https://example.com",
+      "claim": "This domain is for use in commercial advertising without needing permission.",
+      "human_label": "insufficient_evidence",
+      "human_basis": "页面写了 documentation examples，并写了 This is not a service，以及不要用于 testing and monitoring。这三句都没有提到 commercial advertising，也没有写该用途被排除。已写明的文档示例用途本身不否定商业广告用途。",
+      "revisions": [
+        {
+          "date": "2026-11-16",
+          "previous_id": "url_refuted",
+          "previous_expected": "refuted",
+          "new_expected": "insufficient_evidence",
+          "review": "文档示例用途不排除其他用途。不同用途、未提及某用途，都不能单独构成反驳。"
+        },
+        {
+          "date": "2026-11-16",
+          "old_label": "refuted",
+          "new_label": "insufficient_evidence",
+          "independent_reason": "页面写了 documentation examples，并写了 This is not a service，以及不要用于 testing and monitoring。这三句都没有提到 commercial advertising，也没有写该用途被排除。已写明的文档示例用途本身不否定商业广告用途。这条理由来自页面原文，不依赖“只有文档声明 X 不存在才能支持遗漏”的旧规则。"
+        }
+      ]
+    },
+    {
+      "id": "url_explicit_conflict",
+      "url": "https://example.com",
+      "claim": "The page states that this domain is not for use in documentation examples.",
+      "human_label": "refuted",
+      "human_basis": "The page states that this domain is for use in documentation examples. That statement is incompatible with the claim that the page says it is not for that use."
+    },
+    {
+      "id": "url_insufficient",
+      "url": "https://example.com",
+      "claim": "This domain is for use in documentation examples and was registered in 1992.",
+      "human_label": "insufficient_evidence",
+      "human_basis": "The page states the documentation use and does not state a registration year. A missing year is not a refutation."
+    }
+  ]
+}
