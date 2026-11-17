@@ -115,14 +115,18 @@ def stream_api(model: str, system: str, user: str, on_token) -> str:
     """
     import llm_client as cfg
 
-    client = OpenAI(api_key=cfg._load_api_key(), base_url=cfg.OPENROUTER_BASE_URL)
-    stream = client.chat.completions.create(
-        model=model,
-        messages=_api_messages(system, user),
-        temperature=0.0,
-        stream=True,
-        extra_body={"models": [model, *cfg.FALLBACK_MODELS]},
-    )
+    def send(client, target):
+        kwargs = {
+            "model": target["model"],
+            "messages": _api_messages(system, user),
+            "temperature": 0.0,
+            "stream": True,
+        }
+        if target["provider"] == "openrouter":
+            kwargs["extra_body"] = {"models": target["models"]}
+        return client.chat.completions.create(**kwargs)
+
+    stream, _target = cfg.call_with_fallback(model, send)
     parts: list[str] = []
     finished = False
     for chunk in stream:
