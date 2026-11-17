@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FactThread 核查</title>
+  <style>
+    :root { --ink: #101828; --muted: #667085; --line: #eaecf0; --bg: #f8f6f1; --blue: #155eef; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: ui-sans-serif, system-ui, sans-serif; }
+    button, textarea { font: inherit; }
+    header { background: #101828; color: #fff; padding: 0.9rem 1.5rem; }
+    header h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.25rem; }
+    header p { margin: 0.25rem 0 0; color: #ffffffb8; font-size: 0.85rem; }
+    #billing { color: #fff; font-size: 0.95rem; }
+    header a { color: #fff; }
+    main { max-width: 760px; margin: 0 auto; padding: 1.25rem 1.25rem 3rem; }
+    form, section, ol { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px #00000014; }
+    form { padding: 1rem; }
+    textarea { width: 100%; min-height: 7rem; padding: 0.7rem 0.8rem; border: 1px solid #d0d5dd; border-radius: 8px; resize: vertical; }
+    textarea:focus { outline: 2px solid var(--blue); border-color: var(--blue); }
+    .row { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.75rem; }
+    button { background: var(--blue); color: #fff; border: 0; border-radius: 8px; padding: 0.6rem 1.2rem; font-weight: 600; cursor: pointer; }
+    button:hover:not(:disabled) { background: #004eeb; }
+    button:disabled { background: #98a2b3; cursor: progress; }
+    button.secondary { background: #101828; }
+    ol { list-style: none; display: flex; gap: 0.5rem; margin: 1rem 0; padding: 0.7rem; }
+    li { flex: 1; display: flex; align-items: center; gap: 0.45rem; color: var(--muted); font-size: 0.9rem; }
+    li b { font-weight: 600; }
+    .num { display: grid; place-items: center; width: 1.5rem; height: 1.5rem; border-radius: 50%; background: #eaecf0; font-size: 0.75rem; font-weight: 700; }
+    li.running { color: var(--blue); }
+    li.running .num { background: var(--blue); color: #fff; }
+    li.done { color: #0f7b4c; }
+    li.done .num { background: #d1fadf; }
+    li.wait { color: #b54708; }
+    li.wait .num { background: #fef0c7; }
+    section { padding: 1rem 1.1rem; }
+    section h2 { margin: 0 0 0.7rem; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+    .pill { display: inline-block; color: #fff; border-radius: 999px; padding: 0.2rem 0.7rem; font-size: 0.85rem; font-weight: 700; background: #667085; }
+    .pill.supported { background: #0f7b4c; }
+    .pill.refuted { background: #b42318; }
+    .pill.insufficient_evidence { background: #667085; }
+    .pill.pending { background: #b54708; }
+    .why { font-family: Georgia, "Times New Roman", serif; line-height: 1.55; margin: 0.8rem 0; }
+    blockquote { margin: 0.7rem 0; padding: 0.7rem 0.85rem; border-left: 4px solid var(--blue); background: #f8f6f1; border-radius: 0 8px 8px 0; }
+    blockquote p { margin: 0 0 0.45rem; line-height: 1.5; }
+    .src { font-size: 0.9rem; }
+    .src a { color: var(--blue); }
+    .role { font-size: 0.75rem; font-weight: 700; color: var(--muted); margin-bottom: 0.35rem; }
+    .role.original { color: #0f7b4c; }
+    details summary { cursor: pointer; color: var(--blue); font-size: 0.85rem; }
+    .meta { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+    .read { margin: 0.35rem 0; }
+    .read.fail { color: #b42318; }
+    .error { color: #b42318; background: #fef3f2; border-radius: 8px; padding: 0.7rem 0.9rem; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FactThread</h1>
+    <p>一次核查一条 claim。密钥只留在这台机器上。 <a href="/article">核查一篇文章</a></p>
+    <p id="billing">本次不允许付费模型。本次不允许调用 OpenRouter。</p>
+  </header>
+  <main>
+    <form id="form">
+      <textarea id="claim" name="claim" maxlength="4000" placeholder="输入一条需要核查的 claim" required></textarea>
+      <div class="row">
+        <button id="check" type="submit">核查</button>
+      </div>
+    </form>
+    <ol id="stages" hidden>
+      <li data-stage="search"><span class="num">1</span><span><b>搜索</b> <em></em></span></li>
+      <li data-stage="fetch"><span class="num">2</span><span><b>读取来源</b> <em></em></span></li>
+      <li data-stage="judge"><span class="num">3</span><span><b>判断</b> <em></em></span></li>
+    </ol>
+    <p id="error" class="error" hidden></p>
+    <section id="result" hidden>
+      <div id="conclusion">
+        <h2>结论</h2>
+        <span id="verdict" class="pill"></span>
+        <p id="explanation" class="why"></p>
+      </div>
+      <p id="status-line" class="meta" hidden></p>
+      <h2 id="evidence-title">已获取的证据</h2>
+      <div id="reads"></div>
+      <div id="citations"></div>
+      <h2>核查范围</h2>
+      <p id="scope" class="meta"></p>
+      <h2 id="limits-title">限制</h2>
+      <ul id="limits" class="meta"></ul>
+      <p id="wait" class="meta" hidden></p>
+      <div class="row">
+        <button id="resume" class="secondary" type="button" hidden>继续任务</button>
+      </div>
+    </section>
+  </main>
+  <script>
+    const form = document.querySelector("#form");
+    const claimBox = document.querySelector("#claim");
+    const checkButton = document.querySelector("#check");
+    const stages = document.querySelector("#stages");
+    const result = document.querySelector("#result");
+    const conclusion = document.querySelector("#conclusion");
+    const verdict = document.querySelector("#verdict");
+    const explanation = document.querySelector("#explanation");
+    const statusLine = document.querySelector("#status-line");
+    const evidenceTitle = document.querySelector("#evidence-title");
+    const reads = document.querySelector("#reads");
+    const citations = document.querySelector("#citations");
+    const scope = document.querySelector("#scope");
+    const limitsTitle = document.querySelector("#limits-title");
+    const limits = document.querySelector("#limits");
+    const wait = document.querySelector("#wait");
+    const resume = document.querySelector("#resume");
+    const errorBox = document.querySelector("#error");
+    const billing = document.querySelector("#billing");
+    let jobId = "";
+    let timer = 0;
+    let clock = 0;
+    let current = null;
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      jobId = "";
+      post("/api/jobs", { claim: claimBox.value });
+    });
+    resume.addEventListener("click", () => {
+      if (!jobId || resume.disabled) return;
+      post(`/api/jobs/${jobId}/continue`, {});
+    });
+
+    function post(url, body) {
+      errorBox.hidden = true;
+      checkButton.disabled = true;
+      resume.disabled = true;
+      if (url === "/api/jobs") {
+        result.hidden = true;
+        stages.hidden = false;
+        for (const item of stages.children) {
+          item.querySelector("em").textContent = "未开始";
+          item.className = "";
+        }
+      }
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }).then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "核查没有完成。");
+        jobId = payload.id;
+        render(payload);
+        poll();
+      }).catch((error) => {
+        fail(error.message);
+      });
+    }
+
+    function poll() {
+      window.clearTimeout(timer);
+      if (!jobId) return;
+      fetch(`/api/jobs/${jobId}`).then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "核查没有完成。");
+        render(payload);
+        if (payload.status === "running") timer = window.setTimeout(poll, 400);
+        else checkButton.disabled = false;
+      }).catch((error) => fail(error.message));
+    }
+
+    function render(payload) {
+      current = payload;
+      if (payload.paid_label && payload.openrouter_label) {
+        billing.textContent = `${payload.paid_label}${payload.openrouter_label}`;
+      }
+      stages.hidden = false;
+      for (const item of stages.children) {
+        const stage = payload.stages[item.dataset.stage];
+        item.querySelector("em").textContent = stage.label;
+        item.className = stage.status === "running" ? "running" : stage.status === "rate_limited" ? "wait" : stage.status === "not_run" ? "" : "done";
+      }
+      const pending = payload.verdict_label === "判断：等待重试" && !payload.verdict;
+      const showResult = payload.status !== "running" || payload.citations.length || payload.verdict;
+      result.hidden = !showResult;
+      conclusion.hidden = !payload.verdict;
+      statusLine.hidden = !pending;
+      statusLine.textContent = pending ? `${payload.verdict_label}。${payload.status_note || "模型服务暂时限流，证据已保存"}` : "";
+      verdict.textContent = payload.verdict_label || "";
+      verdict.className = "pill " + (payload.verdict || "");
+      explanation.textContent = payload.explanation || "";
+      evidenceTitle.textContent = payload.evidence_heading || (payload.verdict ? "引用" : "已获取的证据");
+      reads.replaceChildren();
+      for (const item of payload.reads || []) {
+        const row = document.createElement("p");
+        row.className = "meta read" + (item.fetch_status === "ok" || item.fetch_status === "truncated" ? "" : " fail");
+        const kind = document.createElement("b");
+        kind.textContent = item.role_label || "";
+        row.append(kind, document.createTextNode(` ${item.detail || ""} `));
+        if (item.url) {
+          const link = document.createElement("a");
+          link.href = item.url;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = item.url;
+          row.append(link);
+        }
+        reads.append(row);
+      }
+      citations.replaceChildren();
+      for (const item of payload.citations) {
+        const block = document.createElement("blockquote");
+        const kind = document.createElement("div");
+        kind.className = "role" + (item.role === "original" ? " original" : "");
+        kind.textContent = item.role_label || "";
+        const quote = document.createElement("p");
+        quote.textContent = item.excerpt || item.quote;
+        block.append(kind, quote);
+        if (item.quote && item.excerpt && item.quote.replace(/\s+/g, " ").trim() !== item.excerpt) {
+          const more = document.createElement("details");
+          const summary = document.createElement("summary");
+          summary.textContent = "展开完整证据";
+          const full = document.createElement("p");
+          full.textContent = item.quote;
+          more.append(summary, full);
+          block.append(more);
+        }
+        const source = document.createElement("div");
+        source.className = "src";
+        if (item.title) {
+          const title = document.createElement("div");
+          title.textContent = item.title;
+          source.append(title);
+        }
+        if (item.url) {
+          const link = document.createElement("a");
+          link.href = item.url;
+          link.target = "_blank";
+          link.rel = "noopener noreferrer";
+          link.textContent = item.url;
+          source.append(link);
+        }
+        block.append(source);
+        citations.append(block);
+      }
+      if (!payload.citations.length) {
+        const empty = document.createElement("p");
+        empty.className = "meta";
+        empty.textContent = "还没有读到页面段落。";
+        citations.append(empty);
+      }
+      scope.textContent = (payload.scope || []).join(" ");
+      limits.replaceChildren();
+      for (const item of payload.limitations || []) {
+        const line = document.createElement("li");
+        line.textContent = item;
+        limits.append(line);
+      }
+      limitsTitle.hidden = !payload.limitations.length;
+      limits.hidden = !payload.limitations.length;
+      resume.hidden = !pending;
+      resume.disabled = payload.status === "running" || !payload.can_continue;
+      showWait(payload);
+      if (payload.status === "error") fail(payload.error || "核查没有完成。");
+    }
+
+    function showWait(payload) {
+      window.clearInterval(clock);
+      if (payload.verdict || payload.verdict_label !== "判断：等待重试") {
+        wait.hidden = true;
+        return;
+      }
+      if (!payload.retry_at) {
+        wait.hidden = payload.retry_known !== false;
+        wait.textContent = payload.retry_known === false ? "重试时间未知" : "";
+        return;
+      }
+      const deadline = new Date(payload.retry_at).getTime();
+      const tick = () => {
+        const left = Math.ceil((deadline - Date.now()) / 1000);
+        if (left <= 0) {
+          window.clearInterval(clock);
+          wait.hidden = true;
+          resume.disabled = false;
+          if (current) current.can_continue = true;
+          return;
+        }
+        resume.disabled = true;
+        const minutes = Math.floor(left / 60);
+        const seconds = left % 60;
+        const local = new Date(deadline).toLocaleTimeString("zh-CN", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false });
+        wait.hidden = false;
+        wait.textContent = `剩余 ${minutes} 分 ${seconds} 秒（本地 ${local} 可重试）`;
+      };
+      tick();
+      clock = window.setInterval(tick, 1000);
+    }
+
+    function fail(message) {
+      errorBox.hidden = false;
+      errorBox.textContent = message;
+      checkButton.disabled = false;
+      resume.disabled = false;
+    }
+  </script>
+</body>
+</html>

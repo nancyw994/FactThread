@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FactThread 文章核查</title>
+  <style>
+    :root { --ink: #101828; --muted: #667085; --line: #eaecf0; --bg: #f8f6f1; --blue: #155eef; }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font-family: ui-sans-serif, system-ui, sans-serif; }
+    button, textarea, input { font: inherit; }
+    header { background: #101828; color: #fff; padding: 0.9rem 1.5rem; }
+    header h1 { margin: 0; font-family: Georgia, "Times New Roman", serif; font-size: 1.25rem; }
+    header p, header a { margin: 0.25rem 0 0; color: #ffffffb8; font-size: 0.85rem; }
+    header a { color: #fff; }
+    #billing { color: #fff; font-size: 0.95rem; }
+    main { max-width: 760px; margin: 0 auto; padding: 1.25rem 1.25rem 3rem; }
+    form, section, article { background: #fff; border-radius: 12px; box-shadow: 0 1px 3px #00000014; }
+    form, section { padding: 1rem; margin-bottom: 1rem; }
+    textarea, input[type="text"] { width: 100%; padding: 0.7rem 0.8rem; border: 1px solid #d0d5dd; border-radius: 8px; }
+    textarea { min-height: 9rem; resize: vertical; }
+    textarea:focus, input[type="text"]:focus { outline: 2px solid var(--blue); border-color: var(--blue); }
+    .row { display: flex; justify-content: flex-end; gap: 0.5rem; margin-top: 0.75rem; align-items: center; }
+    .note { margin-right: auto; color: var(--muted); font-size: 0.9rem; }
+    button { background: var(--blue); color: #fff; border: 0; border-radius: 8px; padding: 0.6rem 1.2rem; font-weight: 600; cursor: pointer; }
+    button:hover:not(:disabled) { background: #004eeb; }
+    button:disabled { background: #98a2b3; cursor: progress; }
+    button.secondary { background: #101828; }
+    section h2, article h2 { margin: 0 0 0.45rem; font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); }
+    article { padding: 0.9rem 1rem; margin: 0.7rem 0; }
+    label.pick { display: flex; gap: 0.6rem; align-items: flex-start; }
+    blockquote { margin: 0.55rem 0; padding: 0.7rem 0.85rem; border-left: 4px solid var(--blue); background: #f8f6f1; border-radius: 0 8px 8px 0; }
+    blockquote p { margin: 0; line-height: 1.5; }
+    .meta { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+    .pill { display: inline-block; color: #fff; border-radius: 999px; padding: 0.2rem 0.7rem; font-size: 0.85rem; font-weight: 700; background: #667085; }
+    .pill.supported { background: #0f7b4c; }
+    .pill.refuted { background: #b42318; }
+    .pill.insufficient_evidence { background: #667085; }
+    .pill.pending { background: #b54708; }
+    .why { font-family: Georgia, "Times New Roman", serif; line-height: 1.55; }
+    .src a { color: var(--blue); }
+    .error { color: #b42318; background: #fef3f2; border-radius: 8px; padding: 0.7rem 0.9rem; }
+    [hidden] { display: none !important; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FactThread</h1>
+    <p><a href="/">返回单条核查</a></p>
+    <p id="billing">本次不允许付费模型。本次不允许调用 OpenRouter。</p>
+  </header>
+  <main>
+    <form id="form">
+      <textarea id="article" maxlength="12000" placeholder="粘贴一篇短文" required></textarea>
+      <div class="row">
+        <span class="note">修改原文后需要重新提取。</span>
+        <button id="extract" type="submit">提取</button>
+      </div>
+    </form>
+    <p id="error" class="error" hidden></p>
+    <section id="candidates" hidden>
+      <h2>候选条目</h2>
+      <div id="list"></div>
+      <div class="row">
+        <span class="note">每批最多选择 3 条，按顺序核查。</span>
+        <button id="run" type="button">核查所选</button>
+      </div>
+    </section>
+    <section id="results" hidden>
+      <h2>核查结果</h2>
+      <div id="cards"></div>
+      <p id="wait" class="meta" hidden></p>
+      <div class="row">
+        <button id="resume" class="secondary" type="button" hidden>继续未完成的条目</button>
+      </div>
+    </section>
+  </main>
+  <script>
+    const form = document.querySelector("#form");
+    const articleBox = document.querySelector("#article");
+    const extractButton = document.querySelector("#extract");
+    const candidates = document.querySelector("#candidates");
+    const list = document.querySelector("#list");
+    const runButton = document.querySelector("#run");
+    const results = document.querySelector("#results");
+    const cards = document.querySelector("#cards");
+    const resume = document.querySelector("#resume");
+    const wait = document.querySelector("#wait");
+    const errorBox = document.querySelector("#error");
+    const billing = document.querySelector("#billing");
+    let articleId = "";
+    let extractedText = "";
+    let submitted = "";
+    let timer = 0;
+    let clock = 0;
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      articleId = "";
+      extractedText = "";
+      submitted = articleBox.value.trim();
+      candidates.hidden = true;
+      results.hidden = true;
+      post("/api/articles", { text: articleBox.value });
+    });
+    articleBox.addEventListener("input", () => {
+      if (!extractedText || articleBox.value.trim() === extractedText) return;
+      articleId = "";
+      extractedText = "";
+      candidates.hidden = true;
+      results.hidden = true;
+      list.replaceChildren();
+    });
+    runButton.addEventListener("click", () => {
+      const picked = selected();
+      if (!articleId || !picked.ids.length || picked.ids.length > 3) return;
+      post(`/api/articles/${articleId}/check`, picked);
+    });
+    resume.addEventListener("click", () => {
+      if (!articleId || resume.disabled) return;
+      post(`/api/articles/${articleId}/continue`, {});
+    });
+    list.addEventListener("change", updateRun);
+    list.addEventListener("input", updateRun);
+
+    function selected() {
+      const ids = [];
+      const claims = {};
+      for (const card of list.querySelectorAll("article")) {
+        const box = card.querySelector("input[type=checkbox]");
+        if (!box.checked) continue;
+        ids.push(card.dataset.id);
+        claims[card.dataset.id] = card.querySelector("input[type=text]").value;
+      }
+      return { ids, claims };
+    }
+
+    function updateRun() {
+      const count = selected().ids.length;
+      runButton.disabled = !articleId || count < 1 || count > 3;
+    }
+
+    function post(url, body) {
+      errorBox.hidden = true;
+      extractButton.disabled = true;
+      runButton.disabled = true;
+      resume.disabled = true;
+      fetch(url, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      }).then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "核查没有完成。");
+        articleId = payload.id;
+        render(payload);
+        poll();
+      }).catch((error) => fail(error.message));
+    }
+
+    function poll() {
+      window.clearTimeout(timer);
+      if (!articleId) return;
+      fetch(`/api/articles/${articleId}`).then(async (response) => {
+        const payload = await response.json();
+        if (!response.ok) throw new Error(payload.error || "核查没有完成。");
+        render(payload);
+        if (payload.status === "running") timer = window.setTimeout(poll, 400);
+        else extractButton.disabled = false;
+      }).catch((error) => fail(error.message));
+    }
+
+    function render(payload) {
+      if (payload.paid_label && payload.openrouter_label) {
+        billing.textContent = `${payload.paid_label}${payload.openrouter_label}`;
+      }
+      if (payload.status === "extracted" || payload.status === "done") {
+        extractedText = submitted;
+        if (articleBox.value.trim() !== extractedText) {
+          articleId = "";
+          candidates.hidden = true;
+          results.hidden = true;
+          return;
+        }
+        drawCandidates(payload.candidates);
+        candidates.hidden = !payload.candidates.length;
+      }
+      drawClaims(payload.claims || []);
+      results.hidden = !(payload.claims || []).length;
+      const pending = (payload.claims || []).some((item) => item.verdict_label === "判断：等待重试" && !item.verdict);
+      resume.hidden = !pending && !payload.can_continue;
+      resume.disabled = payload.status === "running" || !payload.can_continue;
+      showWait(payload);
+      updateRun();
+      if (payload.status === "error") fail(payload.error || "核查没有完成。");
+    }
+
+    function drawCandidates(items) {
+      const previous = new Map();
+      for (const card of list.querySelectorAll("article")) {
+        previous.set(card.dataset.id, {
+          checked: card.querySelector("input[type=checkbox]").checked,
+          claim: card.querySelector("input[type=text]").value,
+        });
+      }
+      list.replaceChildren();
+      for (const item of items) {
+        const kept = previous.get(item.id);
+        const card = document.createElement("article");
+        card.dataset.id = item.id;
+        const pick = document.createElement("label");
+        pick.className = "pick";
+        const box = document.createElement("input");
+        box.type = "checkbox";
+        box.checked = kept ? kept.checked : false;
+        const heading = document.createElement("span");
+        heading.textContent = item.fact_type_label || item.fact_type || "";
+        pick.append(box, heading);
+        const quote = document.createElement("blockquote");
+        const quoteText = document.createElement("p");
+        quoteText.textContent = item.source_quote || "";
+        quote.append(quoteText);
+        const claim = document.createElement("input");
+        claim.type = "text";
+        claim.value = kept ? kept.claim : (item.normalized_claim || "");
+        const missing = document.createElement("p");
+        missing.className = "meta";
+        const gaps = item.missing_context || [];
+        missing.textContent = gaps.length ? `缺失上下文：${gaps.join("；")}` : "缺失上下文：无";
+        card.append(pick, quote, claim, missing);
+        list.append(card);
+      }
+    }
+
+    function drawClaims(items) {
+      cards.replaceChildren();
+      for (const item of items) {
+        const card = document.createElement("article");
+        const title = document.createElement("h2");
+        title.textContent = item.claim || "";
+        card.append(title);
+        if (item.verdict) {
+          const pill = document.createElement("span");
+          pill.className = "pill " + item.verdict;
+          pill.textContent = item.verdict_label || "";
+          const why = document.createElement("p");
+          why.className = "why";
+          why.textContent = item.explanation || "";
+          card.append(pill, why);
+        } else if (item.verdict_label) {
+          const line = document.createElement("p");
+          line.className = "meta";
+          line.textContent = item.status_note ? `${item.verdict_label}。${item.status_note}` : item.verdict_label;
+          card.append(line);
+        }
+        const evidence = document.createElement("h2");
+        evidence.textContent = item.evidence_heading || "已获取的证据";
+        card.append(evidence);
+        for (const read of item.reads || []) {
+          const row = document.createElement("p");
+          row.className = "meta";
+          row.textContent = `${read.role_label || ""} ${read.detail || ""} ${read.url || ""}`;
+          card.append(row);
+        }
+        for (const cite of item.citations || []) {
+          const block = document.createElement("blockquote");
+          const quote = document.createElement("p");
+          quote.textContent = cite.excerpt || cite.quote || "";
+          block.append(quote);
+          if (cite.url) {
+            const source = document.createElement("div");
+            source.className = "src";
+            const link = document.createElement("a");
+            link.href = cite.url;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.textContent = cite.url;
+            source.append(link);
+            block.append(source);
+          }
+          card.append(block);
+        }
+        if (!(item.citations || []).length) {
+          const empty = document.createElement("p");
+          empty.className = "meta";
+          empty.textContent = "还没有读到页面段落。";
+          card.append(empty);
+        }
+        cards.append(card);
+      }
+    }
+
+    function showWait(payload) {
+      window.clearInterval(clock);
+      if (!payload.cooling || !payload.retry_at) {
+        wait.hidden = true;
+        return;
+      }
+      const deadline = new Date(payload.retry_at).getTime();
+      const tick = () => {
+        const left = Math.ceil((deadline - Date.now()) / 1000);
+        if (left <= 0) {
+          window.clearInterval(clock);
+          wait.hidden = true;
+          resume.disabled = false;
+          return;
+        }
+        resume.disabled = true;
+        const minutes = Math.floor(left / 60);
+        const seconds = left % 60;
+        wait.hidden = false;
+        wait.textContent = `剩余 ${minutes} 分 ${seconds} 秒后可继续未完成的条目`;
+      };
+      tick();
+      clock = window.setInterval(tick, 1000);
+    }
+
+    function fail(message) {
+      errorBox.hidden = false;
+      errorBox.textContent = message;
+      extractButton.disabled = false;
+      updateRun();
+    }
+  </script>
+</body>
+</html>
