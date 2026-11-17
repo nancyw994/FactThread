@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AssessmentResponse",
+  "description": "Published evidence-given result. Source URLs are copied from the packet, not from the model. A failed validation publishes no verdict.",
+  "type": "object",
+  "required": [
+    "run_id",
+    "status",
+    "claim",
+    "verdict",
+    "explanation",
+    "explanation_citations",
+    "evidence",
+    "unresolved_questions",
+    "needs_review",
+    "validation_status"
+  ],
+  "properties": {
+    "run_id": { "type": "string" },
+    "status": { "type": "string", "enum": ["completed", "incomplete", "failed"] },
+    "claim": { "type": "string" },
+    "category": {
+      "type": ["string", "null"],
+      "enum": ["factual", "opinion", "prediction", "needs_context", null]
+    },
+    "evidence_as_of": { "type": ["string", "null"] },
+    "verdict": {
+      "type": ["string", "null"],
+      "enum": ["supported", "refuted", "insufficient_evidence", "conflicting_evidence", null]
+    },
+    "explanation": { "type": "string" },
+    "explanation_citations": { "type": "array", "items": { "type": "string" } },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "source_id", "quote", "relation"],
+        "properties": {
+          "id": { "type": "string" },
+          "source_id": { "type": "string" },
+          "quote": { "type": "string" },
+          "relation": { "type": "string", "enum": ["entailment", "contradiction", "neutral"] }
+        }
+      }
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "canonical_url"],
+        "properties": {
+          "id": { "type": "string" },
+          "canonical_url": { "type": "string" },
+          "title": { "type": ["string", "null"] },
+          "published_at": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "unresolved_questions": { "type": "array", "items": { "type": "string" } },
+    "needs_review": { "type": "boolean" },
+    "validation_status": { "type": "string", "enum": ["passed", "failed"] },
+    "validation_failures": { "type": "array", "items": { "type": "string" } },
+    "error_code": {
+      "type": ["string", "null"],
+      "enum": ["invalid_input", "model_error", "validation_failed", null]
+    }
+  }
+}

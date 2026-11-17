@@ -1,0 +1,168 @@
+{
+  "name": "evidence-given development sample",
+  "version": 1,
+  "description": "Original FactThread examples. Gold labels are not model input. This file is not an AVeriTeC extract; those cases stay out of the repo until the license review in the design.",
+  "cases": [
+    {
+      "id": "dev_supported_harbor",
+      "gold": { "verdict": "supported" },
+      "input": {
+        "claim_id": "clm_dev_supported",
+        "claim": "The 2024 Harbor benchmark paper reports that Model X scored 62% on Harbor-Math.",
+        "category": "factual",
+        "claim_date": "2024-06-01",
+        "evidence_as_of": "2026-11-15",
+        "sources": [
+          {
+            "id": "src_harbor",
+            "canonical_url": "https://example.org/harbor-2024",
+            "title": "Harbor benchmark 2024",
+            "published_at": "2024-03-01",
+            "retrieved_at": "2026-11-15T00:00:00Z",
+            "extraction_status": "ok",
+            "text": "The 2024 Harbor benchmark paper measured Model X on Harbor-Math. On Harbor-Math, Model X scored 62%, above the human baseline of 55% for that exam. The paper does not report results on other reasoning tasks."
+          }
+        ],
+        "passages": [
+          {
+            "id": "ev_harbor_score",
+            "source_id": "src_harbor",
+            "quote": "On Harbor-Math, Model X scored 62%, above the human baseline of 55% for that exam."
+          }
+        ]
+      }
+    },
+    {
+      "id": "dev_refuted_harbor",
+      "gold": { "verdict": "refuted" },
+      "input": {
+        "claim_id": "clm_dev_refuted",
+        "claim": "The 2024 Harbor benchmark paper reports that Model X scored 90% on Harbor-Math.",
+        "category": "factual",
+        "claim_date": "2024-06-01",
+        "evidence_as_of": "2026-11-15",
+        "sources": [
+          {
+            "id": "src_harbor",
+            "canonical_url": "https://example.org/harbor-2024",
+            "title": "Harbor benchmark 2024",
+            "published_at": "2024-03-01",
+            "retrieved_at": "2026-11-15T00:00:00Z",
+            "extraction_status": "ok",
+            "text": "The 2024 Harbor benchmark paper measured Model X on Harbor-Math. On Harbor-Math, Model X scored 62%, above the human baseline of 55% for that exam. The paper does not report results on other reasoning tasks."
+          }
+        ],
+        "passages": [
+          {
+            "id": "ev_harbor_score",
+            "source_id": "src_harbor",
+            "quote": "On Harbor-Math, Model X scored 62%, above the human baseline of 55% for that exam."
+          }
+        ]
+      }
+    },
+    {
+      "id": "dev_insufficient_scope",
+      "gold": { "verdict": "insufficient_evidence" },
+      "input": {
+        "claim_id": "clm_dev_scope",
+        "claim": "Model X outperforms humans on all reasoning tasks.",
+        "category": "factual",
+        "claim_date": null,
+        "evidence_as_of": "2026-11-15",
+        "sources": [
+          {
+            "id": "src_harbor",
+            "canonical_url": "https://example.org/harbor-2024",
+            "title": "Harbor benchmark 2024",
+            "published_at": "2024-03-01",
+            "retrieved_at": "2026-11-15T00:00:00Z",
+            "extraction_status": "ok",
+            "text": "The 2024 Harbor benchmark paper measured Model X on Harbor-Math. On Harbor-Math, Model X scored 62%, above the human baseline of 55% for that exam. The paper does not report results on other reasoning tasks."
+          }
+        ],
+        "passages": [
+          {
+            "id": "ev_harbor_score",
+            "source_id": "src_harbor",
+            "quote": "On Harbor-Math, Model X scored 62%, above the human baseline of 55% for that exam."
+          },
+          {
+            "id": "ev_harbor_limit",
+            "source_id": "src_harbor",
+            "quote": "The paper does not report results on other reasoning tasks."
+          }
+        ]
+      }
+    },
+    {
+      "id": "dev_conflicting_price",
+      "gold": { "verdict": "conflicting_evidence" },
+      "input": {
+        "claim_id": "clm_dev_price",
+        "claim": "Acme API costs $5 per million tokens.",
+        "category": "factual",
+        "claim_date": null,
+        "evidence_as_of": "2026-11-15",
+        "sources": [
+          {
+            "id": "src_price_march",
+            "canonical_url": "https://example.org/acme/pricing-2024-03",
+            "title": "Acme price list, March 2024",
+            "published_at": "2024-03-01",
+            "retrieved_at": "2026-11-15T00:00:00Z",
+            "extraction_status": "ok",
+            "text": "Acme's public price list dated March 2024 sets the API at $5 per million tokens."
+          },
+          {
+            "id": "src_price_november",
+            "canonical_url": "https://example.org/acme/pricing-2024-11",
+            "title": "Acme price list, November 2024",
+            "published_at": "2024-11-01",
+            "retrieved_at": "2026-11-15T00:00:00Z",
+            "extraction_status": "ok",
+            "text": "Acme's public price list dated November 2024 sets the API at $8 per million tokens."
+          }
+        ],
+        "passages": [
+          {
+            "id": "ev_price_march",
+            "source_id": "src_price_march",
+            "quote": "Acme's public price list dated March 2024 sets the API at $5 per million tokens."
+          },
+          {
+            "id": "ev_price_november",
+            "source_id": "src_price_november",
+            "quote": "Acme's public price list dated November 2024 sets the API at $8 per million tokens."
+          }
+        ]
+      }
+    },
+    {
+      "id": "dev_opinion",
+      "gold": { "verdict": null },
+      "input": {
+        "claim_id": "clm_dev_opinion",
+        "claim": "Model X feels more creative than earlier systems.",
+        "category": "opinion",
+        "claim_date": null,
+        "evidence_as_of": "2026-11-15",
+        "sources": [],
+        "passages": []
+      }
+    },
+    {
+      "id": "dev_prediction",
+      "gold": { "verdict": null },
+      "input": {
+        "claim_id": "clm_dev_prediction",
+        "claim": "Model X will replace most software engineers by 2027.",
+        "category": "prediction",
+        "claim_date": null,
+        "evidence_as_of": "2026-11-15",
+        "sources": [],
+        "passages": []
+      }
+    }
+  ]
+}

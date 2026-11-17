@@ -3,6 +3,12 @@
 Extract → classify → search → compare → annotate, then a human shows where
 the agent was wrong.
 
+The November 2026 product design is [`docs/design.md`](docs/design.md).
+The first slice of that design is evidence-given verification in
+`pipeline/assess_given.py`: the model may cite only passage IDs from the
+supplied packet, and every quote has to match the stored text. Check it with
+`python3 -m unittest discover -s tests`.
+
 ```text
 pipeline/   extract, classify, search, compare, annotate
 web/        local UI

@@ -1,0 +1,31 @@
+{
+  "article_id": "harbor",
+  "note": "Local fixtures only. Every document is fictional and is not a retrieved web page.",
+  "sources": [
+    {
+      "source_id": "src_harbor_report",
+      "title": "Fictional Harbor-Math report",
+      "document_type": "report",
+      "document_ref": "Harbor-Math report",
+      "is_complete": true,
+      "fictional": true,
+      "body": "FICTIONAL FIXTURE. This is not a real Harbor Lab report, paper, or lab note.\n\nModel X scored 62% on Harbor-Math. The human baseline for Harbor-Math is 55%. The March 2024 standard tier is shown at $5 per million tokens, with no product or service named beside that rate.\n\nThe tables stop at Harbor-Math."
+    },
+    {
+      "source_id": "src_harbor_announcement",
+      "title": "Fictional Harbor Lab publication notice",
+      "document_type": "announcement",
+      "is_complete": true,
+      "fictional": true,
+      "body": "FICTIONAL FIXTURE. This is not a real publication announcement.\n\nHarbor Lab posted its Harbor-Math report on March 4, 2024."
+    },
+    {
+      "source_id": "src_harbor_headlines",
+      "title": "Fictional Harbor-Math headlines",
+      "document_type": "headline",
+      "is_complete": true,
+      "fictional": true,
+      "body": "FICTIONAL FIXTURE. This is not a real news page.\n\nA few headlines called the gain \"twice as good,\" after the score was posted."
+    }
+  ]
+}
