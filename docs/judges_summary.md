@@ -16,4 +16,4 @@ because Fortune/CACM reprinted the essay. Extractor skipped the second half
 See `verify/error_log.md`.
 
 **Demo fallback:**
-`fact-checker/data/runs/2026-09-18-qwen25-3b/annotated.html`
+`data/runs/2026-09-18-qwen25-3b/annotated.html`

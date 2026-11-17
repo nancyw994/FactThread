@@ -4,7 +4,7 @@
 essay
   → 01 extract   claims.json
   → 02 classify  classified.json     # only "verifiable" proceeds
-  → 03 search    evidence.json       # every URL → notes/sources_<run>.log
+  → 03 search    evidence.json       # every URL → data/notes/sources_<run>.log
   → 04 compare   verdicts.json       # supported / contradicted / misleading / …
   → 05 annotate  annotated.html
   → verify       human manual_review.md + error_log.md

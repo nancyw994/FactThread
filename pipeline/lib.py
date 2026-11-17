@@ -22,7 +22,7 @@ except ImportError:  # pragma: no cover
 ROOT = Path(__file__).resolve().parents[1]
 CONFIG = ROOT / "config"
 
-sys.path.insert(0, str(ROOT.parent / "scripts"))  # llm_client.py lives in scripts/
+sys.path.insert(0, str(ROOT / "scripts"))  # llm_client.py lives in scripts/
 
 
 def _load_env_file(path: Path) -> None:
@@ -37,7 +37,7 @@ def _load_env_file(path: Path) -> None:
         os.environ.setdefault(name.strip(), value.strip().strip('"').strip("'"))
 
 
-_load_env_file(ROOT.parent / ".env")
+_load_env_file(ROOT / ".env")
 
 # Pass base_url="openrouter" to route every chat() call through scripts/llm_client.ask_llm.
 API_BACKEND = "openrouter"

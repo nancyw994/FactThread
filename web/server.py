@@ -39,6 +39,7 @@ ARTICLE_TYPES = {".md", ".txt"}
 MAX_BODY = 600_000
 MIN_CHARS, MAX_CHARS = 200, 200_000
 RUNS = ROOT / "data" / "runs"
+NOTES = ROOT / "data" / "notes"
 USERS_FILE = ROOT / "data" / "users.json"
 SAMPLE = ROOT / "data" / "essays" / "shumer_2026-02-09.md"
 ERROR_LOG = ROOT / "verify" / "error_log.md"
@@ -324,7 +325,7 @@ class Handler(BaseHTTPRequestHandler):
             "filename": str(meta.get("filename") or source.name),
             "data": run_data(run_dir),
             "dir": run_dir,
-            "log": ROOT / "notes" / f"sources_{run_id}.log",
+            "log": NOTES / f"sources_{run_id}.log",
             "user": user,
             "running": False,
             "stream": Stream(),
@@ -455,7 +456,7 @@ class Handler(BaseHTTPRequestHandler):
                         "filename": str(meta.get("filename") or source.name),
                         "data": data,
                         "dir": run_dir,
-                        "log": ROOT / "notes" / f"sources_{run_id}.log",
+                        "log": NOTES / f"sources_{run_id}.log",
                         "user": user,
                         "essay_url": meta.get("source_url") or "",
                         "running": False,
@@ -513,7 +514,7 @@ class Handler(BaseHTTPRequestHandler):
                 "filename": Path(filename).name,
                 "data": {},
                 "dir": run_dir,
-                "log": ROOT / "notes" / f"sources_{run_id}.log",
+                "log": NOTES / f"sources_{run_id}.log",
                 "user": user,
                 "essay_url": essay_url,
                 "running": False,

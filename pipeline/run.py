@@ -24,10 +24,10 @@ def require_openai() -> None:
     try:
         import openai  # noqa: F401
     except ModuleNotFoundError:
-        venv = ROOT.parent / ".venv" / "bin" / "python3"
+        venv = ROOT / ".venv" / "bin" / "python3"
         sys.exit(
             "No module named 'openai'. Use the project venv, not system Python:\n"
-            f"  {venv} fact-checker/pipeline/run.py"
+            f"  {venv} pipeline/run.py"
         )
 
 
@@ -44,7 +44,7 @@ def main() -> None:
 
     run_dir = ROOT / "data" / "runs" / args.run_id
     run_dir.mkdir(parents=True, exist_ok=True)
-    log = ROOT / "notes" / f"sources_{args.run_id}.log"
+    log = ROOT / "data" / "notes" / f"sources_{args.run_id}.log"
     common = ["--model", args.model, "--base-url", args.base_url]
 
     call("01_extract.py", ["--essay", str(args.essay), "--out", str(run_dir / "claims.json"), *common])

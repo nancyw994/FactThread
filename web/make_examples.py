@@ -30,7 +30,7 @@ def make(essay: Path) -> None:
     run_dir.mkdir(parents=True, exist_ok=True)
     text = essay.read_text(encoding="utf-8")
     (run_dir / f"article{essay.suffix}").write_text(text, encoding="utf-8")
-    log = ROOT / "notes" / f"sources_{run_id}.log"
+    log = ROOT / "data" / "notes" / f"sources_{run_id}.log"
     log.unlink(missing_ok=True)
 
     print(f"{essay.name}: extract", flush=True)

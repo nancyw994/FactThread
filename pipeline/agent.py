@@ -57,7 +57,7 @@ def start(
     run_id = run_id or datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ")
     run_dir = RUNS / run_id
     run_dir.mkdir(parents=True, exist_ok=True)
-    log = ROOT / "notes" / f"sources_{run_id}.log"
+    log = ROOT / "data" / "notes" / f"sources_{run_id}.log"
     out = {name: run_dir / name for _, name in STAGES}
     llm = {"model": model, "base_url": API_BACKEND}
 

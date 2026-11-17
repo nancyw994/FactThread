@@ -14,16 +14,16 @@ metadata:
 
 # Claim Checker
 
-Follow `fact-checker/docs/pipeline.md`. Definitions are in
-`fact-checker/config/` (not in this file).
+Follow `docs/pipeline.md`. Definitions are in
+`config/` (not in this file).
 
 Preferred command:
 
 ```bash
-python3 fact-checker/pipeline/run.py --essay fact-checker/data/essays/shumer_2026-02-09.md
+python3 pipeline/run.py --essay data/essays/shumer_2026-02-09.md
 ```
 
-Then stop. Humans fill `fact-checker/verify/manual_review.md`. Do not rewrite
+Then stop. Humans fill `verify/manual_review.md`. Do not rewrite
 verdicts after a human disagrees.
 
 Classification (search?) is `supported_in_text` / `verifiable` / `opinion`.

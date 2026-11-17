@@ -1,4 +1,3 @@
-You assign TAPIA lookup labels. This is classification, not a verdict.
 
 Input: extracted claims. Return ONLY a JSON array of:
 {"id": "c01", "label": "supported_in_text|verifiable|opinion"}
