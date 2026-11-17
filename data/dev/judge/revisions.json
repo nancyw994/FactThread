@@ -1,0 +1,74 @@
+{
+  "date": "2026-11-16",
+  "prompt": "config/prompts/judge_evidence.md",
+  "prompt_changes": [
+    "A document speaker in 'the <speaker> says/lists' is confirmed only when document_type or document_ref refers to that document.",
+    "A baseline mentioned in the document belongs to the claim's comparison only when the evidence explicitly connects them. An unconfirmed comparison premise is insufficient_evidence.",
+    "2026-11-16 URL mode: a mentioned baseline refutes a comparison omission only when the evidence links it to that comparison. 'The text does not contain X' is insufficient_evidence. Support requires the document's own statement that X is absent.",
+    "2026-11-16: refuted requires evidence incompatible with a key assertion about the same subject, time, and conditions. Different wording, another use, or an unmentioned use is not by itself a refutation.",
+    "Omission labels are split into complete document, excerpt, and unconfirmed comparison premise. Silence in a complete document is not support.",
+    "2026-11-16: removed the rule that an omission is supported only when the document states that the point is absent. Document-content omission uses the complete document and parse coverage, including synonyms, tables, and appendices; uncovered scope is insufficient_evidence. An author's omission statement checks attribution and the statement content. An excerpt or unconfirmed scope cannot support a full-document omission."
+  ],
+  "c9": {
+    "claim": "the report never names the system that phrase is comparing against.",
+    "article_context": "A few headlines called the gain \"twice as good,\" but the report never names the system that phrase is comparing against.",
+    "source": {
+      "source_id": "src_harbor_report",
+      "document_type": "report",
+      "document_ref": "Harbor-Math report",
+      "is_complete": true,
+      "fictional": true
+    },
+    "document": "FICTIONAL FIXTURE. This is not a real Harbor Lab report, paper, or lab note.\n\nModel X scored 62% on Harbor-Math. The human baseline for Harbor-Math is 55%. The March 2024 standard tier is shown at $5 per million tokens, with no product or service named beside that rate.\n\nThe tables stop at Harbor-Math.",
+    "document_chars": 303,
+    "chars_sent": 303,
+    "truncated": false,
+    "complete_document": true,
+    "model_verdict_before_adjustment": "supported",
+    "model_explanation_before_adjustment": "The claim states that the report never names the system that the phrase is comparing against. In the supplied document, the only baseline mentioned is the generic \"human baseline\" and no specific product or system name is provided. This matches the claim that no system is named, so both the attribution (the report) and the content are supported by the evidence.",
+    "human_label": "insufficient_evidence",
+    "human_basis": "Comparison premise not confirmed. The phrase is the headline wording \"twice as good.\" The report names a human baseline for Harbor-Math, but it never says that baseline is the system that phrase compares against. Presence of a baseline is not that correspondence, and silence is not support."
+  },
+  "held_baseline_unnamed": {
+    "claim": "The bulletin never names the baseline Cedar was compared with.",
+    "source": {
+      "document_type": "report",
+      "is_complete": true
+    },
+    "document": "Cedar scored 40% on Pike-Logic. The tables stop at Pike-Logic.",
+    "document_chars": 62,
+    "truncated": false,
+    "complete_document": true,
+    "model_verdict_before_adjustment": "supported",
+    "model_explanation_before_adjustment": "The complete document contains only that sentence and does not mention any baseline name, so the model treated the silence as support.",
+    "previous_expected": "insufficient_evidence",
+    "human_label": "insufficient_evidence",
+    "human_basis": "The comparison premise is not confirmed. The document does not say Cedar was compared with a baseline. Silence does not support the omission."
+  },
+  "code_change_after_first_post_adjustment_run": "When the supplied source confirms the attribution and the content check is supported, an insufficient_evidence verdict is restored to supported. This is the existing attribution rule. The prompt was not edited.",
+  "post_adjustment_runs": [
+    {
+      "provider": "groq/openai/gpt-oss-120b",
+      "c9_verdict": "refuted",
+      "c9_note": "The model treated the human baseline as the system the phrase compares against. That run disagreed with the human label.",
+      "held_baseline_unnamed": "insufficient_evidence",
+      "development": "9/12",
+      "regression": "11/12",
+      "final": "6/8",
+      "false_support": 0
+    },
+    {
+      "provider": "openrouter/openai/gpt-oss-120b",
+      "c9_verdict": "insufficient_evidence",
+      "c9_note": "Matches the human label. The explanation still says the report names no system, although the document names a human baseline that is not linked to the phrase.",
+      "held_baseline_unnamed": "insufficient_evidence",
+      "held_synonym": "insufficient_evidence; content supported for 0.40 and 40%; attribution failed because the speaker is the bulletin and the source is a report.",
+      "development": "12/12",
+      "regression": "11/12",
+      "regression_failure": "held_other_task expected refuted actual insufficient_evidence",
+      "final": "8/8",
+      "false_support": 0,
+      "prompt_edited_after_this_run": false
+    }
+  ]
+}

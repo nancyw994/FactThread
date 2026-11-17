@@ -1,0 +1,140 @@
+{
+  "written_before_run": true,
+  "role": "development",
+  "note": "Development set. Human expected verdicts were fixed before the rule baseline ran. Prompt changes may be checked against this file. They are not checked against eval_heldout.json.",
+  "cases": [
+    {
+      "id": "synonym_paraphrase",
+      "group": "synonym",
+      "expected": "supported",
+      "claim": "The report says Model X recorded a result of 0.62 on Harbor-Math.",
+      "document_type": "report",
+      "source_id": "src_eval_synonym",
+      "body": "Model X scored 62% on Harbor-Math.",
+      "quote": "Model X scored 62% on Harbor-Math."
+    },
+    {
+      "id": "indirect_comparison",
+      "group": "indirect_comparison",
+      "expected": "supported",
+      "claim": "The report says Model X scored higher than the human baseline on Harbor-Math.",
+      "document_type": "report",
+      "source_id": "src_eval_indirect",
+      "body": "Model X scored 62% on Harbor-Math. The human baseline for Harbor-Math is 55%.",
+      "quote": "Model X scored 62% on Harbor-Math. The human baseline for Harbor-Math is 55%."
+    },
+    {
+      "id": "table_baseline",
+      "group": "table",
+      "expected": "refuted",
+      "claim": "The report lists the human baseline for Harbor-Math at 62%.",
+      "document_type": "report",
+      "source_id": "src_eval_table",
+      "body": "Exam | Score | Human baseline\nHarbor-Math | 62% | 55%",
+      "quote": "Exam | Score | Human baseline\nHarbor-Math | 62% | 55%"
+    },
+    {
+      "id": "year_mismatch",
+      "group": "year",
+      "expected": "refuted",
+      "claim": "Harbor Lab posted its Harbor-Math report on March 4, 2024.",
+      "document_type": "announcement",
+      "source_id": "src_eval_year",
+      "body": "Harbor Lab posted its Harbor-Math report on March 4, 2023.",
+      "quote": "Harbor Lab posted its Harbor-Math report on March 4, 2023."
+    },
+    {
+      "id": "model_version_mismatch",
+      "group": "model_version",
+      "expected": "insufficient_evidence",
+      "label_reason": "The passage reports Model X-1 and does not state Model X-2's result. The corresponding information is missing, so this is not an explicit contradiction.",
+      "claim": "The report says Model X-2 scored 62% on Harbor-Math.",
+      "document_type": "report",
+      "source_id": "src_eval_version",
+      "body": "Model X-1 scored 62% on Harbor-Math.",
+      "quote": "Model X-1 scored 62% on Harbor-Math.",
+      "revisions": [
+        {
+          "date": "2026-11-16",
+          "previous_expected": "refuted",
+          "new_expected": "insufficient_evidence",
+          "previous_reason": "The first human label treated Model X-2 versus Model X-1 as a contradiction because the version strings differ.",
+          "review": "Explicit contradiction would require the evidence to deny Model X-2 or assign Model X-2 a conflicting result. This passage only reports Model X-1. The claim's statement about Model X-2 is missing, not contradicted."
+        }
+      ]
+    },
+    {
+      "id": "attribution_authors_missing",
+      "group": "attribution",
+      "expected": "insufficient_evidence",
+      "claim": "The authors add that Model X scored 62% on Harbor-Math.",
+      "document_type": "report",
+      "source_id": "src_eval_authors",
+      "body": "Model X scored 62% on Harbor-Math.",
+      "quote": "Model X scored 62% on Harbor-Math."
+    },
+    {
+      "id": "attribution_wrong_source",
+      "group": "attribution",
+      "expected": "insufficient_evidence",
+      "claim": "The report says Model X scored 62% on Harbor-Math.",
+      "document_type": "headline",
+      "source_id": "src_eval_headline",
+      "body": "Model X scored 62% on Harbor-Math.",
+      "quote": "Model X scored 62% on Harbor-Math."
+    },
+    {
+      "id": "explicit_refutation",
+      "group": "explicit_refutation",
+      "expected": "refuted",
+      "claim": "The report says Model X scored 72% on Harbor-Math.",
+      "document_type": "report",
+      "source_id": "src_eval_refute",
+      "body": "Model X scored 62% on Harbor-Math.",
+      "quote": "Model X scored 62% on Harbor-Math."
+    },
+    {
+      "id": "insufficient_date",
+      "group": "insufficient",
+      "expected": "insufficient_evidence",
+      "claim": "Harbor Lab posted its Harbor-Math report on March 4, 2024.",
+      "document_type": "announcement",
+      "source_id": "src_eval_date",
+      "body": "Model X scored 62% on Harbor-Math.",
+      "quote": "Model X scored 62% on Harbor-Math."
+    },
+    {
+      "id": "omission_keyword_only",
+      "group": "omission",
+      "expected": "insufficient_evidence",
+      "mode": "omission",
+      "claim": "The authors add that the paper does not report results on other reasoning tasks.",
+      "document_type": "report",
+      "source_id": "src_eval_omit",
+      "is_complete": true,
+      "body": "Model X scored 62% on Harbor-Math. The human baseline for Harbor-Math is 55%."
+    },
+    {
+      "id": "omission_explicit",
+      "group": "omission",
+      "expected": "supported",
+      "mode": "omission",
+      "claim": "The authors add that the paper does not report results on other reasoning tasks.",
+      "document_type": "report",
+      "source_id": "src_eval_explicit",
+      "is_complete": true,
+      "body": "The authors add that the paper does not report results on other reasoning tasks."
+    },
+    {
+      "id": "omission_other_task",
+      "group": "explicit_refutation",
+      "expected": "refuted",
+      "mode": "omission",
+      "claim": "The authors add that the paper does not report results on other reasoning tasks.",
+      "document_type": "report",
+      "source_id": "src_eval_other",
+      "is_complete": true,
+      "body": "Model X scored 62% on Harbor-Math. Model X scored 40% on Harbor-Logic, a reasoning task."
+    }
+  ]
+}

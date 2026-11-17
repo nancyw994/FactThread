@@ -1,0 +1,91 @@
+{
+  "written_before_run": true,
+  "role": "final",
+  "note": "Written after the 2026-11-16 prompt and label revisions. These cases were not used to edit the prompt or the regression labels.",
+  "cases": [
+    {
+      "id": "final_proportion",
+      "group": "synonym",
+      "expected": "supported",
+      "claim": "The report says Maple recorded a result of 0.70 on Wren-Logic.",
+      "document_type": "report",
+      "source_id": "src_final_proportion",
+      "body": "Maple scored 70% on Wren-Logic.",
+      "quote": "Maple scored 70% on Wren-Logic."
+    },
+    {
+      "id": "final_dispatch_speaker",
+      "group": "attribution",
+      "expected": "insufficient_evidence",
+      "claim": "The dispatch says Maple scored 70% on Wren-Logic.",
+      "document_type": "report",
+      "source_id": "src_final_dispatch",
+      "body": "Maple scored 70% on Wren-Logic.",
+      "quote": "Maple scored 70% on Wren-Logic."
+    },
+    {
+      "id": "final_number_conflict",
+      "group": "explicit_refutation",
+      "expected": "refuted",
+      "claim": "The report says Maple scored 81% on Wren-Logic.",
+      "document_type": "report",
+      "source_id": "src_final_number",
+      "body": "Maple scored 70% on Wren-Logic.",
+      "quote": "Maple scored 70% on Wren-Logic."
+    },
+    {
+      "id": "final_year_conflict",
+      "group": "year",
+      "expected": "refuted",
+      "claim": "Maple Lab posted its Wren-Logic report on August 9, 2021.",
+      "document_type": "announcement",
+      "source_id": "src_final_year",
+      "body": "Maple Lab posted its Wren-Logic report on August 9, 2019.",
+      "quote": "Maple Lab posted its Wren-Logic report on August 9, 2019."
+    },
+    {
+      "id": "final_omission_stated",
+      "group": "omission",
+      "expected": "supported",
+      "mode": "omission",
+      "claim": "The authors add that the paper does not report results on other reasoning tasks.",
+      "document_type": "report",
+      "source_id": "src_final_stated",
+      "is_complete": true,
+      "body": "The authors add that the paper does not report results on other reasoning tasks."
+    },
+    {
+      "id": "final_omission_excerpt",
+      "group": "omission",
+      "expected": "insufficient_evidence",
+      "mode": "omission",
+      "claim": "The report does not report results on other reasoning tasks.",
+      "document_type": "report",
+      "source_id": "src_final_excerpt",
+      "is_complete": false,
+      "body": "Maple scored 70% on Wren-Logic."
+    },
+    {
+      "id": "final_comparison_unconfirmed",
+      "group": "baseline",
+      "expected": "insufficient_evidence",
+      "mode": "omission",
+      "claim": "The ledger never names the baseline Maple was compared with.",
+      "document_type": "report",
+      "source_id": "src_final_compare",
+      "is_complete": true,
+      "body": "Maple scored 70% on Wren-Logic. The reference score for Wren-Logic is 61%."
+    },
+    {
+      "id": "final_omission_conflict",
+      "group": "explicit_refutation",
+      "expected": "refuted",
+      "mode": "omission",
+      "claim": "The authors add that the paper does not report results on other reasoning tasks.",
+      "document_type": "report",
+      "source_id": "src_final_conflict",
+      "is_complete": true,
+      "body": "Maple scored 70% on Wren-Logic. Maple scored 22% on Wren-Reason, a reasoning task."
+    }
+  ]
+}

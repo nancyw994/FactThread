@@ -1,0 +1,150 @@
+{
+  "written_before_run": true,
+  "role": "regression",
+  "note": "Originally a held-out set. It was then used to review attribution and omission labels, so it is now a regression set. eval_final.json is the set that was not used to edit the prompt.",
+  "cases": [
+    {
+      "id": "held_synonym",
+      "group": "synonym",
+      "expected": "insufficient_evidence",
+      "label_reason": "0.40 and 40% are the same proportion, and recorded/scored name the same result. The mismatch is the speaker: the claim says the bulletin, and the source document_type is report.",
+      "claim": "The bulletin says Cedar recorded a result of 0.40 on Pike-Logic.",
+      "document_type": "report",
+      "source_id": "src_held_synonym",
+      "body": "Cedar scored 40% on Pike-Logic.",
+      "quote": "Cedar scored 40% on Pike-Logic.",
+      "revisions": [
+        {
+          "date": "2026-11-16",
+          "previous_expected": "supported",
+          "new_expected": "insufficient_evidence",
+          "previous_reason": "The first label treated 0.40 and 40% as the same result and did not check the speaker.",
+          "review": "The model accepted 0.40 as 40% and rejected the claim because a report source does not establish 'the bulletin says'. That speaker mismatch is the semantic difference. The proportion itself is not."
+        }
+      ]
+    },
+    {
+      "id": "held_authors_missing",
+      "group": "attribution",
+      "expected": "insufficient_evidence",
+      "claim": "The authors say that Cedar scored 40% on Pike-Logic.",
+      "document_type": "report",
+      "source_id": "src_held_authors",
+      "body": "Cedar scored 40% on Pike-Logic.",
+      "quote": "Cedar scored 40% on Pike-Logic."
+    },
+    {
+      "id": "held_wrong_source",
+      "group": "attribution",
+      "expected": "insufficient_evidence",
+      "claim": "The report says Cedar scored 40% on Pike-Logic.",
+      "document_type": "headline",
+      "source_id": "src_held_headline",
+      "body": "Cedar scored 40% on Pike-Logic.",
+      "quote": "Cedar scored 40% on Pike-Logic."
+    },
+    {
+      "id": "held_explicit_number",
+      "group": "explicit_refutation",
+      "expected": "refuted",
+      "claim": "The report says Cedar scored 51% on Pike-Logic.",
+      "document_type": "report",
+      "source_id": "src_held_number",
+      "body": "Cedar scored 40% on Pike-Logic.",
+      "quote": "Cedar scored 40% on Pike-Logic."
+    },
+    {
+      "id": "held_date_missing",
+      "group": "insufficient",
+      "expected": "insufficient_evidence",
+      "claim": "Cedar Lab posted its Pike-Logic bulletin on June 2, 2022.",
+      "document_type": "announcement",
+      "source_id": "src_held_date",
+      "body": "Cedar scored 40% on Pike-Logic.",
+      "quote": "Cedar scored 40% on Pike-Logic."
+    },
+    {
+      "id": "held_year_conflict",
+      "group": "year",
+      "expected": "refuted",
+      "claim": "Cedar Lab posted its Pike-Logic bulletin on June 2, 2022.",
+      "document_type": "announcement",
+      "source_id": "src_held_year",
+      "body": "Cedar Lab posted its Pike-Logic bulletin on June 2, 2020.",
+      "quote": "Cedar Lab posted its Pike-Logic bulletin on June 2, 2020."
+    },
+    {
+      "id": "held_version_unstated",
+      "group": "model_version",
+      "expected": "insufficient_evidence",
+      "claim": "The report says Cedar-2 scored 40% on Pike-Logic.",
+      "document_type": "report",
+      "source_id": "src_held_version_missing",
+      "body": "Cedar scored 40% on Pike-Logic.",
+      "quote": "Cedar scored 40% on Pike-Logic."
+    },
+    {
+      "id": "held_version_conflict",
+      "group": "model_version",
+      "expected": "refuted",
+      "claim": "The report says Cedar-2 scored 40% on Pike-Logic.",
+      "document_type": "report",
+      "source_id": "src_held_version_conflict",
+      "body": "Cedar-2 scored 33% on Pike-Logic.",
+      "quote": "Cedar-2 scored 33% on Pike-Logic."
+    },
+    {
+      "id": "held_baseline_unnamed",
+      "group": "baseline",
+      "expected": "insufficient_evidence",
+      "label_reason": "Comparison premise not confirmed. The complete document does not say Cedar was compared with a baseline. Silence does not support the omission, and no named baseline is connected to that comparison.",
+      "mode": "omission",
+      "claim": "The bulletin never names the baseline Cedar was compared with.",
+      "document_type": "report",
+      "source_id": "src_held_baseline",
+      "is_complete": true,
+      "body": "Cedar scored 40% on Pike-Logic. The tables stop at Pike-Logic.",
+      "revisions": [
+        {
+          "date": "2026-11-16",
+          "previous_expected": "insufficient_evidence",
+          "new_expected": "insufficient_evidence",
+          "previous_reason": "The first label said insufficient without separating silence from an unconfirmed comparison.",
+          "review": "Kept insufficient_evidence. The document is complete, but it never establishes the comparison whose baseline would be named. That is the comparison-premise case, not a complete-document omission that the text itself states."
+        }
+      ]
+    },
+    {
+      "id": "held_table_baseline",
+      "group": "table",
+      "expected": "refuted",
+      "claim": "The report lists the human baseline for Pike-Logic at 40%.",
+      "document_type": "report",
+      "source_id": "src_held_table",
+      "body": "Exam | Score | Human baseline\nPike-Logic | 40% | 33%",
+      "quote": "Exam | Score | Human baseline\nPike-Logic | 40% | 33%"
+    },
+    {
+      "id": "held_omission_explicit",
+      "group": "omission",
+      "expected": "supported",
+      "mode": "omission",
+      "claim": "The authors add that the bulletin does not report results on other reasoning tasks.",
+      "document_type": "report",
+      "source_id": "src_held_explicit_omit",
+      "is_complete": true,
+      "body": "The authors add that the bulletin does not report results on other reasoning tasks."
+    },
+    {
+      "id": "held_other_task",
+      "group": "explicit_refutation",
+      "expected": "refuted",
+      "mode": "omission",
+      "claim": "The authors add that the bulletin does not report results on other reasoning tasks.",
+      "document_type": "report",
+      "source_id": "src_held_other",
+      "is_complete": true,
+      "body": "Cedar scored 40% on Pike-Logic. Cedar scored 20% on Pike-Reason, a reasoning task."
+    }
+  ]
+}
