@@ -27,7 +27,7 @@ import threading
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlsplit
 
 import acquire_url
 
@@ -61,16 +61,28 @@ SearchFn = Callable[[str, int], tuple[list[dict[str, str]], str | None]]
 
 
 def build_queries(claim: str, *, limit: int = MAX_QUERIES) -> list[str]:
-    """At most two short queries. The second keeps names, numbers, and hosts."""
+    """Build compact searches from the claim's entities, relation, and object."""
     text = _SPACE.sub(" ", claim).strip().rstrip(".")
     words = text.split()
     if not words:
         return []
-    queries = [" ".join(words[:12])]
-    distinctive = [word.strip(".,;:()[]\"'") for word in words if _distinctive(word)]
-    second = " ".join(distinctive[:12])
-    if second and second != queries[0]:
-        queries.append(second)
+    stop = {"the", "a", "an", "at", "in", "on", "of", "for", "to", "and", "or", "by", "with", "from", "was", "were", "is", "are", "be", "been", "being", "it", "its", "this", "that", "these", "those", "as", "which", "who", "what", "when", "where", "how"}
+    content = [word for word in words if word.strip(".,;:()[]\"'").lower() not in stop]
+    first = " ".join(words[:12])
+    queries = [first]
+    relation = re.compile(r"\b(?:dedicat\w*|host\w*|invent\w*|creat\w*|caus\w*|allow\w*|enabl\w*|result\w*|attribut\w*|deriv\w*|own\w*|locat\w*|serv\w*|us\w*|produc\w*|issu\w*|releas\w*|publish\w*|reserv\w*|led|lead\w*|develop\w*|mov\w*|launch\w*|build\w*|establish\w*|represent\w*)\b", re.I)
+    match = relation.search(text)
+    if match:
+        tokens = re.findall(r"[\w.-]+(?:['’][\w-]+)?", text, flags=re.UNICODE)
+        second = " ".join(word for word in tokens if word.lower() not in stop)
+        if match.group(0).lower() not in second.lower():
+            second = f"{second} {match.group(0)}"
+    else:
+        second = " ".join(word for word in words if _distinctive(word))
+        if not second or second == first:
+            second = " ".join(content[-8:])
+    if second and second != first:
+        queries = [second, first]
     return queries[:limit]
 
 
@@ -256,6 +268,7 @@ def investigate(
     checkpoint: Path | None = None,
     only: set[str] | None = None,
     progress: Callable[[str, dict[str, Any]], None] | None = None,
+    input_source_url: str | None = None,
 ) -> dict[str, Any]:
     """Search, fetch, and judge. A saved run is reused and only unfinished stages run again."""
     search = search or configured_search
@@ -266,6 +279,7 @@ def investigate(
     store = cache_dir or acquire_url.CACHE
     for index, case in enumerate(cases, start=1):
         record = _adopt(case, index, saved.get(str(case.get("id") or f"search{index}")))
+        record["article_source_url"] = input_source_url or record.get("article_source_url")
         if only and record["id"] not in only:
             claims.append(record)
             continue
@@ -340,7 +354,9 @@ def investigate(
             complete=complete,
             sleeper=sleeper,
             rng=rng,
+            input_source_url=record.get("article_source_url"),
         )
+        _mark_evidence(record)
         if record.get("judge_status") == "rate_limited" and record.get("retry_at"):
             kept = remember_shared_retry(store, provider, model_name, str(record["retry_at"]))
             if kept is not None:
@@ -366,6 +382,9 @@ def _blank(case: dict[str, Any], index: int) -> dict[str, Any]:
         "passages": [],
         "sources": [],
         "evidence_found": None,
+        "page_fetch_succeeded": None,
+        "relevant_passage_found": None,
+        "sufficient_evidence_found": None,
         "verdict": None,
         "search_status": "not_run",
         "fetch_status": "not_run",
@@ -397,7 +416,7 @@ def _adopt(case: dict[str, Any], index: int, old: dict[str, Any] | None) -> dict
     record["fetches"] = list(saved.get("fetches") or [])
     record["passages"] = list(saved.get("passages") or [])
     record["sources"] = list(saved.get("sources") or [])
-    for field in ("verdict", "explanation", "evidence_refs", "validation_status", "citation_passed", "call_usage", "judge_requests", "retry_after_s", "retry_at", "limitations"):
+    for field in ("verdict", "explanation", "evidence_refs", "validation_status", "citation_passed", "call_usage", "judge_requests", "retry_after_s", "retry_at", "limitations", "article_source_url", "page_fetch_succeeded", "relevant_passage_found", "sufficient_evidence_found"):
         if field in saved:
             record[field] = saved[field]
     record["human_label"] = case.get("human_label", saved.get("human_label"))
@@ -862,6 +881,13 @@ def _sources_from(fetches: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 def _mark_evidence(record: dict[str, Any]) -> None:
+    record["page_fetch_succeeded"] = any(item.get("fetch_status") in {"ok", "empty_body", "truncated"} for item in record.get("fetches") or [])
+    record["relevant_passage_found"] = bool(record.get("passages"))
+    record["sufficient_evidence_found"] = (
+        record.get("verdict") in {"supported", "refuted"}
+        if record.get("judge_status") == "completed"
+        else None
+    )
     if record["fetch_status"] == "not_run":
         record["evidence_found"] = False if record["search_status"] in {"source_not_found", "search_unavailable"} else None
         return
@@ -890,6 +916,7 @@ def _judge_record(
     complete: Callable[[str, str], str] | None,
     sleeper: Callable[[float], None],
     rng: Callable[[], float],
+    input_source_url: str | None = None,
 ) -> None:
     pages: list[dict[str, Any]] = []
     passages: list[dict[str, Any]] = []
@@ -910,6 +937,10 @@ def _judge_record(
         else:
             continue
         passage["url"] = page.get("final_url") or fetched.get("url")
+        is_input = bool(input_source_url and _url_key(passage["url"]) == _url_key(input_source_url))
+        if is_input:
+            passage["source_role"] = "input_article"
+            passage["independent"] = False
         passages.append(passage)
         pages.append(page)
         sources.append(
@@ -917,6 +948,7 @@ def _judge_record(
                 "source_id": passage.get("source_id"),
                 "url": passage.get("url"),
                 "title": page.get("title") or (by_url.get(fetched["url"]) or {}).get("title") or "",
+                **({"source_role": "input_article", "independent": False} if is_input else {"independent": True}),
             }
         )
         fetched["passage"] = {
@@ -965,6 +997,13 @@ def _judge_record(
     )
     verdict = judged["claims"][0]
     refs, mismatches = _bind_citations(verdict.get("evidence_refs") or [], pages)
+    source_flags = {item.get("source_id"): item for item in sources}
+    for ref in refs:
+        flag = source_flags.get(ref.get("source_id"), {})
+        if flag.get("source_role"):
+            ref["source_role"] = flag["source_role"]
+        if "independent" in flag:
+            ref["independent"] = flag["independent"]
     record["evidence_refs"] = refs
     record["explanation"] = verdict.get("explanation")
     record["document_scope"] = verdict.get("document_scope")
@@ -992,6 +1031,12 @@ def _judge_record(
         record["citation_passed"] = None
     if record["verdict"] not in VERDICTS:
         _note(record, "The claim is not treated as false.")
+    independent_refs = [ref for ref in refs if ref.get("independent") is not False and ref.get("source_role") != "input_article"]
+    if record["verdict"] in {"supported", "refuted"} and not independent_refs:
+        record["verdict"] = "insufficient_evidence"
+        note = "The cited evidence comes only from the input article, so it is not independent corroboration."
+        record["explanation"] = f"{record.get('explanation') or ''} {note}".strip()
+        record.setdefault("limitations", []).append(note)
     _record_direct_fetch(record)
 
 
@@ -1182,11 +1227,10 @@ def _host(url: str) -> str:
 
 
 def _url_key(url: str) -> str:
-    parsed = urlparse(url)
+    parsed = urlsplit(url)
     host = (parsed.hostname or "").lower().removeprefix("www.")
     path = parsed.path.rstrip("/") or "/"
-    query = f"?{parsed.query}" if parsed.query else ""
-    return f"{host}{path}{query}"
+    return f"{host}{path}"
 
 
 def _print_run(result: dict[str, Any]) -> None:

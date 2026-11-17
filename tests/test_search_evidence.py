@@ -88,7 +88,10 @@ class SearchEvidenceTests(unittest.TestCase):
                 allow_openrouter_fallback=False,
                 allow_paid=False,
             )
-        self.assertEqual(search_evidence.build_queries(CLAIM), ["RFC 2606 reserves example.com for documentation", "RFC 2606 example.com"])
+        queries = search_evidence.build_queries(CLAIM)
+        self.assertIn("reserves", queries[0])
+        self.assertIn("example.com", queries[0])
+        self.assertTrue(any("reserves" in query and "example.com" in query for query in queries))
         self.assertEqual(len(calls), 2)
         claim = result["claims"][0]
         self.assertEqual(len(claim["candidates"]), 5)
@@ -106,6 +109,14 @@ class SearchEvidenceTests(unittest.TestCase):
             self.assertEqual((ref["start"], ref["end"]), (passage["start"], passage["end"]))
         self.assertEqual(result["evaluation"]["claims"][0]["judge_correct"], True)
         self.assertFalse(result["paid_fallback"])
+
+    def test_relation_query_keeps_object_and_predicate_ahead_of_entity_fallback(self) -> None:
+        queries = search_evidence.build_queries(
+            "The institute moved the archive to an offline vault."
+        )
+        self.assertIn("moved", queries[0])
+        self.assertIn("archive", queries[0])
+        self.assertIn("offline", queries[0])
 
     def test_a_missing_search_service_is_not_a_refutation(self) -> None:
         def search(query: str, limit: int) -> tuple[list[dict[str, str]], str | None]:

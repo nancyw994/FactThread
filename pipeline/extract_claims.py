@@ -68,6 +68,25 @@ _COMPOUND = re.compile(
 )
 _HEADLINE_ATTR = re.compile(r"\bheadlines?\b.{0,40}\b(called|said|wrote|described)\b", re.IGNORECASE)
 _WORDING_GAP = re.compile(r"baseline|compar|system that|which system", re.IGNORECASE)
+_TEXT_WORD = re.compile(r"[\w]+(?:[-’'][\w]+)*", re.UNICODE)
+_EN_STOP = frozenset(
+    "a an and are as at be been being by for from had has have he her hers him his i in into is it its me my of on or our ours she that the their theirs them they this those these to was were what when where which while who why will with we you your".split()
+)
+_NUMBER = re.compile(r"\b\d+(?:,\d{3})*(?:\.\d+)?\b")
+_VAGUE_ACTION_REFERENCE = re.compile(r"\b(?:these|those|such)\s+(?:actions?|steps?|measures?|changes?|decisions?|efforts?)\b", re.IGNORECASE)
+_CAUSAL = re.compile(
+    r"\b(?:cause[sd]?|allow(?:s|ed)?|enable[sd]?|lead(?:s)? to|led to|result(?:s|ed)? in|contribut(?:e|es|ed) to|drive[sn]?|drove|promot(?:e|es|ed|ing)|fuel(?:s|ed|ing)|accelerat(?:e|es|ed|ing))\b",
+    re.IGNORECASE,
+)
+_VAGUE_OUTCOME = re.compile(
+    r"\b(?:flourish(?:ed|es|ing)?|thrive[sd]?|prosper(?:ed|s|ing)?|improv(?:e|es|ed|ing)|"
+    r"succeed(?:ed|s|ing)?|successful(?:ly)?|grow(?:s|th|ing)?|development|progress|better|stronger)\b",
+    re.IGNORECASE,
+)
+_MEASURE = re.compile(
+    r"(?:\b\d+(?:\.\d+)?\s?%\b|\b(?:by|from|to)\s+\d|\b(?:rate|count|number|share|percentage|score|measure|metric|index|volume)\b)",
+    re.IGNORECASE,
+)
 
 Complete = Callable[[str, list[str] | None], Any]
 
@@ -325,6 +344,11 @@ def expand_compound(claim: dict[str, Any]) -> list[dict[str, Any]]:
 def _finalize(article: str, claim: dict[str, Any]) -> dict[str, Any]:
     quote = claim["source_quote"]
     normalized = correct_attribution(quote, str(claim.get("normalized_claim") or quote).strip())
+    normalization_gaps: list[str] = []
+    source_numbers = _NUMBER.findall(quote)
+    claim_numbers = _NUMBER.findall(normalized)
+    if any(number not in claim_numbers for number in source_numbers):
+        normalization_gaps.append("规范化声明未保留原文中的数字或年份")
     located = locate_quote(article, quote)
     offset = located[0] if isinstance(located, tuple) else 0
     normalized = resolve_exam(article, offset, normalized)
@@ -333,6 +357,9 @@ def _finalize(article: str, claim: dict[str, Any]) -> dict[str, Any]:
     fact_type = infer_fact_type(claim, focused, "")
     scope = infer_scope(focused, "", document_ref, ref_state, fact_type)
     missing = relevant_gaps(focused, "", list(claim.get("missing_context") or []))
+    for gap in normalization_gaps:
+        if gap not in missing:
+            missing.append(gap)
     gap = price_gap(quote, normalized)
     if (
         gap
@@ -343,6 +370,9 @@ def _finalize(article: str, claim: dict[str, Any]) -> dict[str, Any]:
         missing.append(gap)
     if ref_state == "ambiguous" and _DOC_GAP not in missing:
         missing.append(_DOC_GAP)
+    for gap in causal_context_gaps(quote, normalized):
+        if gap not in missing:
+            missing.append(gap)
     absence = is_absence(focused, "")
     status, status_reason = assign_status(fact_type, scope, missing, absence, ref_state)
     return {
@@ -356,6 +386,20 @@ def _finalize(article: str, claim: dict[str, Any]) -> dict[str, Any]:
         "document_ref": document_ref,
         "missing_context": missing,
     }
+
+
+def causal_context_gaps(source_quote: str, normalized_claim: str) -> list[str]:
+    """Flag causal claims whose antecedent or outcome is too vague to check."""
+    text = f"{source_quote} {normalized_claim}"
+    if not _CAUSAL.search(text):
+        return []
+    gaps = []
+    if _VAGUE_ACTION_REFERENCE.search(normalized_claim):
+        gaps.append("需要明确因果关系所指的行动或变化")
+    if _VAGUE_OUTCOME.search(text) and not _MEASURE.search(text):
+        gaps.append("需要说明因果结果的具体对象或衡量指标")
+        gaps.append("需要提供所述行动导致该结果的因果依据")
+    return gaps
 
 
 def infer_fact_type(claim: dict[str, Any], quote: str, normalized: str) -> str:

@@ -13,6 +13,7 @@ import threading
 import traceback
 from pathlib import Path
 from typing import Any, Callable
+from urllib.parse import urlsplit, urlunsplit
 
 import extract_claims
 import search_evidence
@@ -91,16 +92,20 @@ class ArticleBook:
         self.allow_openrouter = False
         self.articles: dict[str, dict[str, Any]] = {}
         self.lock = threading.Lock()
+        self._restore()
 
-    def start_extract(self, text: str) -> dict[str, Any]:
+    def start_extract(self, text: str, article_source_url: Any = None) -> dict[str, Any]:
         article_text = _article(text)
+        source_url = _source_url(article_source_url)
         digest = _sha(article_text)
         with self.lock:
             existing = next(
                 (
                     item
                     for item in self.articles.values()
-                    if item["text_sha"] == digest and item["status"] in {"extracted", "done"}
+                    if item["text_sha"] == digest
+                    and _canonical_url(item.get("article_source_url")) == _canonical_url(source_url)
+                    and item["status"] in {"extracted", "done"}
                 ),
                 None,
             )
@@ -111,28 +116,49 @@ class ArticleBook:
             "id": article_id,
             "text": article_text,
             "text_sha": digest,
+            "article_source_url": source_url,
             "status": "running",
             "phase": "extract",
             "error": None,
             "candidates": [],
             "selection": [],
             "records": {},
+            "attempt_history": {},
         }
         with self.lock:
             self.articles[article_id] = article
         threading.Thread(target=self._extract, args=(article,), daemon=True).start()
         return self.snapshot(article_id)
 
-    def start_check(self, article_id: str, ids: Any, edits: Any) -> dict[str, Any]:
+    def start_check(
+        self,
+        article_id: str,
+        ids: Any,
+        edits: Any,
+        *,
+        retry: bool = False,
+        article_source_url: Any = None,
+    ) -> dict[str, Any]:
         article = self._get(article_id)
         if article["status"] == "running":
             raise RuntimeError("running")
         selection = self._selection(article, ids, edits)
         with self.lock:
-            article["selection"] = selection
+            if article_source_url is not None:
+                article["article_source_url"] = _source_url(article_source_url)
+            current = {item["candidate_id"]: item for item in article.get("selection") or []}
+            for item in selection:
+                previous = article["records"].get(item["pipeline_id"])
+                if retry and previous is not None:
+                    history = article.setdefault("attempt_history", {}).setdefault(item["pipeline_id"], [])
+                    history.append(previous)
+                    article["records"].pop(item["pipeline_id"], None)
+                current[item["candidate_id"]] = item
+            article["selection"] = list(current.values())
             article["status"] = "running"
             article["phase"] = "check"
             article["error"] = None
+            self._save(article)
         threading.Thread(target=self._check, args=(article,), daemon=True).start()
         return self.snapshot(article_id)
 
@@ -149,6 +175,7 @@ class ArticleBook:
             article["status"] = "running"
             article["phase"] = "check"
             article["error"] = None
+            self._save(article)
         threading.Thread(target=self._check, args=(article,), daemon=True).start()
         return self.snapshot(article_id)
 
@@ -166,6 +193,7 @@ class ArticleBook:
                 "phase": article.get("phase"),
                 "error": article.get("error"),
                 "text_sha": article["text_sha"],
+                "article_source_url": article.get("article_source_url"),
                 "candidates": list(article.get("candidates") or []),
             }
         claims = []
@@ -182,7 +210,9 @@ class ArticleBook:
                 )
             else:
                 active = record.get("active_stage") if status == "running" else None
-                shown = self.view(record, active=active, allow_paid=False, allow_openrouter=False)
+                view_record = dict(record)
+                view_record["article_source_url"] = shown_article.get("article_source_url")
+                shown = self.view(view_record, active=active, allow_paid=False, allow_openrouter=False)
                 if shown.get("retry_at") and (retry_at is None or shown["retry_at"] < retry_at):
                     retry_at = shown["retry_at"]
                 if _cooling(record):
@@ -197,6 +227,7 @@ class ArticleBook:
             "phase": shown_article.get("phase"),
             "error": shown_article.get("error"),
             "text_sha": shown_article["text_sha"],
+            "article_source_url": shown_article.get("article_source_url"),
             "candidates": [_candidate_view(item) for item in shown_article["candidates"]],
             "selected": [item["candidate_id"] for item in selection],
             "claims": claims,
@@ -224,6 +255,7 @@ class ArticleBook:
             article["candidates"] = candidates
             article["selection"] = []
             article["records"] = {}
+            article["attempt_history"] = {}
             article["status"] = "extracted"
             article["phase"] = None
         self._save(article)
@@ -235,6 +267,7 @@ class ArticleBook:
             with self.lock:
                 article["status"] = "done"
                 article["phase"] = None
+            self._save(article)
             return
         previous = {"claims": [article["records"][item["pipeline_id"]] for item in pending if item["pipeline_id"] in article["records"]]}
 
@@ -244,6 +277,7 @@ class ArticleBook:
                     current = dict(record)
                     current["active_stage"] = stage
                     article["records"][str(record.get("id"))] = current
+                    self._save(article)
 
         options: dict[str, Any] = {}
         if self.sleeper is not None:
@@ -260,6 +294,7 @@ class ArticleBook:
                 allow_paid=False,
                 cache_dir=self.cache_dir,
                 complete=self.complete,
+                input_source_url=article.get("article_source_url"),
                 previous=previous if previous["claims"] else None,
                 progress=progress,
                 **options,
@@ -269,6 +304,7 @@ class ArticleBook:
             with self.lock:
                 article["status"] = "error"
                 article["error"] = _safe_error(exc)
+            self._save(article)
             return
         with self.lock:
             for record in result["claims"]:
@@ -296,10 +332,9 @@ class ArticleBook:
             text = str(edited or "").strip()
             if not text:
                 raise ValueError("要核查的条目不能是空的。")
-            if text != by_id[candidate_id]["normalized_claim"]:
-                pipeline_id = _sha(text)
-            else:
-                pipeline_id = _sha(by_id[candidate_id]["normalized_claim"])
+            legacy_id = _sha(text)
+            scoped_id = _sha(f"{article['text_sha']}\0{text}")
+            pipeline_id = legacy_id if legacy_id in article.get("records", {}) else scoped_id
             chosen.append({"candidate_id": candidate_id, "claim": text, "pipeline_id": pipeline_id})
         if not chosen:
             raise ValueError("先选择要核查的条目。")
@@ -320,12 +355,52 @@ class ArticleBook:
         path = self.articles_dir / f"{article['id']}.json"
         stored = {
             "id": article["id"],
+            "text": article["text"],
             "text_sha": article["text_sha"],
+            "article_source_url": article.get("article_source_url"),
             "candidates": article.get("candidates") or [],
             "selection": article.get("selection") or [],
             "records": article.get("records") or {},
+            "attempt_history": article.get("attempt_history") or {},
+            "status": article.get("status"),
+            "phase": article.get("phase"),
+            "error": article.get("error"),
         }
         path.write_text(json.dumps(stored, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+
+    def _restore(self) -> None:
+        """Reload locally saved articles so a paused batch can continue after restart."""
+        if self.articles_dir is None or not self.articles_dir.is_dir():
+            return
+        for path in self.articles_dir.glob("*.json"):
+            try:
+                saved = json.loads(path.read_text(encoding="utf-8"))
+                text = _article(saved.get("text"))
+                digest = _sha(text)
+                if digest != saved.get("text_sha") or path.stem != saved.get("id"):
+                    continue
+                selection = saved.get("selection") if isinstance(saved.get("selection"), list) else []
+                records = saved.get("records") if isinstance(saved.get("records"), dict) else {}
+                status = saved.get("status") or ("done" if selection else "extracted")
+                # A process that stopped mid-request leaves its last stage checkpoint
+                # available; mark it idle so the user can continue that item.
+                if status == "running":
+                    status = "extracted" if saved.get("phase") == "extract" else "done"
+                self.articles[path.stem] = {
+                    "id": path.stem,
+                    "text": text,
+                    "text_sha": digest,
+                    "article_source_url": _source_url(saved.get("article_source_url")),
+                    "status": status,
+                    "phase": None,
+                    "error": saved.get("error"),
+                    "candidates": saved.get("candidates") if isinstance(saved.get("candidates"), list) else [],
+                    "selection": selection,
+                    "records": records,
+                    "attempt_history": saved.get("attempt_history") if isinstance(saved.get("attempt_history"), dict) else {},
+                }
+            except (OSError, ValueError, TypeError, json.JSONDecodeError):
+                continue
 
 
 def _stored_candidate(claim: dict[str, Any]) -> dict[str, Any]:
@@ -335,18 +410,29 @@ def _stored_candidate(claim: dict[str, Any]) -> dict[str, Any]:
         "normalized_claim": claim.get("normalized_claim") or "",
         "fact_type": claim.get("fact_type") or claim.get("category") or "",
         "missing_context": list(claim.get("missing_context") or []),
+        "status_reason": claim.get("status_reason"),
     }
 
 
 def _candidate_view(claim: dict[str, Any]) -> dict[str, Any]:
     fact_type = str(claim.get("fact_type") or "")
+    missing_context = list(claim.get("missing_context") or [])
     return {
         "id": claim.get("id"),
         "source_quote": claim.get("source_quote") or "",
         "normalized_claim": claim.get("normalized_claim") or "",
         "fact_type": fact_type,
         "fact_type_label": TYPE_LABELS.get(fact_type, fact_type),
-        "missing_context": list(claim.get("missing_context") or []),
+        "missing_context": missing_context,
+        "context_note": (
+            "尚需补充声明中的主体、日期或比较基准。"
+            if fact_type == "needs_context" and not missing_context
+            else None
+        ),
+        "default_selected": (
+            fact_type not in {"opinion", "prediction", "intention", "needs_context"}
+            and not missing_context
+        ),
     }
 
 
@@ -383,6 +469,31 @@ def _article(value: Any) -> str:
     if len(text) > MAX_ARTICLE:
         raise ValueError("这篇文章太长。")
     return text
+
+
+def _source_url(value: Any) -> str | None:
+    raw = str(value or "").strip()
+    if not raw:
+        return None
+    if len(raw) > 2_000:
+        raise ValueError("文章来源 URL 太长。")
+    parsed = urlsplit(raw)
+    if parsed.scheme.lower() not in {"http", "https"} or not parsed.hostname or parsed.username or parsed.password:
+        raise ValueError("文章来源必须是有效的 http 或 https URL。")
+    return urlunsplit((parsed.scheme.lower(), parsed.netloc, parsed.path or "/", parsed.query, ""))
+
+
+def _canonical_url(value: Any) -> str | None:
+    raw = str(value or "").strip()
+    if not raw:
+        return None
+    parsed = urlsplit(raw)
+    host = (parsed.hostname or "").lower().removeprefix("www.")
+    if not host:
+        return None
+    port = f":{parsed.port}" if parsed.port else ""
+    path = parsed.path.rstrip("/") or "/"
+    return urlunsplit((parsed.scheme.lower(), f"{host}{port}", path, "", ""))
 
 
 def _id() -> str:

@@ -464,6 +464,8 @@ def _llm_packet(
                 "source_id": item.get("source_id"),
                 "url": item.get("url") or item.get("final_url"),
                 "title": item.get("title") or "",
+                "source_role": item.get("source_role"),
+                "independent": item.get("independent"),
             }
             for item in row["sources"]
         ]
@@ -1132,6 +1134,10 @@ def _public_ref(span: dict[str, Any]) -> dict[str, Any]:
     }
     if span.get("url"):
         ref["url"] = span.get("url")
+    if span.get("source_role"):
+        ref["source_role"] = span.get("source_role")
+    if "independent" in span:
+        ref["independent"] = span.get("independent")
     if span.get("full_document"):
         ref["full_document"] = True
     return ref

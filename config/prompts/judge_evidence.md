@@ -31,3 +31,4 @@ Return only JSON:
 {"verdict":"supported|refuted|insufficient_evidence","attribution_check":"passed|failed|not_applicable","content_check":"supported|refuted|insufficient_evidence","explanation":"...","evidence_refs":[{"source_id":"...","quote":"...","start":0,"end":0}],"limitations":["..."]}
 
 Every evidence_refs item must be copied from supplied_spans. Keep source_id, quote, start, and end unchanged.
+If a supplied span or source has source_role "input_article", it is the article provided by the user. It can establish what that article says, but it is not independent corroboration of the article's external factual claim. Keep it in the evidence and disclose this limitation; do not treat it as independent support.

@@ -21,6 +21,12 @@ ARTICLE = (
     "The World Wide Web was invented in 2005."
 )
 OTHER = "The recorded count was 12 lanes in 1998."
+SHORT_ARTICLE = (
+    "Apollo 11 landed the first humans on the Moon on July 20, 1969. "
+    "The first Moon landing happened in 1972. "
+    "Apollo 11 was humanity's greatest achievement. "
+    "NASA will establish a permanent lunar base by 2030."
+)
 
 
 def _extract(text: str, repair: list[str] | None) -> dict:
@@ -71,6 +77,79 @@ class ArticleModeTests(unittest.TestCase):
         self.assertEqual(first["missing_context"], [])
         self.assertEqual(second["missing_context"], ["which product the price applies to"])
         self.assertNotIn("human_label", json.dumps(done))
+
+    def test_short_article_defaults_opinion_and_prediction_off_and_checks_only_selected(self) -> None:
+        quotes = [part.strip().rstrip(".") + "." for part in SHORT_ARTICLE.split(". ")]
+
+        def extract(text: str, repair: list[str] | None) -> dict:
+            categories = ["checkable_fact", "checkable_fact", "opinion", "prediction"]
+            return {
+                "claims": [
+                    {
+                        "source_quote": quote,
+                        "normalized_claim": quote,
+                        "category": category,
+                        "missing_context": [],
+                    }
+                    for quote, category in zip(quotes, categories)
+                ]
+            }
+
+        searched: list[str] = []
+        judged: list[str] = []
+
+        def get_page(url: str) -> dict:
+            body = (
+                "Apollo 11 landed the first humans on the Moon on July 20, 1969. "
+                "The first Moon landing was in 1969, not 1972."
+            )
+            return {
+                "http_status": 200,
+                "final_url": url,
+                "raw": f"<html><title>NASA</title><body><p>{body}</p></body></html>",
+                "truncated": False,
+                "error": None,
+            }
+
+        def search(query: str, limit: int) -> tuple[list[dict[str, str]], None]:
+            searched.append(query)
+            return _hits(query, limit)
+
+        def complete(system: str, user: str) -> str:
+            packet = json.loads(user.split("\n\nThe previous reply", 1)[0])
+            judged.append(packet["claim"])
+            span = packet["supplied_spans"][0]
+            verdict = "refuted" if "1972" in packet["claim"] else "supported"
+            return json.dumps(
+                {
+                    "verdict": verdict,
+                    "explanation": "Compared with the fetched source.",
+                    "evidence_refs": [span],
+                    "limitations": [],
+                }
+            )
+
+        with self._server(search, complete, extract=extract, getter=get_page) as base:
+            job = self._wait(base, self._post(base, "/api/articles", {"text": SHORT_ARTICLE})["id"])
+            self.assertEqual([row["source_quote"] for row in job["candidates"]], quotes)
+            self.assertEqual([row["normalized_claim"] for row in job["candidates"]], quotes)
+            self.assertEqual([row["fact_type"] for row in job["candidates"]], [
+                "checkable_fact", "checkable_fact", "opinion", "prediction"
+            ])
+            self.assertEqual([row["default_selected"] for row in job["candidates"]], [True, True, False, False])
+            selected = [row["id"] for row in job["candidates"][:2]]
+            checked = self._wait(
+                base,
+                self._post(base, f"/api/articles/{job['id']}/check", {"ids": selected})["id"],
+            )
+
+        self.assertEqual(judged, [quotes[0], quotes[1]], checked)
+        self.assertTrue(searched)
+        self.assertFalse(any("achievement" in query.lower() or "2030" in query for query in searched))
+        self.assertEqual([item["verdict"] for item in checked["claims"]], ["supported", "refuted"])
+        self.assertTrue(all(item["citations"] for item in checked["claims"]))
+        self.assertFalse(checked["paid_fallback"])
+        self.assertFalse(checked["openrouter_fallback"])
 
     def test_a_changed_article_drops_the_old_extraction(self) -> None:
         with self._server() as base:
@@ -132,7 +211,8 @@ class ArticleModeTests(unittest.TestCase):
             continued = self._post(base, f"/api/articles/{job['id']}/continue", {})
             done = self._wait(base, continued["id"])
         first_at = next(index for index, query in enumerate(searches) if query.startswith("Tim Berners-Lee"))
-        self.assertLess(first_at, searches.index("The World Wide Web was invented in 2005"))
+        later_fact_at = next(index for index, query in enumerate(searches) if "invented" in query and "2005" in query)
+        self.assertLess(first_at, later_fact_at)
         self.assertEqual(len(searches), searched)
         self.assertEqual(done["claims"][0]["verdict"], "supported")
         self.assertEqual(done["claims"][1]["verdict"], "supported")
@@ -174,8 +254,64 @@ class ArticleModeTests(unittest.TestCase):
         self.assertEqual(again["claims"][0]["verdict"], "refuted")
         self.assertIn(edited, seen)
 
-    def _server(self, search=None, complete=None):
-        return _Running(search or _hits, complete or _supported)
+    def test_saved_article_and_completed_claim_survive_server_restart(self) -> None:
+        import tempfile
+
+        searches: list[str] = []
+        blocked = {"value": True}
+
+        def search(query: str, limit: int) -> tuple[list[dict[str, str]], None]:
+            searches.append(query)
+            return _hits(query, limit)
+
+        def complete(system: str, user: str) -> str:
+            packet = json.loads(user.split("\n\nThe previous reply", 1)[0])
+            if blocked["value"] and "2005" in packet["claim"]:
+                error = RuntimeError("429 rate limit")
+                error.status_code = 429
+                raise error
+            span = packet["supplied_spans"][0]
+            return json.dumps(
+                {
+                    "verdict": "supported",
+                    "explanation": "The page states it.",
+                    "evidence_refs": [span],
+                    "limitations": [],
+                }
+            )
+
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            first = check_server.App(
+                search=search, getter=_page, complete=complete, extract=_extract,
+                jobs_dir=root / "jobs", cache_dir=root / "pages",
+                sleeper=lambda seconds: None, rng=lambda: 0,
+            )
+            job = first.articles.start_extract(ARTICLE)
+            job = _wait_for(first, job["id"])
+            ids = [item["id"] for item in job["candidates"]]
+            first.articles.start_check(job["id"], ids, {})
+            held = _wait_for(first, job["id"])
+            self.assertEqual(held["claims"][0]["verdict"], "supported")
+            self.assertTrue(held["can_continue"])
+            searched = len(searches)
+
+            blocked["value"] = False
+            restored = check_server.App(
+                search=search, getter=_page, complete=complete,
+                jobs_dir=root / "jobs", cache_dir=root / "pages",
+                sleeper=lambda seconds: None, rng=lambda: 0,
+            )
+            loaded = restored.articles.snapshot(job["id"])
+            self.assertEqual(loaded["claims"][0]["verdict"], "supported")
+            restored.articles.continue_article(job["id"])
+            done = _wait_for(restored, job["id"])
+
+        self.assertEqual(len(searches), searched)
+        self.assertEqual([item["verdict"] for item in done["claims"]], ["supported", "supported"])
+
+    def _server(self, search=None, complete=None, extract=None, getter=None):
+        return _Running(search or _hits, complete or _supported, extract=extract, getter=getter)
 
     def _post(self, base: str, path: str, payload: dict) -> dict:
         request = urllib.request.Request(
@@ -214,17 +350,30 @@ def _supported(system: str, user: str) -> str:
     )
 
 
+def _wait_for(app: check_server.App, article_id: str) -> dict:
+    deadline = time.time() + 5
+    last = {}
+    while time.time() < deadline:
+        last = app.articles.snapshot(article_id)
+        if last["status"] != "running":
+            if last["status"] == "error":
+                raise AssertionError(last.get("error"))
+            return last
+        time.sleep(0.02)
+    raise AssertionError(f"article stayed running: {last}")
+
+
 class _Running:
-    def __init__(self, search, complete) -> None:
+    def __init__(self, search, complete, extract=None, getter=None) -> None:
         import tempfile
 
         self.tmp = tempfile.TemporaryDirectory()
         root = Path(self.tmp.name)
         self.app = check_server.App(
             search=search,
-            getter=_page,
+            getter=getter or _page,
             complete=complete,
-            extract=_extract,
+            extract=extract or _extract,
             jobs_dir=root / "jobs",
             cache_dir=root / "pages",
             sleeper=lambda seconds: None,

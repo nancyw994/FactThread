@@ -196,6 +196,18 @@ class RuleTests(unittest.TestCase):
         self.assertEqual(row["fact_type"], "opinion")
         self.assertEqual(row["status"], "skipped")
 
+    def test_ambiguous_causal_outcome_requires_target_metric_and_basis(self) -> None:
+        quote = "These actions promoted development."
+
+        def complete(text, repair):
+            return {"claims": [claim(quote)]}
+
+        row = ex.extract_claims(quote, complete)["claims"][0]
+        self.assertEqual(row["status"], "needs_context")
+        self.assertIn("需要明确因果关系所指的行动或变化", row["missing_context"])
+        self.assertIn("需要说明因果结果的具体对象或衡量指标", row["missing_context"])
+        self.assertIn("需要提供所述行动导致该结果的因果依据", row["missing_context"])
+
     def test_harbor_sample_matches_the_expected_roles(self) -> None:
         article = (ROOT / "data/dev/extract/harbor.txt").read_text(encoding="utf-8")
         raw = json.loads((ROOT / "data/dev/extract/last_extract.json").read_text(encoding="utf-8"))["claims"]

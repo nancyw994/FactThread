@@ -21,7 +21,7 @@ from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any, Callable
-from urllib.parse import urlparse
+from urllib.parse import urlparse, urlsplit, urlunsplit
 
 WEB = Path(__file__).resolve().parent
 ROOT = WEB.parent
@@ -94,8 +94,21 @@ def public_view(
     pending = judge_status == "rate_limited"
     retry_at = _retry_at(record) if pending else None
     cooling = bool(retry_at and retry_at > datetime.now(timezone.utc))
+    citations = _citations(record, published=bool(verdict))
+    independent_sources = {item["url"] for item in citations if item.get("independent") and item.get("url")}
+    fetches = list(record.get("fetches") or [])
+    fetched_ok = record.get("page_fetch_succeeded")
+    if fetched_ok is None:
+        fetched_ok = any(item.get("fetch_status") in {"ok", "truncated", "empty_body"} for item in fetches)
+    relevant = record.get("relevant_passage_found")
+    if relevant is None:
+        relevant = bool(record.get("passages"))
+    sufficient = record.get("sufficient_evidence_found")
+    if sufficient is None and judge_status == "completed":
+        sufficient = verdict in {"supported", "refuted"}
     return {
         "claim": record.get("claim") or "",
+        "article_source_url": record.get("article_source_url"),
         "stages": {
             "search": _stage(record.get("search_status"), SEARCH_LABELS, active == "search"),
             "fetch": _stage(record.get("fetch_status"), FETCH_LABELS, active == "fetch"),
@@ -107,7 +120,13 @@ def public_view(
         "explanation": record.get("explanation") if verdict else None,
         "evidence_heading": "引用" if verdict else "已获取的证据",
         "reads": _reads(record),
-        "citations": _citations(record, published=bool(verdict)),
+        "citations": citations,
+        "independent_source_count": len(independent_sources),
+        "evidence_retrieval": {
+            "fetch_succeeded": fetched_ok,
+            "relevant_passage_found": relevant,
+            "sufficient_evidence_found": sufficient,
+        },
         "scope": _scope(record, pending),
         "limitations": _limits(record),
         "can_continue": pending and not cooling,
@@ -169,13 +188,20 @@ def _citations(record: dict[str, Any], *, published: bool) -> list[dict[str, Any
         if passage.get("source_id"):
             titles.setdefault(str(passage["source_id"]), str(fetched.get("title") or ""))
     rows = record.get("evidence_refs") if published else record.get("passages")
+    source_by_id = {str(item.get("source_id")): item for item in record.get("sources") or []}
     citations = []
     for item in rows or []:
         url = str(item.get("url") or "")
         if urlparse(url).scheme not in {"http", "https"}:
             url = ""
         quote = str(item.get("quote") or "")
-        role = _evidence_role(url, record)
+        source = source_by_id.get(str(item.get("source_id"))) or {}
+        is_input_source = (
+            source.get("source_role") == "input_article"
+            or item.get("source_role") == "input_article"
+            or _same_url(url, record.get("article_source_url"))
+        )
+        role = "input_article" if is_input_source else _evidence_role(url, record)
         citations.append(
             {
                 "quote": quote,
@@ -184,7 +210,8 @@ def _citations(record: dict[str, Any], *, published: bool) -> list[dict[str, Any
                 "url": url,
                 "cited": published,
                 "role": role,
-                "role_label": "原始文档" if role == "original" else "辅助材料",
+                "role_label": "输入文章来源" if role == "input_article" else ("原始文档" if role == "original" else "辅助材料"),
+                "independent": not is_input_source,
             }
         )
     return citations
@@ -206,14 +233,18 @@ def _reads(record: dict[str, Any]) -> list[dict[str, Any]]:
     for source in record.get("named_sources") or []:
         host = str(source.get("host") or "")
         match = next((item for item in fetches if search_evidence._host(item.get("final_url") or item.get("url") or "") == host), None)
-        rows.append(_read_row(str(source.get("url") or ""), match, "original", source.get("fetch_status"), source.get("error")))
+        url = str(source.get("url") or "")
+        role = "input_article" if _same_url(url, record.get("article_source_url")) else "original"
+        rows.append(_read_row(url, match, role, source.get("fetch_status"), source.get("error")))
         if host:
             covered.add(host)
     for fetched in fetches:
         host = search_evidence._host(fetched.get("final_url") or fetched.get("url") or "")
         if host in covered:
             continue
-        rows.append(_read_row(str(fetched.get("url") or ""), fetched, _evidence_role(str(fetched.get("url") or ""), record), fetched.get("fetch_status"), fetched.get("error")))
+        url = str(fetched.get("url") or "")
+        role = "input_article" if _same_url(url, record.get("article_source_url")) else _evidence_role(url, record)
+        rows.append(_read_row(url, fetched, role, fetched.get("fetch_status"), fetched.get("error")))
     return rows
 
 
@@ -228,8 +259,24 @@ def _read_row(url: str, fetched: dict[str, Any] | None, role: str, status: Any, 
         "detail": detail,
         "page_cache": (fetched or {}).get("page_cache"),
         "role": role,
-        "role_label": "原始文档" if role == "original" else "辅助材料",
+        "role_label": "输入文章来源" if role == "input_article" else ("原始文档" if role == "original" else "辅助材料"),
+        "independent": role != "input_article",
     }
+
+
+def _same_url(left: Any, right: Any) -> bool:
+    def canonical(raw: Any) -> str | None:
+        value = str(raw or "").strip()
+        parsed = urlsplit(value)
+        host = (parsed.hostname or "").lower().removeprefix("www.")
+        if parsed.scheme.lower() not in {"http", "https"} or not host:
+            return None
+        port = f":{parsed.port}" if parsed.port else ""
+        path = parsed.path.rstrip("/") or "/"
+        return urlunsplit((parsed.scheme.lower(), host + port, path, "", ""))
+
+    left_key, right_key = canonical(left), canonical(right)
+    return left_key is not None and left_key == right_key
 
 
 def _evidence_role(url: str, record: dict[str, Any]) -> str:
@@ -476,10 +523,22 @@ def handler_for(app: App) -> type[BaseHTTPRequestHandler]:
                 if path == "/api/jobs":
                     return self._send_json(202, app.start(payload.get("claim")))
                 if path == "/api/articles":
-                    return self._send_json(202, app.articles.start_extract(payload.get("text")))
+                    return self._send_json(
+                        202,
+                        app.articles.start_extract(payload.get("text"), payload.get("article_source_url")),
+                    )
                 if path.startswith("/api/articles/") and path.endswith("/check"):
                     article_id = path.removeprefix("/api/articles/").removesuffix("/check").strip("/")
-                    return self._send_json(202, app.articles.start_check(article_id, payload.get("ids"), payload.get("claims")))
+                    return self._send_json(
+                        202,
+                        app.articles.start_check(
+                            article_id,
+                            payload.get("ids"),
+                            payload.get("claims"),
+                            retry=bool(payload.get("retry")),
+                            article_source_url=payload.get("article_source_url"),
+                        ),
+                    )
                 if path.startswith("/api/articles/") and path.endswith("/continue"):
                     article_id = path.removeprefix("/api/articles/").removesuffix("/continue").strip("/")
                     return self._send_json(202, app.articles.continue_article(article_id))
