@@ -20,6 +20,7 @@ import argparse
 import json
 import re
 import sys
+import time
 from pathlib import Path
 from typing import Any, Callable
 
@@ -33,6 +34,7 @@ EVAL = ROOT / "data" / "dev" / "judge" / "eval_expected.json"
 HELDOUT = ROOT / "data" / "dev" / "judge" / "eval_heldout.json"
 FINAL = ROOT / "data" / "dev" / "judge" / "eval_final.json"
 VERDICTS = frozenset({"supported", "refuted", "insufficient_evidence"})
+MAX_REPAIRS = 1
 METHOD = {
     "kind": "fixed_rules",
     "uses_model": False,
@@ -143,7 +145,7 @@ def judge_one(
             limitations=[row.get("reason") or f"Evidence status is {status}, so this claim is not judged."],
         )
     if judge == "llm":
-        return _judge_llm(row, bodies, complete, context_limit, meter)
+        return _judge_llm(row, bodies, complete, context_limit, meter, model)
     if row.get("fact_type") == "intention" or _INTENT.search(str(row.get("normalized_claim") or "")):
         return _finish(row, bodies, _judge_intention(row, bodies))
     if _is_omission(row):
@@ -156,32 +158,65 @@ class CallMeter:
 
     def __init__(self) -> None:
         self.calls: list[dict[str, Any]] = []
+        self.purpose = "initial"
 
     def add(self, result: dict[str, Any]) -> None:
-        self.calls.append(result)
+        stored = dict(result)
+        stored.setdefault("purpose", self.purpose)
+        for attempt in stored.get("attempts") or []:
+            attempt.setdefault("purpose", stored["purpose"])
+        self.calls.append(stored)
 
     def summary(self) -> dict[str, Any]:
-        costs = [call.get("cost_usd") for call in self.calls]
-        known = [cost for cost in costs if isinstance(cost, int | float)]
-        cost_known = bool(self.calls) and len(known) == len(self.calls)
+        requests = [row for call in self.calls for row in _request_rows(call)]
+        billed = [row for row in requests if row.get("ok")]
+        known = [row["cost_usd"] for row in billed if isinstance(row.get("cost_usd"), int | float)]
+        cost_known = bool(billed) and len(known) == len(billed)
         prompt = sum(int((call.get("usage") or {}).get("prompt_tokens") or 0) for call in self.calls)
         completion = sum(int((call.get("usage") or {}).get("completion_tokens") or 0) for call in self.calls)
         served = []
-        for call in self.calls:
-            model_name = call.get("model")
+        for row in billed:
+            model_name = row.get("served_model") or row.get("model")
             if not model_name:
                 continue
-            provider = call.get("provider")
+            provider = row.get("provider")
             served.append(f"{provider}/{model_name}" if provider else model_name)
         return {
-            "calls": len(self.calls),
+            "calls": len(billed),
             "elapsed_s": round(sum(float(call.get("elapsed_s") or 0) for call in self.calls), 3),
             "prompt_tokens": prompt,
             "completion_tokens": completion,
             "cost_usd": round(sum(known), 8) if cost_known else "unknown",
             "cost_reported_calls": len(known),
             "served_models": list(dict.fromkeys(served)),
+            "requests": requests,
+            "request_attempts": len(requests),
+            "successful_calls": len(billed),
+            "cache_hits": sum(1 for row in requests if row.get("cache_hit")),
         }
+
+
+def _request_rows(call: dict[str, Any]) -> list[dict[str, Any]]:
+    """One row per provider attempt. A missing price stays unknown and is not stored as zero."""
+    purpose = call.get("purpose") or "initial"
+    attempts = call.get("attempts") or [call]
+    rows = []
+    for attempt in attempts:
+        cost = attempt.get("cost_usd")
+        rows.append(
+            {
+                "route_reason": attempt.get("route_reason"),
+                "purpose": attempt.get("purpose") or purpose,
+                "provider": attempt.get("provider"),
+                "model": attempt.get("model"),
+                "served_model": attempt.get("served_model") or attempt.get("model"),
+                "cache_hit": bool(attempt.get("cache_hit")),
+                "cost_usd": cost if isinstance(cost, int | float) or cost == "unknown" else "unknown",
+                "ok": bool(attempt.get("ok", True)),
+                "rejected_reason": call.get("rejected_reason"),
+            }
+        )
+    return rows
 
 
 def _method(judge: str, model: str | None) -> dict[str, Any]:
@@ -246,7 +281,13 @@ def _llm_client():
 
 def _live_complete(model: str, meter: CallMeter) -> Callable[[str, str], str]:
     def complete(system: str, user: str) -> str:
-        result = _llm_client().ask_llm_usage({"instructions": system}, user, model=model)
+        try:
+            result = _llm_client().ask_llm_usage({"instructions": system}, user, model=model)
+        except RuntimeError as exc:
+            attempts = getattr(exc, "attempts", None)
+            if attempts:
+                meter.add({"attempts": attempts, "ok": False, "cost_usd": "unknown", "elapsed_s": 0, "usage": {}})
+            raise
         meter.add(result)
         return result["content"]
 
@@ -259,6 +300,7 @@ def _judge_llm(
     complete: Callable[[str, str], str] | None,
     context_limit: int,
     meter: CallMeter | None,
+    model: str | None = None,
 ) -> dict[str, Any]:
     if complete is None:
         raise RuntimeError("The LLM judge was selected, but no model call was configured.")
@@ -288,26 +330,88 @@ def _judge_llm(
         )
     system = JUDGE_PROMPT.read_text(encoding="utf-8")
     user = json.dumps(packet, ensure_ascii=False)
-    parsed = _parse_object(complete(system, user))
-    decision = _normalize_llm(parsed)
-    failures = validate_refs(decision["evidence_refs"], bodies)
-    if failures or decision["verdict"] not in VERDICTS:
-        reason = "; ".join(failures) if failures else "verdict must be supported, refuted, or insufficient_evidence"
+    raw, decision, failures, meta = _ask_judge(system, user, "initial", complete, meter, bodies)
+    judge_requests = [_judge_request("initial", raw, failures, meta, model)]
+    repairs = 0
+    while failures and repairs < MAX_REPAIRS:
+        reason = "; ".join(failures)
+        if meter is not None and meter.calls:
+            meter.calls[-1]["rejected_reason"] = reason
         repair = (
             user
             + "\n\nThe previous reply was not accepted: "
             + reason
             + ". Return JSON again. Copy source_id, quote, start, and end from supplied_spans without changes."
         )
-        parsed = _parse_object(complete(system, repair))
-        decision = _normalize_llm(parsed)
+        raw, decision, failures, meta = _ask_judge(system, repair, "repair", complete, meter, bodies)
+        judge_requests.append(_judge_request("repair", raw, failures, meta, model))
+        repairs += 1
+    if failures:
+        judged = _unpublished(
+            row,
+            validation_status="validation_failed",
+            limitations=["The citations do not match the stored source, so no verdict is published."],
+            failures=failures,
+        )
+        judged["judge_requests"] = judge_requests
+        return judged
     judged = _finish(row, bodies, decision)
+    judged["judge_requests"] = judge_requests
     judged["check_scope"] = scope
     judged["document_scope"] = _scope_statement(scope)
     spans = (packet or {}).get("supplied_spans") or []
     _attach_llm_checks(judged, row, decision, spans)
     judged["limitations"] = _consistent_limits(judged.get("limitations") or [], scope)
     return judged
+
+
+def _ask_judge(
+    system: str,
+    user: str,
+    purpose: str,
+    complete: Callable[[str, str], str],
+    meter: CallMeter | None,
+    bodies: dict[str, str],
+) -> tuple[str, dict[str, Any], list[str], dict[str, Any]]:
+    if meter is not None:
+        meter.purpose = purpose
+    before = len(meter.calls) if meter is not None else 0
+    started = time.perf_counter()
+    raw = complete(system, user)
+    elapsed = round(time.perf_counter() - started, 3)
+    meta = meter.calls[-1] if meter is not None and len(meter.calls) > before else {}
+    if meta.get("elapsed_s") is None:
+        meta = {**meta, "elapsed_s": elapsed}
+    decision = _normalize_llm(_parse_object(raw))
+    return raw, decision, _reply_failures(decision, bodies), meta
+
+
+def _reply_failures(decision: dict[str, Any], bodies: dict[str, str]) -> list[str]:
+    failures = validate_refs(decision["evidence_refs"], bodies)
+    if decision["verdict"] not in VERDICTS:
+        failures.append("verdict must be supported, refuted, or insufficient_evidence")
+    return failures
+
+
+def _judge_request(
+    purpose: str,
+    raw: str,
+    failures: list[str],
+    meta: dict[str, Any],
+    model: str | None,
+) -> dict[str, Any]:
+    """Backend log of one judge call. The raw reply is not a user-facing field."""
+    cost = meta.get("cost_usd")
+    return {
+        "purpose": purpose,
+        "raw_reply": raw,
+        "validation_errors": list(failures),
+        "provider": meta.get("provider"),
+        "model": meta.get("served_model") or meta.get("model") or model,
+        "elapsed_s": meta.get("elapsed_s"),
+        "usage": meta.get("usage") or {},
+        "cost_usd": cost if isinstance(cost, int | float) or cost == "unknown" else "unknown",
+    }
 
 
 def _llm_packet(

@@ -23,6 +23,8 @@ import copy
 import json
 import re
 import sys
+import threading
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable
 from urllib.parse import urlparse
@@ -35,6 +37,11 @@ OUT = ROOT / "data" / "dev" / "search" / "last_search.json"
 MAX_QUERIES = 2
 MAX_CANDIDATES = 5
 MAX_PAGES = 3
+PIPELINE_VERSION = "source-selection-2"
+CACHE_VERSION = "page-body-v1"
+DEFAULT_PROVIDER = "groq"
+DEFAULT_MODEL = "openai/gpt-oss-120b"
+_COOLDOWN_LOCK = threading.Lock()
 VERDICTS = acquire_url.VERDICTS
 SEARCH_DONE = frozenset({"ok", "source_not_found", "search_unavailable"})
 JUDGE_DONE = frozenset({"completed", "failed"})
@@ -44,6 +51,10 @@ _URL_IN_CLAIM = re.compile(r"https?://[^\s)>\]]+", re.IGNORECASE)
 _SPEECH_SOURCE = re.compile(
     r"\b(?P<speaker>https?://[^\s)>\]]+|(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,24})"
     r"\s+(?:states|says|said|claims|writes|wrote|adds|confirms)\b",
+    re.IGNORECASE,
+)
+_RFC_STATEMENT = re.compile(
+    r"\bRFC\s+(?P<num>\d{3,5})\s+(?:states|says|said|claims|writes|wrote|adds|confirms|reserves|defines|specifies)\b",
     re.IGNORECASE,
 )
 SearchFn = Callable[[str, int], tuple[list[dict[str, str]], str | None]]
@@ -161,16 +172,19 @@ def named_sources(claim: str) -> list[dict[str, Any]]:
     found: list[dict[str, Any]] = []
     seen: set[str] = set()
 
-    def add(url: str, *, attributed: bool, explicit_url: bool) -> None:
+    def add(url: str, *, attributed: bool, explicit_url: bool, role: str = "original") -> None:
         host = _host(url)
         if not host or host in seen:
             if host in seen and attributed:
                 for item in found:
                     if item["host"] == host:
                         item["attributed"] = True
+                        item["role"] = "original"
             return
         seen.add(host)
-        found.append({"url": url, "host": host, "attributed": attributed, "explicit_url": explicit_url})
+        found.append(
+            {"url": url, "host": host, "attributed": attributed, "explicit_url": explicit_url, "role": role}
+        )
 
     for match in _SPEECH_SOURCE.finditer(claim):
         speaker = match.group("speaker").rstrip(".,;:")
@@ -179,9 +193,21 @@ def named_sources(claim: str) -> list[dict[str, Any]]:
         else:
             host = speaker.lower().removeprefix("www.")
             add(f"https://{host}", attributed=True, explicit_url=False)
+    for match in _RFC_STATEMENT.finditer(claim):
+        for url in _rfc_originals(match.group("num")):
+            add(url, attributed=True, explicit_url=False)
     for match in _URL_IN_CLAIM.finditer(claim):
         add(match.group(0).rstrip(".,;:"), attributed=False, explicit_url=True)
     return found
+
+
+def _rfc_originals(number: str) -> list[str]:
+    """The RFC Editor and IETF copies of a numbered RFC. Other sites are not this document."""
+    num = str(int(number))
+    return [
+        f"https://www.rfc-editor.org/rfc/rfc{num}.html",
+        f"https://datatracker.ietf.org/doc/html/rfc{num}",
+    ]
 
 
 def select_pages(candidates: list[dict[str, str]], *, limit: int = MAX_PAGES) -> list[dict[str, str]]:
@@ -229,6 +255,7 @@ def investigate(
     previous: dict[str, Any] | None = None,
     checkpoint: Path | None = None,
     only: set[str] | None = None,
+    progress: Callable[[str, dict[str, Any]], None] | None = None,
 ) -> dict[str, Any]:
     """Search, fetch, and judge. A saved run is reused and only unfinished stages run again."""
     search = search or configured_search
@@ -251,9 +278,11 @@ def investigate(
             record["verdict"] = None
             record["citation_passed"] = None
             record["explanation"] = None
-        if record["search_status"] not in SEARCH_DONE:
+        selecting = record["search_status"] not in SEARCH_DONE
+        if selecting:
             if record["judge_status"] != "completed":
                 record["limitations"] = []
+            _report(progress, "search", record)
             if search_paused:
                 _note(record, "Search was not run because the search service rate limit continued. A paid search service was not enabled. The claim is not treated as false.")
             else:
@@ -261,12 +290,18 @@ def investigate(
                 search_tries = stopped[1]
                 if stopped[0]:
                     search_paused = True
+            _report(progress, "search", record)
         _ensure_named_sources(record)
         if record["candidates"] and not _fetch_complete(record):
+            selecting = True
+            _report(progress, "fetch", record)
             _continue_fetch(record, getter=getter, cache_dir=store)
+        if selecting:
+            record["sources_selected_at"] = datetime.now(timezone.utc).isoformat()
         _record_direct_fetch(record)
         _mark_evidence(record)
         record["key_evidence_obtained"] = _key_evidence_obtained(record)
+        _report(progress, "fetch", record)
         claims.append(record)
     _checkpoint(checkpoint, claims, allow_paid=allow_paid, allow_openrouter_fallback=allow_openrouter_fallback)
     judge_paused = False
@@ -280,6 +315,20 @@ def investigate(
             continue
         if not _needs_judge(record, judge):
             continue
+        provider, model_name = _model_identity(model)
+        record["provider"] = provider
+        record["model"] = model_name
+        deadline = shared_retry_at(store, provider, model_name)
+        if deadline is not None and deadline > datetime.now(timezone.utc):
+            record["judge_status"] = "rate_limited"
+            record["retry_at"] = deadline.isoformat()
+            record["retry_after_s"] = (deadline - datetime.now(timezone.utc)).total_seconds()
+            _note(record, "The model was not called because the provider rate limit continued. Saved evidence is kept. The claim is not treated as false.")
+            judge_paused = True
+            _report(progress, "judge", record)
+            _checkpoint(checkpoint, claims, allow_paid=allow_paid, allow_openrouter_fallback=allow_openrouter_fallback)
+            continue
+        _report(progress, "judge", record)
         _judge_record(
             record,
             getter=getter,
@@ -292,6 +341,12 @@ def investigate(
             sleeper=sleeper,
             rng=rng,
         )
+        if record.get("judge_status") == "rate_limited" and record.get("retry_at"):
+            kept = remember_shared_retry(store, provider, model_name, str(record["retry_at"]))
+            if kept is not None:
+                record["retry_at"] = kept.isoformat()
+                record["retry_after_s"] = (kept - datetime.now(timezone.utc)).total_seconds()
+        _report(progress, "judge", record)
         _checkpoint(checkpoint, claims, allow_paid=allow_paid, allow_openrouter_fallback=allow_openrouter_fallback)
         if record["judge_status"] == "rate_limited":
             judge_paused = True
@@ -317,6 +372,12 @@ def _blank(case: dict[str, Any], index: int) -> dict[str, Any]:
         "judge_status": "not_run",
         "citation_passed": None,
         "limitations": [],
+        "pipeline_version": PIPELINE_VERSION,
+        "cache_version": CACHE_VERSION,
+        "created_at": datetime.now(timezone.utc).isoformat(),
+        "sources_selected_at": None,
+        "provider": None,
+        "model": None,
     }
 
 
@@ -326,17 +387,25 @@ def _adopt(case: dict[str, Any], index: int, old: dict[str, Any] | None) -> dict
     if not old:
         return record
     saved = copy.deepcopy(old)
+    created = saved.get("created_at") or record["created_at"]
+    if saved.get("pipeline_version") != PIPELINE_VERSION:
+        record["created_at"] = created
+        return record
     record["queries"] = _query_records(saved.get("queries"))
     record["candidates"] = list(saved.get("candidates") or [])
     record["selected"] = list(saved.get("selected") or [])
     record["fetches"] = list(saved.get("fetches") or [])
     record["passages"] = list(saved.get("passages") or [])
     record["sources"] = list(saved.get("sources") or [])
-    for field in ("verdict", "explanation", "evidence_refs", "validation_status", "citation_passed", "call_usage", "retry_after_s", "limitations"):
+    for field in ("verdict", "explanation", "evidence_refs", "validation_status", "citation_passed", "call_usage", "judge_requests", "retry_after_s", "retry_at", "limitations"):
         if field in saved:
             record[field] = saved[field]
     record["human_label"] = case.get("human_label", saved.get("human_label"))
     record["human_basis"] = case.get("human_basis", saved.get("human_basis"))
+    record["created_at"] = created
+    record["sources_selected_at"] = saved.get("sources_selected_at")
+    record["provider"] = saved.get("provider")
+    record["model"] = saved.get("model")
     record["search_status"] = saved.get("search_status") or _legacy_search_status(saved)
     record["fetch_status"] = saved.get("fetch_status") or _legacy_fetch_status(saved)
     record["judge_status"] = _legacy_judge_status(saved) if "search_status" not in saved else saved.get("judge_status") or "not_run"
@@ -507,22 +576,29 @@ def _ensure_named_sources(record: dict[str, Any]) -> None:
         if current is not None:
             current["named"] = True
             current["attributed"] = bool(source["attributed"])
+            current["role"] = source.get("role") or "original"
             record["candidates"].remove(current)
             record["candidates"].insert(0, current)
             continue
         added = {
             "query": "named source",
             "url": source["url"],
-            "title": source["host"],
+            "title": source.get("document") or source["host"],
             "snippet": "",
             "named": True,
             "attributed": bool(source["attributed"]),
+            "role": source.get("role") or "original",
         }
         record["candidates"].insert(0, added)
         by_host[source["host"]] = added
     kept_named = [item for item in record["candidates"] if item.get("named")]
     others = [item for item in record["candidates"] if not item.get("named")]
-    record["candidates"] = (kept_named + others)[: max(MAX_CANDIDATES, len(kept_named))]
+    room = max(MAX_CANDIDATES, len(kept_named)) - len(kept_named)
+    kept_others = others[:room]
+    opposing = next((item for item in others if item not in kept_others and _OPPOSE.search(item.get("snippet") or "")), None)
+    if opposing is not None and kept_others:
+        kept_others[-1] = opposing
+    record["candidates"] = kept_named + kept_others
     record["selected"] = [
         {"url": item["url"], "title": item["title"], "query": item["query"]}
         for item in select_pages(record["candidates"])
@@ -637,7 +713,13 @@ def _fetch_complete(record: dict[str, Any]) -> bool:
     if not selected:
         return record["search_status"] in SEARCH_DONE
     saved = {item.get("url"): item for item in record.get("fetches") or []}
-    return all(saved.get(url, {}).get("fetch_status") in {"ok", "truncated", "empty_body"} for url in selected)
+    for url in selected:
+        fetched = saved.get(url) or {}
+        if fetched.get("fetch_status") not in {"ok", "truncated", "empty_body"}:
+            return False
+        if _is_named_page(record, url) and not fetched.get("passage"):
+            return False
+    return True
 
 
 def _continue_fetch(record: dict[str, Any], *, getter: Callable[[str], dict[str, Any]] | None, cache_dir: Path) -> None:
@@ -645,7 +727,9 @@ def _continue_fetch(record: dict[str, Any], *, getter: Callable[[str], dict[str,
     fetches: list[dict[str, Any]] = []
     for item in record.get("selected") or []:
         previous = saved.get(item["url"])
-        if previous and previous.get("fetch_status") in {"ok", "truncated", "empty_body"}:
+        if previous and previous.get("fetch_status") in {"ok", "truncated", "empty_body"} and (
+            previous.get("passage") or not _is_named_page(record, item["url"])
+        ):
             fetches.append(previous)
             continue
         page, state = acquire_url._cached_page(item["url"], getter=getter, refresh=False, cache_dir=cache_dir)
@@ -685,15 +769,80 @@ def _fetch_view(record: dict[str, Any], item: dict[str, str], page: dict[str, An
     row = acquire_url.evidence_for_claim(record["claim"], page, claim_id=record["id"])
     if row.get("status") == "ready" and row.get("passages"):
         passage = dict(row["passages"][0])
-        passage["url"] = page.get("final_url") or item["url"]
+    elif _is_named_page(record, item["url"]):
+        passage = _named_body_passage(record["claim"], page, host=_host(item["url"]))
+    else:
+        passage = None
+    if passage:
         fetched["passage"] = {
             "source_id": passage.get("source_id"),
-            "url": passage.get("url"),
+            "url": page.get("final_url") or item["url"],
             "start": passage.get("start"),
             "end": passage.get("end"),
             "quote": passage.get("quote"),
         }
     return fetched
+
+
+def _kept_named_passage(page: dict[str, Any], saved: dict[str, Any] | None) -> dict[str, Any] | None:
+    import acquire_evidence
+
+    if not saved or not saved.get("quote"):
+        return None
+    body = str(page.get("body") or "")
+    start, end = saved.get("start"), saved.get("end")
+    if not acquire_evidence.quote_matches(body, str(saved["quote"]), start, end):
+        return None
+    passage = dict(saved)
+    passage["source_id"] = page.get("source_id") or saved.get("source_id")
+    return passage
+
+
+def _is_named_page(record: dict[str, Any], url: str) -> bool:
+    host = _host(url)
+    return any(item.get("host") == host for item in record.get("named_sources") or [])
+
+
+def _named_body_passage(claim: str, page: dict[str, Any], host: str | None = None) -> dict[str, Any] | None:
+    """Keep an exact slice of a named page when no sentence cleared the scorer."""
+    import acquire_evidence
+
+    body = str(page.get("body") or "")
+    source_id = page.get("source_id")
+    if not source_id or not body.strip():
+        return None
+    if len(body) <= 1000:
+        start, end = 0, len(body)
+    else:
+        unique = list(dict.fromkeys(acquire_evidence._content_tokens(claim)))
+        paragraphs = acquire_url._paragraphs(body)
+        scores = []
+        for index, (start, end, paragraph) in enumerate(paragraphs):
+            tokens = set(acquire_evidence._content_tokens(paragraph))
+            overlap = sum(1 for token in unique if token in tokens)
+            scores.append(overlap)
+        needles = [item for item in re.findall(r"\b(?:[a-z0-9-]+\.)+[a-z]{2,}\b", claim.lower()) if item != host]
+        named = [
+            index
+            for index, (start, end, paragraph) in enumerate(paragraphs)
+            if any(needle in paragraph.lower() for needle in needles)
+        ]
+        if named:
+            index = max(named, key=lambda item: scores[item])
+        elif scores and max(scores) >= 2:
+            index = scores.index(max(scores))
+        else:
+            return None
+        low = high = index
+        while low > 0 and paragraphs[high][1] - paragraphs[low - 1][0] <= 900:
+            low -= 1
+        while high + 1 < len(paragraphs) and paragraphs[high + 1][1] - paragraphs[low][0] <= 900:
+            high += 1
+        start, end = paragraphs[low][0], paragraphs[high][1]
+    quote = body[start:end]
+    if not acquire_evidence.quote_matches(body, quote, start, end):
+        return None
+    return {"source_id": source_id, "quote": quote, "start": start, "end": end}
 
 
 def _sources_from(fetches: list[dict[str, Any]]) -> list[dict[str, Any]]:
@@ -752,9 +901,14 @@ def _judge_record(
         page, state = acquire_url._cached_page(fetched["url"], getter=getter, refresh=False, cache_dir=cache_dir)
         fetched["page_cache"] = state
         row = acquire_url.evidence_for_claim(record["claim"], page, claim_id=record["id"])
-        if row.get("status") != "ready" or not row.get("passages"):
+        if row.get("status") == "ready" and row.get("passages"):
+            passage = dict(row["passages"][0])
+        elif _is_named_page(record, fetched["url"]):
+            passage = _kept_named_passage(page, fetched.get("passage"))
+            if passage is None:
+                continue
+        else:
             continue
-        passage = dict(row["passages"][0])
         passage["url"] = page.get("final_url") or fetched.get("url")
         passages.append(passage)
         pages.append(page)
@@ -797,6 +951,8 @@ def _judge_record(
         "passages": passages,
         "document": None,
     }
+    record["verification_scope"] = combined["verification_scope"]
+    record["document_complete"] = False
     judged = acquire_url.judge_acquired(
         {"pages": pages, "claims": [combined]},
         judge=judge,
@@ -811,21 +967,24 @@ def _judge_record(
     refs, mismatches = _bind_citations(verdict.get("evidence_refs") or [], pages)
     record["evidence_refs"] = refs
     record["explanation"] = verdict.get("explanation")
+    record["document_scope"] = verdict.get("document_scope")
     record["limitations"] = list(verdict.get("limitations") or [])
     record["validation_status"] = verdict.get("validation_status")
     record["call_usage"] = judged.get("usage")
+    record["judge_requests"] = list(verdict.get("judge_requests") or [])
     record["verdict"] = verdict.get("verdict")
     record["judge_status"] = "not_run" if verdict.get("judge_status") == "pending" else verdict.get("judge_status")
-    if verdict.get("retry_after_s") is not None:
-        record["retry_after_s"] = verdict.get("retry_after_s")
+    _remember_retry(record, verdict)
     _apply_named_attribution(record)
+    if record.get("judge_status") != "rate_limited":
+        record["retry_at"] = None
     if mismatches:
         record["verdict"] = None
         record["judge_status"] = "failed"
         record["validation_status"] = "failed"
         record["citation_passed"] = False
         _note(record, "A citation did not match its original source. No verdict is published. The claim is not treated as false.")
-    elif record["validation_status"] == "failed":
+    elif record["validation_status"] in {"failed", "validation_failed"}:
         record["citation_passed"] = False
     elif record["validation_status"] == "passed" and record["verdict"] in VERDICTS:
         record["citation_passed"] = True
@@ -861,6 +1020,89 @@ def _bind_citations(refs: list[dict[str, Any]], pages: list[dict[str, Any]]) -> 
     return bound, failures
 
 
+def _model_identity(model: str | None) -> tuple[str, str]:
+    """The judge uses Groq unless a caller names another model. OpenRouter stays off."""
+    return DEFAULT_PROVIDER, model or DEFAULT_MODEL
+
+
+def _cooldown_path(cache_dir: Path) -> Path:
+    return cache_dir / "model_cooldown.json"
+
+
+def _parse_moment(raw: Any) -> datetime | None:
+    if not isinstance(raw, str) or not raw:
+        return None
+    try:
+        moment = datetime.fromisoformat(raw)
+    except ValueError:
+        return None
+    if moment.tzinfo is None:
+        moment = moment.replace(tzinfo=timezone.utc)
+    return moment
+
+
+def shared_retry_at(cache_dir: Path, provider: str, model: str) -> datetime | None:
+    """The provider's saved deadline. A missing deadline is not a guessed wait."""
+    path = _cooldown_path(cache_dir)
+    if not path.is_file():
+        return None
+    try:
+        saved = json.loads(path.read_text(encoding="utf-8"))
+    except json.JSONDecodeError:
+        return None
+    item = saved.get(f"{provider}/{model}") if isinstance(saved, dict) else None
+    if not isinstance(item, dict):
+        return None
+    return _parse_moment(item.get("retry_at"))
+
+
+def remember_shared_retry(cache_dir: Path, provider: str, model: str, retry_at: str | None) -> datetime | None:
+    """Keep the later deadline for this provider and model. Page bodies are not touched."""
+    candidate = _parse_moment(retry_at)
+    with _COOLDOWN_LOCK:
+        current = shared_retry_at(cache_dir, provider, model)
+        chosen = candidate
+        if current is not None and (chosen is None or current > chosen):
+            chosen = current
+        if chosen is None:
+            return None
+        if current is None or chosen > current:
+            path = _cooldown_path(cache_dir)
+            path.parent.mkdir(parents=True, exist_ok=True)
+            saved: dict[str, Any] = {}
+            if path.is_file():
+                try:
+                    loaded = json.loads(path.read_text(encoding="utf-8"))
+                    if isinstance(loaded, dict):
+                        saved = loaded
+                except json.JSONDecodeError:
+                    saved = {}
+            saved[f"{provider}/{model}"] = {"provider": provider, "model": model, "retry_at": chosen.isoformat()}
+            path.write_text(json.dumps(saved, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+        if chosen <= datetime.now(timezone.utc):
+            return None
+        return chosen
+
+
+def _remember_retry(record: dict[str, Any], verdict: dict[str, Any]) -> None:
+    """Keep the server's Retry-After as an absolute time. A missing time stays missing."""
+    if record.get("judge_status") != "rate_limited":
+        return
+    seconds = verdict.get("retry_after_s")
+    if isinstance(seconds, int | float):
+        record["retry_after_s"] = float(seconds)
+        record["retry_at"] = (datetime.now(timezone.utc) + timedelta(seconds=float(seconds))).isoformat()
+        return
+    record["retry_after_s"] = None
+    record["retry_at"] = None
+
+
+def _report(progress: Callable[[str, dict[str, Any]], None] | None, stage: str, record: dict[str, Any]) -> None:
+    """Tell a caller which stage is current. The record is the pipeline's own object."""
+    if progress is not None:
+        progress(stage, record)
+
+
 def _note(record: dict[str, Any], text: str) -> None:
     if text and text not in record["limitations"]:
         record["limitations"].append(text)
@@ -868,6 +1110,8 @@ def _note(record: dict[str, Any], text: str) -> None:
 
 def _payload(claims: list[dict[str, Any]], *, allow_paid: bool, allow_openrouter_fallback: bool) -> dict[str, Any]:
     return {
+        "pipeline_version": PIPELINE_VERSION,
+        "cache_version": CACHE_VERSION,
         "budgets": {"max_queries": MAX_QUERIES, "max_candidates": MAX_CANDIDATES, "max_pages": MAX_PAGES},
         "paid_fallback": allow_paid,
         "openrouter_fallback": allow_openrouter_fallback,

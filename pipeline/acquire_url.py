@@ -306,9 +306,13 @@ def judge_acquired(
         index += 1
     result = {"method": judge_evidence._method(judge, chosen), "claims": judged}
     usage = meter.summary() if meter is not None else {"calls": 0, "elapsed_s": 0, "cost_usd": "unknown", "served_models": []}
-    usage["request_attempts"] = attempts["attempts"]
-    usage["successful_calls"] = attempts["successes"]
-    usage["failed_attempts"] = attempts["failures"]
+    if not usage.get("requests"):
+        usage["request_attempts"] = attempts["attempts"]
+        usage["successful_calls"] = attempts["successes"]
+        usage["failed_attempts"] = attempts["failures"]
+        usage["cache_hits"] = 0
+    else:
+        usage["failed_attempts"] = sum(1 for item in usage["requests"] if not item.get("ok"))
     result["usage"] = usage
     return result
 

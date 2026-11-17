@@ -1,8 +1,8 @@
 """Call a model with a YAML spec plus free text, and return the reply.
 
-The default model is served by Groq. If that request fails, the same model is
-sent to OpenRouter. A free OpenRouter model still does not fall through to a
-paid model.
+Groq serves openai/gpt-oss-120b on its free tier. Calling OpenRouter is a
+separate switch from allowing a paid model. Free mode sends a model only when
+that provider is confirmed to serve it for free.
 """
 
 import os
@@ -28,7 +28,23 @@ _FALLBACK_STATUS = {401, 403, 404, 408, 409, 429, 500, 502, 503, 529}
 
 
 def is_free_model(model: str) -> bool:
+    """True for an OpenRouter id that the provider marks as free."""
     return model == FREE_MODEL or model.endswith(":free")
+
+
+def confirmed_free(provider: str, model: str) -> bool:
+    """True only for a provider and model id already known to be free.
+
+    openai/gpt-oss-120b is free on Groq. The same id on OpenRouter is billed,
+    so it is not confirmed free there.
+    """
+    if provider == "groq" and model == GROQ_MODEL:
+        return True
+    return provider == "openrouter" and is_free_model(model)
+
+
+def _route_allowed(provider: str, model: str) -> bool:
+    return confirmed_free(provider, model) or ALLOW_PAID
 
 
 def _env_flag(name: str, default: bool) -> bool:
@@ -54,28 +70,36 @@ def configure_providers(*, allow_openrouter_fallback: bool | None = None, allow_
 
 
 def route_models(model: str) -> list[str]:
-    """Models OpenRouter may serve. A free request never falls through to a paid model.
+    """OpenRouter model ids for one request.
 
-    A paid request uses only the requested model unless paid fallback is authorized.
+    Free mode returns a confirmed-free id and nothing else. An unconfirmed id
+    is omitted rather than sent as the primary model. Paid fallback ids are
+    added only when paid models are allowed.
     """
-    if is_free_model(model) or not ALLOW_PAID:
+    if not _route_allowed("openrouter", model):
+        return []
+    if not ALLOW_PAID:
         return [model]
-    return [model, *FALLBACK_MODELS]
+    extras = [item for item in FALLBACK_MODELS if item != model]
+    return [model, *extras]
 
 
 def provider_chain(model: str) -> list[dict]:
-    """Groq first for gpt-oss-120b. OpenRouter is optional and uses the same model id."""
+    """Providers allowed for this model. OpenRouter and paid models are separate switches."""
     if model == GROQ_MODEL:
-        chain = [
-            {
-                "provider": "groq",
-                "model": GROQ_MODEL,
-                "base_url": GROQ_BASE_URL,
-                "key_name": "GROQ_API_KEY",
-                "models": [GROQ_MODEL],
-            }
-        ]
-        if ALLOW_OPENROUTER_FALLBACK:
+        chain = []
+        if _route_allowed("groq", model):
+            chain.append(
+                {
+                    "provider": "groq",
+                    "model": GROQ_MODEL,
+                    "base_url": GROQ_BASE_URL,
+                    "key_name": "GROQ_API_KEY",
+                    "models": [GROQ_MODEL],
+                    "route_reason": "groq_primary",
+                }
+            )
+        if ALLOW_OPENROUTER_FALLBACK and _route_allowed("openrouter", model):
             chain.append(
                 {
                     "provider": "openrouter",
@@ -83,16 +107,23 @@ def provider_chain(model: str) -> list[dict]:
                     "base_url": OPENROUTER_BASE_URL,
                     "key_name": "OPENROUTER_API_KEY",
                     "models": [GROQ_MODEL],
+                    "route_reason": "openrouter_same_model",
                 }
             )
         return chain
+    if not ALLOW_OPENROUTER_FALLBACK:
+        return []
+    models = route_models(model)
+    if not models:
+        return []
     return [
         {
             "provider": "openrouter",
-            "model": model,
+            "model": models[0],
             "base_url": OPENROUTER_BASE_URL,
             "key_name": "OPENROUTER_API_KEY",
-            "models": route_models(model),
+            "models": models,
+            "route_reason": "openrouter_requested",
         }
     ]
 
@@ -231,13 +262,22 @@ def ask_llm_usage(
     usage_data = _usage_dict(getattr(response, "usage", None))
     cost = usage_data.get("cost")
     reported = isinstance(cost, int | float)
+    served = getattr(response, "model", None) or target["model"]
+    attempts = target.get("attempts") or []
+    if attempts:
+        attempts[-1]["cost_usd"] = cost if reported else "unknown"
+        attempts[-1]["served_model"] = served
     return {
         "content": _message_text(response),
-        "model": getattr(response, "model", None) or target["model"],
+        "model": served,
+        "requested_model": target["model"],
         "provider": target["provider"],
+        "route_reason": target.get("route_reason"),
+        "cache_hit": False,
         "usage": usage_data,
         "cost_usd": cost if reported else "unknown",
         "elapsed_s": elapsed,
+        "attempts": attempts,
     }
 
 
@@ -308,11 +348,33 @@ def should_fallback(exc: BaseException) -> bool:
     return status in _FALLBACK_STATUS or type(exc).__name__ in _FALLBACK_ERRORS
 
 
+def _no_route_message(model: str) -> str:
+    if not ALLOW_PAID and not confirmed_free("groq", model) and not confirmed_free("openrouter", model):
+        return (
+            f"{model} is not a confirmed free model. Paid models are not allowed, so it was not called. "
+            "The fixed_rules baseline was not substituted."
+        )
+    if not ALLOW_OPENROUTER_FALLBACK and model != GROQ_MODEL:
+        return (
+            f"OpenRouter is not allowed, so {model} was not called. "
+            "The fixed_rules baseline was not substituted."
+        )
+    if ALLOW_OPENROUTER_FALLBACK and not ALLOW_PAID and model == GROQ_MODEL:
+        return (
+            "OpenRouter was not called because openai/gpt-oss-120b is not a confirmed free model there. "
+            "Paid models are not allowed. The fixed_rules baseline was not substituted."
+        )
+    return f"No provider is allowed for {model}. The fixed_rules baseline was not substituted."
+
+
 def available_targets(model: str) -> list[dict]:
-    """Providers that have a key. Raises when none do."""
+    """Providers that have a key and are allowed for this model. Raises when none are."""
+    chain = provider_chain(model)
+    if not chain:
+        raise RuntimeError(_no_route_message(model))
     ready: list[dict] = []
     missing: list[str] = []
-    for target in provider_chain(model):
+    for target in chain:
         key, status = lookup_key(target["key_name"])
         if status == "ok":
             ready.append({**target, "api_key": key})
@@ -326,21 +388,50 @@ def available_targets(model: str) -> list[dict]:
     return ready
 
 
+def _attempt(target: dict) -> dict:
+    return {
+        "route_reason": target.get("route_reason"),
+        "provider": target["provider"],
+        "model": target["model"],
+        "cache_hit": False,
+        "ok": False,
+        "cost_usd": "unknown",
+    }
+
+
+def _fail(message: str, exc: BaseException, attempts: list[dict]):
+    if is_rate_limit(exc):
+        error = RateLimited(message, retry_after=retry_after_seconds(exc))
+    else:
+        error = RuntimeError(message)
+    error.attempts = attempts
+    raise error from exc
+
+
 def call_with_fallback(model: str, send):
-    """Call send(client, target). A failed Groq request is retried on OpenRouter."""
+    """Call send(client, target). A later provider is used only when that route is allowed."""
     targets = available_targets(model)
     errors: list[str] = []
+    attempts: list[dict] = []
     for index, target in enumerate(targets):
+        attempt = _attempt(target)
         client = _client(target)
         try:
-            return send(client, target), target
-        except Exception as exc:  # noqa: BLE001 — provider failures continue to the next host
-            errors.append(f"{target['provider']} {target['model']}: {type(exc).__name__}: {exc}")
+            result = send(client, target)
+        except Exception as exc:  # noqa: BLE001 — an allowed provider may follow a failed one
+            attempt["error"] = type(exc).__name__
+            attempts.append(attempt)
+            errors.append(f"{target['provider']} {target['model']}: {type(exc).__name__}")
             if index == len(targets) - 1 or not should_fallback(exc):
                 message = "Model request failed. " + " ".join(errors) + " The fixed_rules baseline was not substituted."
-                if is_rate_limit(exc):
-                    raise RateLimited(message, retry_after=retry_after_seconds(exc)) from exc
-                raise RuntimeError(message) from exc
+                if ALLOW_OPENROUTER_FALLBACK and not ALLOW_PAID and model == GROQ_MODEL and target["provider"] == "groq":
+                    message += " OpenRouter was not called because openai/gpt-oss-120b is not a confirmed free model there."
+                _fail(message, exc, attempts)
+            continue
+        attempt["ok"] = True
+        attempts.append(attempt)
+        target["attempts"] = attempts
+        return result, target
     raise RuntimeError("No model provider was called. The fixed_rules baseline was not substituted.")
 
 

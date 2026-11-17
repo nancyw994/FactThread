@@ -7,3 +7,7 @@ __pycache__/
 
 # local demo accounts: password hashes and sign-in tokens
 data/users.json
+
+# single-claim web jobs; page cache and verdicts stay on this machine
+data/web/jobs/
+data/web/articles/

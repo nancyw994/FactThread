@@ -245,8 +245,16 @@ class LlmJudgeTests(unittest.TestCase):
         judged = judge.judge_one(row, bodies, judge="llm", complete=complete, model="stub-model")
         self.assertEqual(len(calls), 2)
         self.assertIsNone(judged["verdict"])
-        self.assertEqual(judged["validation_status"], "failed")
+        self.assertIsNone(judged["explanation"])
+        self.assertEqual(judged["validation_status"], "validation_failed")
         self.assertFalse(judged["publish"])
+        self.assertEqual([item["purpose"] for item in judged["judge_requests"]], ["initial", "repair"])
+        self.assertTrue(judged["judge_requests"][0]["validation_errors"])
+        self.assertTrue(judged["judge_requests"][1]["validation_errors"])
+        self.assertIn("A guess.", judged["judge_requests"][0]["raw_reply"])
+        self.assertEqual(judged["judge_requests"][0]["model"], "stub-model")
+        self.assertEqual(judged["judge_requests"][0]["cost_usd"], "unknown")
+        self.assertIsInstance(judged["judge_requests"][0]["elapsed_s"], float)
 
     def test_omission_is_not_checked_when_the_document_does_not_fit(self) -> None:
         body = "Model X scored 62% on Harbor-Math. " * 20
@@ -449,6 +457,53 @@ class LlmJudgeTests(unittest.TestCase):
         reported = judge.CallMeter()
         reported.add({"model": "m", "provider": "openrouter", "cost_usd": 0, "elapsed_s": 1, "usage": {}})
         self.assertEqual(reported.summary()["cost_usd"], 0)
+        self.assertEqual(meter.summary()["requests"][0]["cost_usd"], "unknown")
+        self.assertNotEqual(meter.summary()["cost_usd"], 0)
+
+    def test_a_rejected_quote_is_sent_again(self) -> None:
+        row, bodies = self._row()
+        meter = judge.CallMeter()
+        seen = []
+
+        def complete(system: str, user: str) -> str:
+            seen.append((meter.purpose, user))
+            meter.add(
+                {
+                    "provider": "groq",
+                    "model": "openai/gpt-oss-120b",
+                    "elapsed_s": 0.4,
+                    "usage": {"prompt_tokens": 12, "completion_tokens": 8},
+                    "cost_usd": "unknown",
+                }
+            )
+            packet = json.loads(user.split("\n\nThe previous reply", 1)[0])
+            span = dict(packet["supplied_spans"][0])
+            if meter.purpose == "initial":
+                span["end"] = span["start"]
+            return json.dumps(
+                {
+                    "verdict": "supported",
+                    "explanation": "The supplied sentence states it.",
+                    "evidence_refs": [span],
+                    "limitations": [],
+                }
+            )
+
+        judged = judge.judge_one(row, bodies, judge="llm", complete=complete, model="stub-model", meter=meter)
+        self.assertEqual([item[0] for item in seen], ["initial", "repair"])
+        self.assertIn("previous reply", seen[1][1])
+        self.assertEqual(judged["verdict"], "supported")
+        self.assertEqual(judged["validation_status"], "passed")
+        self.assertEqual(judged["judge_requests"][0]["purpose"], "initial")
+        self.assertTrue(judged["judge_requests"][0]["validation_errors"])
+        self.assertEqual(judged["judge_requests"][1]["purpose"], "repair")
+        self.assertEqual(judged["judge_requests"][1]["validation_errors"], [])
+        self.assertIn("The supplied sentence states it.", judged["judge_requests"][1]["raw_reply"])
+        self.assertEqual(judged["judge_requests"][0]["provider"], "groq")
+        self.assertEqual(judged["judge_requests"][0]["model"], "openai/gpt-oss-120b")
+        self.assertEqual(judged["judge_requests"][0]["elapsed_s"], 0.4)
+        self.assertEqual(judged["judge_requests"][0]["usage"]["prompt_tokens"], 12)
+        self.assertEqual(judged["judge_requests"][0]["cost_usd"], "unknown")
 
     def test_model_version_review_is_recorded(self) -> None:
         data = json.loads((ROOT / "data" / "dev" / "judge" / "eval_expected.json").read_text(encoding="utf-8"))

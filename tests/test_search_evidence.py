@@ -11,10 +11,12 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "pipeline"))
 
+import acquire_url
 import search_evidence  # noqa: E402
 
 
 CLAIM = "RFC 2606 reserves example.com for documentation."
+PLAIN = "The recorded count was 12 lanes in 1998."
 BODY = f"<html><title>Example</title><body><p>{CLAIM}</p></body></html>"
 
 
@@ -110,7 +112,7 @@ class SearchEvidenceTests(unittest.TestCase):
             return [], "No search service is available. A paid search service was not enabled."
 
         result = search_evidence.investigate(
-            [{"id": "none", "claim": CLAIM, "human_label": "supported"}],
+            [{"id": "none", "claim": PLAIN, "human_label": "supported"}],
             search=search,
             judge="none",
         )
@@ -126,7 +128,7 @@ class SearchEvidenceTests(unittest.TestCase):
 
     def test_no_hits_are_source_not_found(self) -> None:
         result = search_evidence.investigate(
-            [{"id": "empty", "claim": CLAIM}],
+            [{"id": "empty", "claim": PLAIN}],
             search=lambda query, limit: ([], None),
             judge="none",
         )
@@ -190,9 +192,12 @@ class SearchEvidenceTests(unittest.TestCase):
             )
         claim = result["claims"][0]
         self.assertIsNone(claim["verdict"])
+        self.assertIsNone(claim["explanation"])
         self.assertNotEqual(claim["verdict"], "refuted")
         self.assertFalse(claim["citation_passed"])
-        self.assertEqual(claim["validation_status"], "failed")
+        self.assertEqual(claim["validation_status"], "validation_failed")
+        self.assertEqual(claim["judge_status"], "validation_failed")
+        self.assertIn("this quote is not on the page", claim["judge_requests"][0]["raw_reply"])
 
     def test_a_rate_limit_stops_later_claims(self) -> None:
         def search(query: str, limit: int) -> tuple[list[dict[str, str]], str | None]:
@@ -236,7 +241,7 @@ class SearchEvidenceTests(unittest.TestCase):
     def test_a_completed_claim_is_not_searched_again(self) -> None:
         saved = {
             "id": "done",
-            "claim": CLAIM,
+            "claim": PLAIN,
             "human_label": "supported",
             "queries": ["RFC 2606 reserves example.com for documentation", "RFC 2606 example.com"],
             "candidates": [
@@ -258,9 +263,10 @@ class SearchEvidenceTests(unittest.TestCase):
             "judge_status": "completed",
             "citation_passed": True,
             "explanation": "kept",
+            "pipeline_version": search_evidence.PIPELINE_VERSION,
         }
         result = search_evidence.investigate(
-            [{"id": "done", "claim": CLAIM, "human_label": "supported"}],
+            [{"id": "done", "claim": PLAIN, "human_label": "supported"}],
             search=lambda query, limit: (_ for _ in ()).throw(AssertionError("search repeated")),
             getter=lambda url: (_ for _ in ()).throw(AssertionError("page refetched")),
             judge="llm",
@@ -283,8 +289,8 @@ class SearchEvidenceTests(unittest.TestCase):
 
         result = search_evidence.investigate(
             [
-                {"id": "first", "claim": CLAIM},
-                {"id": "second", "claim": CLAIM},
+                {"id": "first", "claim": PLAIN},
+                {"id": "second", "claim": PLAIN},
             ],
             search=search,
             judge="none",
@@ -396,7 +402,7 @@ class SearchEvidenceTests(unittest.TestCase):
             ], None
 
         def getter(url: str) -> dict:
-            text = CLAIM if url.endswith("/a") else f"Note. {CLAIM}"
+            text = PLAIN if url.endswith("/a") else f"Note. {PLAIN}"
             return {
                 "http_status": 200,
                 "final_url": url,
@@ -425,7 +431,7 @@ class SearchEvidenceTests(unittest.TestCase):
 
         with tempfile.TemporaryDirectory() as tmp:
             result = search_evidence.investigate(
-                [{"id": "swap", "claim": CLAIM, "human_label": "supported"}],
+                [{"id": "swap", "claim": PLAIN, "human_label": "supported"}],
                 search=search,
                 getter=getter,
                 judge="llm",
@@ -436,9 +442,11 @@ class SearchEvidenceTests(unittest.TestCase):
         claim = result["claims"][0]
         self.assertEqual(len(claim["passages"]), 2)
         self.assertIsNone(claim["verdict"])
+        self.assertIsNone(claim["explanation"])
         self.assertNotEqual(claim["verdict"], "refuted")
         self.assertFalse(claim["citation_passed"])
-        self.assertEqual(claim["validation_status"], "failed")
+        self.assertEqual(claim["validation_status"], "validation_failed")
+        self.assertEqual([item["purpose"] for item in claim["judge_requests"]], ["initial", "repair"])
 
     def test_a_named_site_is_fetched_before_search_results(self) -> None:
         claim_text = "example.com states that this domain is for use in documentation examples without needing permission."
@@ -540,8 +548,51 @@ class SearchEvidenceTests(unittest.TestCase):
         self.assertFalse(claim["key_evidence_obtained"])
         self.assertFalse(result["evaluation"]["claims"][0]["end_to_end_match"])
 
+    def test_an_rfc_statement_reads_the_editor_before_a_summary(self) -> None:
+        claim_text = "RFC 2606 states that top level domain names are not reserved for use in documentation."
+        snippet = "Platform summary: the RFC reserves documentation names."
+        official = "a few top level domain names are reserved for use in documentation"
+
+        def search(query: str, limit: int) -> tuple[list[dict[str, str]], str | None]:
+            return [{"url": "https://grokipedia.com/page/RFC_2606", "title": "Overview", "quote": snippet}], None
+
+        def getter(url: str) -> dict:
+            body = official if "rfc-editor.org" in url or "ietf.org" in url else "A third-party overview of the RFC."
+            return {
+                "http_status": 200,
+                "final_url": url,
+                "raw": f"<html><title>RFC 2606</title><body><p>{body}</p></body></html>",
+                "truncated": False,
+                "error": None,
+            }
+
+        result = search_evidence.investigate(
+            [{"id": "rfc", "claim": claim_text}],
+            search=search,
+            getter=getter,
+            judge="none",
+        )
+        claim = result["claims"][0]
+        selected = [item["url"] for item in claim["selected"]]
+        self.assertTrue(selected[0].startswith("https://www.rfc-editor.org/rfc/rfc2606"))
+        self.assertIn("datatracker.ietf.org", selected[1])
+        quotes = " ".join(str((item.get("passage") or {}).get("quote") or "") for item in claim["fetches"])
+        self.assertIn(official, quotes)
+        self.assertNotIn(snippet, quotes)
+        self.assertNotIn("Platform summary", quotes)
+        missed = search_evidence.investigate(
+            [{"id": "miss", "claim": claim_text}],
+            search=lambda query, limit: ([], None),
+            getter=getter,
+            judge="none",
+        )
+        self.assertTrue(missed["claims"][0]["selected"][0]["url"].startswith("https://www.rfc-editor.org/rfc/rfc2606"))
+
     def test_an_explicit_url_is_fetched_and_a_bare_title_is_not_invented(self) -> None:
-        self.assertEqual(search_evidence.named_sources("RFC 2606 states that names are reserved."), [])
+        self.assertEqual(search_evidence.named_sources("RFC 2606 is widely cited."), [])
+        rfc = search_evidence.named_sources("RFC 2606 states that names are reserved.")
+        self.assertEqual([item["host"] for item in rfc], ["rfc-editor.org", "datatracker.ietf.org"])
+        self.assertTrue(all(item["role"] == "original" for item in rfc))
         cern = search_evidence.named_sources("http://info.cern.ch is the home of the first website.")
         self.assertEqual(cern[0]["host"], "info.cern.ch")
         self.assertFalse(cern[0]["attributed"])
@@ -573,6 +624,7 @@ class SearchEvidenceTests(unittest.TestCase):
             "search_status": "ok",
             "fetch_status": "not_run",
             "judge_status": "rate_limited",
+            "pipeline_version": search_evidence.PIPELINE_VERSION,
         }
         calls: list[str] = []
 
@@ -627,6 +679,7 @@ class SearchEvidenceTests(unittest.TestCase):
             "search_status": "ok",
             "fetch_status": "ok",
             "explanation": "old third-party judgment",
+            "pipeline_version": search_evidence.PIPELINE_VERSION,
         }
 
         def complete(system: str, user: str) -> str:
@@ -657,6 +710,155 @@ class SearchEvidenceTests(unittest.TestCase):
         self.assertEqual(search_evidence._host(claim["fetches"][0]["final_url"]), "example.com")
         self.assertEqual(claim["verdict"], "supported")
         self.assertTrue(claim["key_evidence_obtained"])
+
+    def test_an_old_source_list_is_selected_again_without_clearing_page_cache(self) -> None:
+        claim_text = "example.com states that this domain is for use in documentation examples without needing permission."
+        sentence = "This domain is for use in documentation examples without needing permission."
+        saved = {
+            "id": "old",
+            "claim": claim_text,
+            "pipeline_version": "source-selection-1",
+            "created_at": "2026-11-16T00:00:00+00:00",
+            "queries": [{"query": "old query", "status": "ok", "error": None}],
+            "candidates": [{"url": "https://en.wikipedia.org/wiki/Example.com", "title": "Wiki", "query": "old query"}],
+            "selected": [{"url": "https://en.wikipedia.org/wiki/Example.com", "title": "Wiki", "query": "old query"}],
+            "fetches": [
+                {
+                    "url": "https://en.wikipedia.org/wiki/Example.com",
+                    "final_url": "https://en.wikipedia.org/wiki/Example.com",
+                    "fetch_status": "ok",
+                    "passage": {"source_id": "src_wiki", "url": "https://en.wikipedia.org/wiki/Example.com", "start": 0, "end": 4, "quote": "wiki"},
+                }
+            ],
+            "search_status": "ok",
+            "fetch_status": "ok",
+            "judge_status": "completed",
+            "verdict": "supported",
+        }
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = Path(tmp)
+            page_path = acquire_url._page_cache_path(cache, "https://example.com")
+            page_path.parent.mkdir(parents=True)
+            page_path.write_text(
+                json.dumps(
+                    {
+                        "original_url": "https://example.com",
+                        "final_url": "https://example.com/",
+                        "title": "Example Domain",
+                        "fetched_at": "2026-11-16T00:00:00Z",
+                        "http_status": 200,
+                        "body": sentence,
+                        "content_sha256": "cached",
+                        "truncated": False,
+                        "fetch_status": "ok",
+                        "error": None,
+                        "source_id": "src_example",
+                    }
+                ),
+                encoding="utf-8",
+            )
+            cached_bytes = page_path.read_bytes()
+
+            def getter(url: str) -> dict:
+                if url == "https://example.com":
+                    raise AssertionError("cached page was fetched again")
+                return {
+                    "http_status": 200,
+                    "final_url": url,
+                    "raw": f"<html><title>Wiki</title><body><p>{sentence}</p></body></html>",
+                    "truncated": False,
+                    "error": None,
+                }
+
+            result = search_evidence.investigate(
+                [{"id": "old", "claim": claim_text}],
+                search=lambda query, limit: ([{"url": "https://en.wikipedia.org/wiki/Example.com", "title": "Wiki", "quote": "overview"}], None),
+                getter=getter,
+                judge="none",
+                cache_dir=cache,
+                previous={"claims": [saved]},
+            )
+            claim = result["claims"][0]
+            self.assertEqual(page_path.read_bytes(), cached_bytes)
+            self.assertEqual(claim["created_at"], "2026-11-16T00:00:00+00:00")
+            self.assertEqual(claim["pipeline_version"], search_evidence.PIPELINE_VERSION)
+            self.assertEqual(claim["cache_version"], search_evidence.CACHE_VERSION)
+            self.assertEqual(claim["selected"][0]["url"], "https://example.com")
+            named = next(item for item in claim["fetches"] if item["url"] == "https://example.com")
+            self.assertEqual(named["page_cache"], "hit")
+            self.assertEqual(named["fetch_status"], "ok")
+            self.assertNotEqual(result["paid_fallback"], True)
+
+    def test_a_provider_cooldown_blocks_the_next_model_call(self) -> None:
+        calls = {"n": 0}
+        searches: list[str] = []
+        first = "The recorded count was 12 lanes in 1998."
+        second = "The recorded span was 14 lanes in 1999."
+        body = f"{first} {second}"
+
+        def search(query: str, limit: int) -> tuple[list[dict[str, str]], None]:
+            searches.append(query)
+            return [{"url": "https://example.com/lanes", "title": "Lanes", "quote": "snippet"}], None
+
+        def complete(system: str, user: str) -> str:
+            calls["n"] += 1
+            error = RuntimeError("429 rate limit")
+            error.retry_after = 120
+            error.status_code = 429
+            raise error
+
+        with tempfile.TemporaryDirectory() as tmp:
+            cache = Path(tmp)
+            kwargs = {
+                "search": search,
+                "getter": lambda url: {
+                    "http_status": 200,
+                    "final_url": url,
+                    "raw": f"<html><title>Lanes</title><body><p>{body}</p></body></html>",
+                    "truncated": False,
+                    "error": None,
+                },
+                "judge": "llm",
+                "model": "stub-model",
+                "complete": complete,
+                "cache_dir": cache,
+                "sleeper": lambda seconds: None,
+                "rng": lambda: 0,
+            }
+            earlier = search_evidence.investigate([{"id": "one", "claim": first}], **kwargs)
+            after_first = len(searches)
+            later = search_evidence.investigate([{"id": "two", "claim": second}], **kwargs)
+        self.assertEqual(earlier["claims"][0]["judge_status"], "rate_limited")
+        self.assertEqual(calls["n"], 2)
+        self.assertGreater(len(searches), after_first)
+        self.assertEqual(later["claims"][0]["judge_status"], "rate_limited")
+        self.assertEqual(later["claims"][0]["provider"], "groq")
+        self.assertEqual(later["claims"][0]["model"], "stub-model")
+        self.assertEqual(later["claims"][0]["fetch_status"], "ok")
+        self.assertTrue(later["claims"][0]["retry_at"])
+        self.assertFalse(later["paid_fallback"])
+        self.assertFalse(later["openrouter_fallback"])
+
+    def test_a_named_page_is_kept_when_the_claim_words_are_absent(self) -> None:
+        claim_text = "example.com states that commercial advertising is permitted without permission."
+        sentence = "This domain is for use in documentation examples without needing permission."
+        result = search_evidence.investigate(
+            [{"id": "ad", "claim": claim_text}],
+            search=lambda query, limit: ([], None),
+            getter=lambda url: {
+                "http_status": 200,
+                "final_url": url,
+                "raw": f"<html><title>Example Domain</title><body><p>{sentence}</p></body></html>",
+                "truncated": False,
+                "error": None,
+            },
+            judge="none",
+        )
+        claim = result["claims"][0]
+        self.assertEqual(claim["selected"][0]["url"], "https://example.com")
+        passage = claim["fetches"][0]["passage"]
+        self.assertIn(sentence, passage["quote"])
+        self.assertTrue(claim["evidence_found"])
 
 
 if __name__ == "__main__":
