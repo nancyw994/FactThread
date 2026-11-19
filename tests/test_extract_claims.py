@@ -31,6 +31,30 @@ def claim(quote: str, category: str = "checkable_fact", normalized: str | None =
 
 
 class QuoteTests(unittest.TestCase):
+    def test_valid_empty_is_distinct_and_does_not_retry(self) -> None:
+        calls = []
+
+        def complete(text, repair):
+            calls.append(repair)
+            return {"claims": []}
+
+        result = ex.extract_claims(ARTICLE, complete)
+        self.assertEqual(result["status"], "empty")
+        self.assertEqual(result["attempts"][0]["parsed_count"], 0)
+        self.assertEqual(len(calls), 1)
+
+    def test_rejected_all_claims_is_filtered_empty_with_reasons(self) -> None:
+        result = ex.extract_claims(ARTICLE, lambda text, repair: {"claims": [claim("not in source")]})
+        self.assertEqual(result["status"], "filtered_empty")
+        self.assertEqual(result["attempts"][-1]["rejected_count"], 1)
+        self.assertIn("source_quote is not in the article", result["attempts"][-1]["rejection_reasons"])
+
+    def test_request_and_parse_failures_are_not_empty_successes(self) -> None:
+        requested = ex.extract_claims(ARTICLE, lambda text, repair: (_ for _ in ()).throw(TimeoutError("timeout")))
+        parsed = ex.extract_claims(ARTICLE, lambda text, repair: (_ for _ in ()).throw(ex.ExtractionParseError("invalid JSON")))
+        self.assertEqual(requested["status"], "request_failed")
+        self.assertEqual(parsed["status"], "parse_failed")
+
     def test_gold_quotes_occur_once(self) -> None:
         for article in ex.load_gold():
             self.assertGreaterEqual(len(article["text"].split()), 180, article["id"])
@@ -42,6 +66,44 @@ class QuoteTests(unittest.TestCase):
         self.assertIsInstance(ex.locate_quote(ARTICLE, "not in the article"), str)
         doubled = "Model X scored 62% on Harbor-Math. Model X scored 62% on Harbor-Math."
         self.assertIn("ambiguous", ex.locate_quote(doubled, "Model X scored 62% on Harbor-Math"))
+
+    def test_extraction_saves_all_duplicate_quote_positions(self) -> None:
+        quote = "The archive opened in 2001."
+        article = f"{quote} Notes follow. {quote}"
+
+        def complete(text, repair):
+            return {"claims": [claim(quote)]}
+
+        row = ex.extract_claims(article, complete)["claims"][0]
+        self.assertEqual(row["source_ranges"], [[0, len(quote)], [len(quote) + len(" Notes follow. "), len(article)]])
+
+    def test_claim_split_preserves_each_overlapping_source_range(self) -> None:
+        quote = "The report says the archive opened in 2001, and it closed in 2004."
+        article = quote
+        subquote = "the archive opened in 2001"
+        items = [claim(quote), claim(subquote, normalized="The archive opened in 2001.")]
+
+        def complete(text, repair):
+            return {"claims": items}
+
+        rows = ex.extract_claims(article, complete)["claims"]
+        self.assertEqual(len(rows), 2)
+        first_start, first_end = rows[0]["source_ranges"][0]
+        second_start, second_end = rows[1]["source_ranges"][0]
+        self.assertLess(max(first_start, second_start), min(first_end, second_end))
+        for row in rows:
+            start, end = row["source_ranges"][0]
+            self.assertEqual(article[start:end], row["source_quote"])
+
+    def test_normalization_does_not_add_first_when_quote_does_not_say_first(self) -> None:
+        quote = "The archive opened in 2001."
+
+        def complete(text, repair):
+            return {"claims": [claim(quote, normalized="The first archive opened in 2001.")]}
+
+        row = ex.extract_claims(quote, complete)["claims"][0]
+        self.assertEqual(row["normalized_claim"], quote)
+        self.assertIn("规范化声明添加了原文没有的顺序限定", row["missing_context"])
 
     def test_retrieval_gate_is_separate_from_category(self) -> None:
         def complete(text, repair):

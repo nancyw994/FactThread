@@ -44,6 +44,7 @@ _DOCUMENT = re.compile(
 )
 _PRICE_GAP = "which product or service the price applies to"
 _DOC_GAP = "which document is referred to"
+_HEADLINE_GAP = "需要明确标题所指的具体结果或衡量指标"
 _NAMED_REPORT = re.compile(
     r"\b(?:its|the|a|an)\s+(?P<name>[A-Z][\w-]+(?:\s+[A-Z][\w-]+)*)\s+report\b"
 )
@@ -68,11 +69,15 @@ _COMPOUND = re.compile(
 )
 _HEADLINE_ATTR = re.compile(r"\bheadlines?\b.{0,40}\b(called|said|wrote|described)\b", re.IGNORECASE)
 _WORDING_GAP = re.compile(r"baseline|compar|system that|which system", re.IGNORECASE)
+_HEADLINE_RESULT = re.compile(r"\b(?:gain|increase|improvement|rise|drop|decline|result|score|performance|growth)\b", re.IGNORECASE)
+_MODALITY = re.compile(r"\b(?:will|would|may|might|could|can|should|must|cannot|can't|did not|does not|never|not)\b", re.IGNORECASE)
 _TEXT_WORD = re.compile(r"[\w]+(?:[-’'][\w]+)*", re.UNICODE)
 _EN_STOP = frozenset(
     "a an and are as at be been being by for from had has have he her hers him his i in into is it its me my of on or our ours she that the their theirs them they this those these to was were what when where which while who why will with we you your".split()
 )
 _NUMBER = re.compile(r"\b\d+(?:,\d{3})*(?:\.\d+)?\b")
+_ORDINAL = re.compile(r"\b(?:first(?:[- ]ever)?|second|third|fourth|fifth|earliest|initially|initial)\b|首次|最早|第一|第二|第三", re.IGNORECASE)
+_EXAM_REF = re.compile(r"\bthat exam\b", re.IGNORECASE)
 _VAGUE_ACTION_REFERENCE = re.compile(r"\b(?:these|those|such)\s+(?:actions?|steps?|measures?|changes?|decisions?|efforts?)\b", re.IGNORECASE)
 _CAUSAL = re.compile(
     r"\b(?:cause[sd]?|allow(?:s|ed)?|enable[sd]?|lead(?:s)? to|led to|result(?:s|ed)? in|contribut(?:e|es|ed) to|drive[sn]?|drove|promot(?:e|es|ed|ing)|fuel(?:s|ed|ing)|accelerat(?:e|es|ed|ing))\b",
@@ -91,25 +96,43 @@ _MEASURE = re.compile(
 Complete = Callable[[str, list[str] | None], Any]
 
 
+class ExtractionParseError(ValueError):
+    """The model replied, but its response was not a usable extraction object."""
+
+
 def locate_quote(text: str, quote: str) -> str | tuple[int, int]:
     """Return an error, or the unique span where quote sits in text."""
     if not isinstance(quote, str) or not quote.strip():
         return "source_quote is empty"
-    if quote not in text:
+    ranges = find_quote_ranges(text, quote)
+    if not ranges:
         return "source_quote is not in the article"
-    start = text.find(quote)
-    if text.find(quote, start + 1) >= 0:
+    if len(ranges) > 1:
         return "source_quote is ambiguous in the article"
-    return start, start + len(quote)
+    return tuple(ranges[0])
+
+
+def find_quote_ranges(text: str, quote: str) -> list[list[int]]:
+    """Return exact, overlapping occurrence positions; never ask extraction to invent offsets."""
+    if not isinstance(quote, str) or not quote:
+        return []
+    ranges: list[list[int]] = []
+    start = 0
+    while True:
+        index = text.find(quote, start)
+        if index < 0:
+            break
+        ranges.append([index, index + len(quote)])
+        start = index + 1
+    return ranges
 
 
 def check_claim(text: str, claim: Any) -> list[str]:
     if not isinstance(claim, dict):
         return ["claim is not an object"]
     errors: list[str] = []
-    located = locate_quote(text, claim.get("source_quote"))
-    if isinstance(located, str):
-        errors.append(located)
+    if not find_quote_ranges(text, claim.get("source_quote") or ""):
+        errors.append("source_quote is not in the article")
     normalized = claim.get("normalized_claim")
     if not isinstance(normalized, str) or not normalized.strip():
         errors.append("normalized_claim is empty")
@@ -122,30 +145,56 @@ def check_claim(text: str, claim: Any) -> list[str]:
 
 
 def extract_claims(text: str, complete: Complete) -> dict[str, Any]:
-    """Return {"claims", "rejected"}. One repair is allowed for bad quotes."""
+    """Return claims plus explicit extraction status and per-attempt filter counts."""
     if not isinstance(text, str) or not text.strip():
-        return {"claims": [], "rejected": [{"claim": None, "errors": ["article is empty"]}]}
+        return {"claims": [], "rejected": [{"claim": None, "errors": ["article is empty"]}], "status": "invalid_input", "attempts": []}
 
     rejected: list[dict[str, Any]] = []
     accepted: list[dict[str, Any]] = []
     errors: list[str] = []
-    for _ in range(2):
+    attempts: list[dict[str, Any]] = []
+    for attempt_number in range(1, 3):
         try:
             output = complete(text, errors or None)
+        except ExtractionParseError as exc:
+            attempts.append({"attempt": attempt_number, "stage": "parse", "error": str(exc)})
+            return {"claims": [], "rejected": rejected, "status": "parse_failed", "error": str(exc), "attempts": attempts}
         except Exception as exc:
             return {
                 "claims": [],
                 "rejected": [{"claim": None, "errors": [f"model_error:{type(exc).__name__}"]}],
+                "status": "request_failed",
+                "error": f"{type(exc).__name__}: {exc}",
+                "attempts": attempts + [{"attempt": attempt_number, "stage": "request", "error": type(exc).__name__}],
             }
         if isinstance(output, list):
             output = {"claims": output}
+        if isinstance(output, dict) and output.get("status") in {"request_failed", "parse_failed"}:
+            status = output["status"]
+            message = str(output.get("error") or status)
+            return {"claims": [], "rejected": output.get("rejected") or [], "status": status, "error": message,
+                    "attempts": attempts + [{"attempt": attempt_number, "stage": status.removesuffix("_failed"), "error": message}]}
+        raw_claims = output.get("claims") if isinstance(output, dict) else None
+        parsed_count = len(raw_claims) if isinstance(raw_claims, list) else 0
         accepted, rejected = _split(text, output)
+        attempts.append({
+            "attempt": attempt_number,
+            "stage": "filter",
+            "parsed_count": parsed_count,
+            "accepted_count": len(accepted),
+            "rejected_count": len(rejected),
+            "rejection_reasons": [error for item in rejected for error in item["errors"]],
+        })
         if accepted and not rejected:
             break
+        if parsed_count == 0 and not rejected:
+            return {"claims": [], "rejected": [], "status": "empty", "attempts": attempts}
         errors = [error for item in rejected for error in item["errors"]]
         if not errors:
             errors = ["no claims were returned"]
-    return {"claims": _number(accepted), "rejected": rejected}
+    numbered = _number(accepted)
+    status = "filtered_empty" if not numbered and rejected else "completed_with_rejections" if rejected else "completed"
+    return {"claims": numbered, "rejected": rejected, "status": status, "attempts": attempts}
 
 
 def align_to_gold(gold: list[dict[str, Any]], predicted: list[dict[str, Any]]) -> dict[str, Any]:
@@ -245,10 +294,6 @@ def _split(text: str, output: Any) -> tuple[list[dict[str, Any]], list[dict[str,
             rejected.append({"claim": claim, "errors": errors})
         else:
             for part in expand_compound(claim):
-                located = locate_quote(text, part["source_quote"])
-                if isinstance(located, str):
-                    rejected.append({"claim": part, "errors": [located]})
-                    continue
                 accepted.append(_finalize(text, part))
     return accepted, rejected
 
@@ -349,14 +394,32 @@ def _finalize(article: str, claim: dict[str, Any]) -> dict[str, Any]:
     claim_numbers = _NUMBER.findall(normalized)
     if any(number not in claim_numbers for number in source_numbers):
         normalization_gaps.append("规范化声明未保留原文中的数字或年份")
-    located = locate_quote(article, quote)
-    offset = located[0] if isinstance(located, tuple) else 0
-    normalized = resolve_exam(article, offset, normalized)
+    source_ordinals = {match.group(0).lower() for match in _ORDINAL.finditer(quote)}
+    claim_ordinals = {match.group(0).lower() for match in _ORDINAL.finditer(normalized)}
+    if claim_ordinals - source_ordinals:
+        normalized = quote
+        normalization_gaps.append("规范化声明添加了原文没有的顺序限定")
+    source_modality = {match.group(0).lower() for match in _MODALITY.finditer(quote)}
+    normalized_modality = {match.group(0).lower() for match in _MODALITY.finditer(normalized)}
+    if source_modality - normalized_modality:
+        normalized = quote
+        normalization_gaps.append("规范化声明未保留原文的时态、否定或确定程度")
+    source_ranges = find_quote_ranges(article, quote)
+    offset = source_ranges[0][0] if source_ranges else 0
+    resolved_claims = [resolve_exam(article, span[0], normalized) for span in source_ranges] or [normalized]
+    if all(value == resolved_claims[0] for value in resolved_claims):
+        normalized = resolved_claims[0]
+    elif _EXAM_REF.search(normalized):
+        normalization_gaps.append("原文引用在多处出现，指代对象无法唯一确定")
     focused = _scope_text(quote, normalized)
-    document_ref, ref_state = resolve_document_ref(article, offset, quote, focused)
+    references = [resolve_document_ref(article, span[0], quote, focused) for span in source_ranges] or [resolve_document_ref(article, offset, quote, focused)]
+    if all(reference == references[0] for reference in references):
+        document_ref, ref_state = references[0]
+    else:
+        document_ref, ref_state = None, "ambiguous"
     fact_type = infer_fact_type(claim, focused, "")
     scope = infer_scope(focused, "", document_ref, ref_state, fact_type)
-    missing = relevant_gaps(focused, "", list(claim.get("missing_context") or []))
+    missing = relevant_gaps(focused, normalized, list(claim.get("missing_context") or []))
     for gap in normalization_gaps:
         if gap not in missing:
             missing.append(gap)
@@ -370,13 +433,14 @@ def _finalize(article: str, claim: dict[str, Any]) -> dict[str, Any]:
         missing.append(gap)
     if ref_state == "ambiguous" and _DOC_GAP not in missing:
         missing.append(_DOC_GAP)
-    for gap in causal_context_gaps(quote, normalized):
+    for gap in claim_context_gaps(quote, normalized):
         if gap not in missing:
             missing.append(gap)
     absence = is_absence(focused, "")
     status, status_reason = assign_status(fact_type, scope, missing, absence, ref_state)
     return {
         "source_quote": quote,
+        "source_ranges": source_ranges,
         "normalized_claim": normalized,
         "fact_type": fact_type,
         "category": fact_type,
@@ -399,6 +463,24 @@ def causal_context_gaps(source_quote: str, normalized_claim: str) -> list[str]:
     if _VAGUE_OUTCOME.search(text) and not _MEASURE.search(text):
         gaps.append("需要说明因果结果的具体对象或衡量指标")
         gaps.append("需要提供所述行动导致该结果的因果依据")
+    return gaps
+
+
+def headline_context_gaps(source_quote: str, normalized_claim: str) -> list[str]:
+    """Ask for the referent behind vague result words in attributed headline claims."""
+    source_results = {match.group(0).lower() for match in _HEADLINE_RESULT.finditer(source_quote)}
+    normalized = normalized_claim.lower()
+    if _HEADLINE_ATTR.search(source_quote) and source_results and not any(term in normalized for term in source_results):
+        return [_HEADLINE_GAP]
+    return []
+
+
+def claim_context_gaps(source_quote: str, normalized_claim: str) -> list[str]:
+    """Context checks shared by fresh extraction and restored saved claims."""
+    gaps = causal_context_gaps(source_quote, normalized_claim)
+    for gap in headline_context_gaps(source_quote, normalized_claim):
+        if gap not in gaps:
+            gaps.append(gap)
     return gaps
 
 
@@ -456,7 +538,11 @@ def relevant_gaps(quote: str, normalized: str, missing: list[str]) -> list[str]:
     """Keep only gaps in what this claim asserts. A wording claim is not a performance claim."""
     if not is_headline_wording(quote, normalized):
         return missing
-    return [item for item in missing if not _WORDING_GAP.search(item)]
+    context_gap_needed = bool(headline_context_gaps(quote, normalized))
+    return [
+        item for item in missing
+        if not _WORDING_GAP.search(item) and (item != _HEADLINE_GAP or context_gap_needed)
+    ]
 
 
 def is_headline_wording(quote: str, normalized: str) -> bool:
@@ -468,7 +554,7 @@ def is_absence(quote: str, normalized: str) -> bool:
 
 
 def resolve_exam(article: str, offset: int, normalized: str) -> str:
-    if not re.search(r"\bthat exam\b", normalized, re.IGNORECASE):
+    if not _EXAM_REF.search(normalized):
         return normalized
     names: list[str] = []
     for match in _EXAM_NAME.finditer(article[:offset]):
