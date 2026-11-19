@@ -1,0 +1,220 @@
+{
+  "code_version": "article-extraction-3",
+  "articles": {
+    "chan_chan": {
+      "accepted_before": 31,
+      "accepted_after": 31,
+      "rejected_after": 0,
+      "changed": [
+        {
+          "source_quote": "The dead were interred alongside a rich array of grave goods, including metal weapons, copper and gold artifacts, ornate jewelry, and colorful textiles—suggesting that they were high-status individuals, perhaps even royalty.",
+          "change": {
+            "normalized_claim": {
+              "before": "The grave goods suggest that the interred individuals were high-status individuals, perhaps even royalty",
+              "after": "The dead were interred alongside a rich array of grave goods, including metal weapons, copper and gold artifacts, ornate jewelry, and colorful textiles"
+            },
+            "status": {
+              "before": "skipped",
+              "after": "ready"
+            }
+          }
+        }
+      ]
+    },
+    "heatwave": {
+      "accepted_before": 34,
+      "accepted_after": 35,
+      "rejected_after": 0,
+      "changed": [
+        {
+          "source_quote": "an El Niño in the Central Pacific can help trigger a marine heatwave in the Gulf of Alaska",
+          "change": "newly_accepted",
+          "now": {
+            "normalized_claim": "An El Niño in the Central Pacific can help trigger a marine heatwave in the Gulf of Alaska",
+            "status": "ready",
+            "missing_context": [],
+            "normalization_notes": []
+          }
+        }
+      ]
+    },
+    "nar_buyers": {
+      "accepted_before": 40,
+      "accepted_after": 40,
+      "rejected_after": 1,
+      "changed": [
+        {
+          "source_quote": "They were also older.",
+          "change": {
+            "status": {
+              "before": "ready",
+              "after": "needs_context"
+            },
+            "missing_context": {
+              "before": [],
+              "after": [
+                "声明以指代不明的代词开头，需要说明所指对象"
+              ]
+            }
+          }
+        },
+        {
+          "source_quote": "while for those who paid all-cash it was 54",
+          "change": {
+            "status": {
+              "before": "ready",
+              "after": "needs_context"
+            },
+            "missing_context": {
+              "before": [],
+              "after": [
+                "声明以指代不明的代词开头，需要说明所指对象"
+              ]
+            }
+          }
+        }
+      ]
+    },
+    "pfas": {
+      "accepted_before": 29,
+      "accepted_after": 33,
+      "rejected_after": 1,
+      "changed": [
+        {
+          "source_quote": "Women deserve clear answers about how chemicals in their environment may affect their health,” said HHS Secretary Robert F. Kennedy, Jr.",
+          "change": "newly_accepted",
+          "now": {
+            "normalized_claim": "HHS Secretary Robert F. Kennedy, Jr. said women deserve clear answers about how chemicals in their environment may affect their health.",
+            "status": "skipped",
+            "missing_context": [],
+            "normalization_notes": []
+          }
+        },
+        {
+          "source_quote": "This NIH study links two forever chemicals to a higher risk of ER-negative breast cancer",
+          "change": {
+            "status": {
+              "before": "ready",
+              "after": "needs_context"
+            },
+            "missing_context": {
+              "before": [],
+              "after": [
+                "直接引语未在规范化声明中标注说话人"
+              ]
+            }
+          }
+        },
+        {
+          "source_quote": "For PFOS, the rate was 93% higher, or nearly twice as high.",
+          "change": {
+            "status": {
+              "before": "ready",
+              "after": "needs_context"
+            },
+            "missing_context": {
+              "before": [],
+              "after": [
+                "比较性数字缺少比较基准（与什么相比）"
+              ]
+            }
+          }
+        },
+        {
+          "source_quote": "PFAS are persistent in the environment and in our bodies,",
+          "change": "newly_accepted",
+          "now": {
+            "normalized_claim": "PFAS are persistent in the environment and in our bodies.",
+            "status": "ready",
+            "missing_context": [],
+            "normalization_notes": []
+          }
+        },
+        {
+          "source_quote": "exposure to them is still potentially modifiable, meaning people can take steps to reduce their exposure",
+          "change": "newly_accepted",
+          "now": {
+            "normalized_claim": "Exposure to PFAS is still potentially modifiable, meaning people can take steps to reduce their exposure.",
+            "status": "ready",
+            "missing_context": [],
+            "normalization_notes": []
+          }
+        },
+        {
+          "source_quote": "these findings could open new avenues for prevention.”",
+          "change": "newly_accepted",
+          "now": {
+            "normalized_claim": "These findings could open new avenues for prevention.",
+            "status": "skipped",
+            "missing_context": [
+              "直接引语未在规范化声明中标注说话人"
+            ],
+            "normalization_notes": []
+          }
+        }
+      ]
+    },
+    "rubio_outages": {
+      "accepted_before": 26,
+      "accepted_after": 26,
+      "rejected_after": 0,
+      "changed": [
+        {
+          "source_quote": "Flights across the country were grounded the next day in the longest so-called ground stop since 9/11.",
+          "change": {
+            "normalized_claim": {
+              "before": "Flights across the country were grounded the next day, marking the longest ground stop since 9/11.",
+              "after": "Flights across the country were grounded the next day in the longest so-called ground stop since 9/11."
+            },
+            "normalization_notes": {
+              "before": [],
+              "after": [
+                "模型规范化删去了原文的限定或转述措辞，已回退为原文措辞"
+              ]
+            }
+          }
+        },
+        {
+          "source_quote": "an internal network that the National Security Agency uses to communicate classified information was offline after what the agency described as \"routine maintenance.\"",
+          "change": {
+            "normalized_claim": {
+              "before": "The National Security Agency's internal network used to communicate classified information was offline after routine maintenance.",
+              "after": "an internal network that the National Security Agency uses to communicate classified information was offline after what the agency described as \"routine maintenance.\""
+            },
+            "normalization_notes": {
+              "before": [],
+              "after": [
+                "模型规范化删去了原文的限定或转述措辞，已回退为原文措辞"
+              ]
+            }
+          }
+        },
+        {
+          "source_quote": "The secretary of state is seen as a potential 2028 presidential candidate, though he lately has declined to comment on whether he would consider a campaign to try to succeed Trump.",
+          "change": {
+            "normalized_claim": {
+              "before": "He has declined to comment on whether he would consider a campaign to try to succeed Trump.",
+              "after": "The secretary of state is seen as a potential 2028 presidential candidate, though he lately has declined to comment on whether he would consider a campaign to try to succeed Trump."
+            },
+            "status": {
+              "before": "needs_context",
+              "after": "ready"
+            },
+            "missing_context": {
+              "before": [
+                "规范化声明未保留原文中的数字或年份"
+              ],
+              "after": []
+            },
+            "normalization_notes": {
+              "before": [],
+              "after": [
+                "模型规范化改变了时态/确定程度，已回退为原文措辞"
+              ]
+            }
+          }
+        }
+      ]
+    }
+  }
+}

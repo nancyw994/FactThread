@@ -1,0 +1,18 @@
+{
+  "frozen_file": "data/dev/article_generalization/frozen_checkpoints_generalization.json",
+  "source": "offline replay of saved raw replies with article-extraction-4 (no new API requests); original checkpoint_scores.json left untouched",
+  "scored_by": "main agent, manual against article text",
+  "summary": {"covered_faithful": 16, "covered_partial": 5, "missing": 0, "partial_now_flagged_needs_context": 3},
+  "changed_vs_original": {
+    "RUB-2": "partial -> faithful (#9 falls back to source wording, keeps 'so-called')",
+    "RUB-3": "partial -> faithful (#14 falls back to source wording, keeps 'what the agency described as')",
+    "PFAS-7": "partial, now flagged needs_context: speaker gap on continued direct quote",
+    "PFAS-2": "partial, now flagged needs_context: relative number without baseline",
+    "NAR-3": "partial, now flagged needs_context: 'it was 54' dangling subject"
+  },
+  "unchanged_partial": {
+    "NAR-2": "subject 'first-time buyers' lost; no deterministic signal in the quote",
+    "RUB-4": "'did not present any evidence' sits outside the extracted quote; extraction coverage, not normalization"
+  },
+  "dev_regression": "chan_chan and heatwave: no claim changed by the new checks"
+}

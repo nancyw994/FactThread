@@ -133,3 +133,17 @@ C 逐条核对了全部 11 条“从句中开始”提示：5 条合理，6 条�
 - 改动：`pipeline/extract_claims.py`。先做精确匹配；失败时才启用回退，回退只容忍首字母大小写、直/弯引号和撇号、连字符/破折号变体，以及引文末尾标点的差异。回退加了词边界保护（"no." 不能匹配到 "nothing" 里），而且必须唯一命中。命中后 source_quote 和 source_ranges 一律换成原文的精确片段，并写入 extraction_notes「引文与原文仅大小写/标点不同，已替换为原文精确片段」。`web/articles.py` 的版本号升到 `article-extraction-3`，旧缓存不会被复用。
 - 测试：`tests.test_extract_claims` 33 个全部通过（新增 4 个，含 2 个边界负例）；全量 166 个，只有 2 个是已知的 `test_check_server` 旧失败。
 - 离线重放：用已保存的输出重放，只重新跑校验和 finalize，没有发新的模型请求。原先被拒的 7 条里，5 条恢复（Heatwave c19、PFAS 4 条）；2 条真实改写仍然被拒。所有已接受 claim 重新校验后都不变。
+
+## 附录：规范化忠实度的确定性检查（article-extraction-4）
+
+不改 prompt、不发新请求。在 `_finalize` / `claim_context_gaps` 中新增三类确定性规则：
+
+1. **限定/转述措辞被删 → 回退原文措辞。** 原文含 so-called、described as、alleged(ly)、reported(ly)、purported、supposedly、apparently、claimed、unverified/unconfirmed、without evidence / did not present evidence 等，而规范化声明中不再出现对应词干时，`normalized_claim` 回退为 `source_quote`，并记录 `模型规范化删去了原文的限定或转述措辞，已回退为原文措辞`。
+2. **跨句直接引语的说话人检查。** 原先要求引文两侧都有引号；现在只要一侧有未配对的引号（同一行内）即视为直接引语，上下文向前看两句（避免 “Robert F. Kennedy, Jr.” 中的缩写把归属句切断）。跨行的引号不计入，避免借用相邻段落的引号。
+3. **指代/比较基准缺失 → 只标记，不补写。** 声明以无指代的代词开头（it/they/this… + 系动词）或出现 “93% higher” 这类相对数字却没有 than/compared to 等基准时，加入 missing_context。
+
+**离线重放**（`data/dev/article_generalization/diagnostics/replay_normalization_fidelity.py`，与 HEAD 代码重放结果逐条对比）：新规则只改变 7 条声明，全部是目标情形；Chan Chan、Heatwave 无任何变化。
+
+**重新评分**（`checkpoint_scores_replay_extraction4.json`，原评分文件未改）：忠实 14→16（RUB-2、RUB-3），部分 7→5，遗漏 0；其余部分覆盖中 PFAS-2、PFAS-7、NAR-3 现在被正确标为 needs_context。NAR-2（主语丢失）和 RUB-4（关键句不在引文内）仍未解决，属于抽取覆盖问题，不适合用规范化规则硬补。
+
+**测试**：新增 `NormalizationFidelityTests`（7 个），`tests.test_extract_claims` 40/40 通过；全量 173 个测试仅剩 2 个既有的 `test_check_server` 失败。
