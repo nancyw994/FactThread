@@ -107,6 +107,14 @@ _NAMED_ATTRIBUTION = re.compile(
 )
 _SPEAKER_GAP = "直接引语未在规范化声明中标注说话人"
 _NORMALIZATION_FALLBACK = "模型规范化改变了时态/确定程度，已回退为原文措辞"
+_QUOTE_TYPOGRAPHY_NOTE = "引文与原文仅大小写/标点不同，已替换为原文精确片段"
+_QUOTE_EQUIVALENTS = {
+    '"': '[\"“”]', "“": '[\"“”]', "”": '[\"“”]',
+    "'": "['‘’]", "‘": "['‘’]", "’": "['‘’]",
+    "-": "[-–—]", "–": "[-–—]", "—": "[-–—]",
+}
+_QUOTE_TRAILING = frozenset(".,;:\"“”'‘’")
+_QUOTE_PUNCTUATION = frozenset(".,;:")
 
 Complete = Callable[[str, list[str] | None], Any]
 
@@ -128,9 +136,14 @@ def locate_quote(text: str, quote: str) -> str | tuple[int, int]:
 
 
 def find_quote_ranges(text: str, quote: str) -> list[list[int]]:
-    """Return exact, overlapping occurrence positions; never ask extraction to invent offsets."""
+    """Return exact occurrences first, then narrowly typographic fallback positions."""
     if not isinstance(quote, str) or not quote:
         return []
+    ranges = _exact_quote_ranges(text, quote)
+    return ranges if ranges else _typographic_quote_ranges(text, quote)
+
+
+def _exact_quote_ranges(text: str, quote: str) -> list[list[int]]:
     ranges: list[list[int]] = []
     start = 0
     while True:
@@ -142,12 +155,55 @@ def find_quote_ranges(text: str, quote: str) -> list[list[int]]:
     return ranges
 
 
+def _typographic_quote_ranges(text: str, quote: str) -> list[list[int]]:
+    """Match only first-letter case, quote/dash glyphs, and quote-final punctuation."""
+    end = len(quote)
+    while end and quote[end - 1] in _QUOTE_TRAILING:
+        end -= 1
+    core = quote[:end]
+    if not core:
+        return []
+    has_trailing_punctuation = any(char in _QUOTE_PUNCTUATION for char in quote[end:])
+
+    pattern_parts: list[str] = []
+    first_alpha_seen = False
+    for char in core:
+        if char.isalpha() and not first_alpha_seen:
+            pattern_parts.append(f"[{re.escape(char.lower())}{re.escape(char.upper())}]")
+            first_alpha_seen = True
+        elif char in _QUOTE_EQUIVALENTS:
+            pattern_parts.append(_QUOTE_EQUIVALENTS[char])
+        else:
+            pattern_parts.append(re.escape(char))
+    if not first_alpha_seen:
+        return []
+    suffix = r"[.,;:]?[\"“”'‘’]*" if has_trailing_punctuation else r"[\"“”'‘’]*"
+    # Word boundaries: a case-folded first letter or a dropped trailing mark
+    # must not let the quote match inside a longer word ("no." vs "nothing").
+    prefix = r"(?<![^\W_])" if core[0].isalnum() else ""
+    boundary = r"(?![^\W_])" if core[-1].isalnum() else ""
+    body = prefix + "".join(pattern_parts) + boundary + suffix
+    matcher = re.compile("(?=" + body + ")")
+    ranges: list[list[int]] = []
+    for match in matcher.finditer(text):
+        # The lookahead keeps repeated/overlapping fallback matches visible.
+        found = re.compile(body).match(text, match.start())
+        if found:
+            ranges.append([match.start(), found.end()])
+    return ranges
+
+
 def check_claim(text: str, claim: Any) -> list[str]:
     if not isinstance(claim, dict):
         return ["claim is not an object"]
     errors: list[str] = []
-    if not find_quote_ranges(text, claim.get("source_quote") or ""):
-        errors.append("source_quote is not in the article")
+    quote = claim.get("source_quote") or ""
+    if not _exact_quote_ranges(text, quote):
+        fallback_ranges = _typographic_quote_ranges(text, quote)
+        if not fallback_ranges:
+            errors.append("source_quote is not in the article")
+        elif len(fallback_ranges) > 1:
+            errors.append("source_quote is ambiguous in the article")
     normalized = claim.get("normalized_claim")
     if not isinstance(normalized, str) or not normalized.strip():
         errors.append("normalized_claim is empty")
@@ -418,6 +474,14 @@ def expand_compound(claim: dict[str, Any]) -> list[dict[str, Any]]:
 
 def _finalize(article: str, claim: dict[str, Any]) -> dict[str, Any]:
     quote = claim["source_quote"]
+    source_ranges = _exact_quote_ranges(article, quote)
+    if not source_ranges:
+        source_ranges = _typographic_quote_ranges(article, quote)
+        if len(source_ranges) > 1:
+            raise ValueError("source_quote is ambiguous in the article")
+    quote_was_adjusted = bool(source_ranges) and article[slice(*source_ranges[0])] != quote
+    if quote_was_adjusted:
+        quote = article[slice(*source_ranges[0])]
     normalized = correct_attribution(quote, str(claim.get("normalized_claim") or quote).strip())
     normalization_gaps: list[str] = []
     normalization_notes: list[str] = []
@@ -435,7 +499,8 @@ def _finalize(article: str, claim: dict[str, Any]) -> dict[str, Any]:
     if source_modality - normalized_modality:
         normalized = quote
         normalization_notes.append(_NORMALIZATION_FALLBACK)
-    source_ranges = find_quote_ranges(article, quote)
+    # The quote above is now the exact article substring, so preserve the
+    # resolver's ranges (including duplicate exact occurrences).
     offset = source_ranges[0][0] if source_ranges else 0
     resolved_claims = [resolve_exam(article, span[0], normalized) for span in source_ranges] or [normalized]
     if all(value == resolved_claims[0] for value in resolved_claims):
@@ -484,7 +549,7 @@ def _finalize(article: str, claim: dict[str, Any]) -> dict[str, Any]:
         "document_ref": document_ref,
         "missing_context": missing,
         "normalization_notes": normalization_notes,
-        "extraction_notes": _quote_position_notes(article, source_ranges),
+        "extraction_notes": ([_QUOTE_TYPOGRAPHY_NOTE] if quote_was_adjusted else []) + _quote_position_notes(article, source_ranges),
     }
 
 

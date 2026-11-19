@@ -146,6 +146,46 @@ class QuoteTests(unittest.TestCase):
         doubled = "Model X scored 62% on Harbor-Math. Model X scored 62% on Harbor-Math."
         self.assertIn("ambiguous", ex.locate_quote(doubled, "Model X scored 62% on Harbor-Math"))
 
+    def test_typographic_quote_fallback_accepts_only_supported_differences(self) -> None:
+        cases = [
+            ("For example, an El Niño in the Central Pacific can help.",
+             "An El Niño in the Central Pacific can help."),
+            ("exposure to them is still widespread.", "Exposure to them is still widespread."),
+            ("these findings could open new avenues for prevention.”",
+             "These findings could open new avenues for prevention."),
+            ('Kennedy said, “PFAS are persistent in the environment.”',
+             'Kennedy said, "PFAS are persistent in the environment."'),
+            ("PFAS are persistent in our bodies, exposure continues.",
+             "PFAS are persistent in our bodies."),
+        ]
+        note = "引文与原文仅大小写/标点不同，已替换为原文精确片段"
+        for article, model_quote in cases:
+            with self.subTest(model_quote=model_quote):
+                result = ex.extract_claims(article, lambda text, repair: {"claims": [claim(model_quote)]})
+                self.assertIn(result["status"], {"completed", "completed_with_rejections"})
+                accepted = result["claims"][0]
+                start, end = accepted["source_ranges"][0]
+                self.assertEqual(accepted["source_quote"], article[start:end])
+                self.assertIn(note, accepted["extraction_notes"])
+
+    def test_typographic_fallback_rejects_rewrites_and_ambiguity(self) -> None:
+        inserted_article = "PFAS exposure may persist and can remain in the body for years."
+        inserted_quote = "PFAS can remain in the body for years."
+        elided_article = "Those who are older and wealthier can buy a home."
+        elided_quote = "Those who are managing to buy are wealthier."
+        for article, quote in ((inserted_article, inserted_quote), (elided_article, elided_quote)):
+            with self.subTest(quote=quote):
+                self.assertEqual(ex.locate_quote(article, quote), "source_quote is not in the article")
+        repeated = "“These findings could help.” “these findings could help.”"
+        self.assertEqual(
+            ex.locate_quote(repeated, '"these findings could help."'),
+            "source_quote is ambiguous in the article",
+        )
+        self.assertIn(
+            "source_quote is ambiguous in the article",
+            ex.check_claim(repeated, claim('"these findings could help."')),
+        )
+
     def test_extraction_saves_all_duplicate_quote_positions(self) -> None:
         quote = "The archive opened in 2001."
         article = f"{quote} Notes follow. {quote}"
@@ -454,3 +494,13 @@ class VerifyTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TypographicBoundaryTests(unittest.TestCase):
+    def test_dropped_trailing_mark_does_not_match_inside_word(self):
+        from extract_claims import find_quote_ranges
+        self.assertEqual(find_quote_ranges("He said nothing about it.", "He said no."), [])
+
+    def test_case_folded_first_letter_does_not_match_inside_word(self):
+        from extract_claims import find_quote_ranges
+        self.assertEqual(find_quote_ranges("It was too late to leave.", "Ate to leave"), [])

@@ -34,7 +34,7 @@ TYPE_LABELS = {
 }
 EXTRACTION_RESPONSE_FORMAT = {"type": "json_object"}
 ARTICLE_MODEL = os.environ.get("FACTTHREAD_ARTICLE_MODEL", "openai/gpt-oss-120b").strip()
-EXTRACTION_CODE_VERSION = "article-extraction-2"
+EXTRACTION_CODE_VERSION = "article-extraction-3"
 PROMPT_VERSION = "article-claims-v2"
 
 
@@ -470,6 +470,24 @@ class ArticleBook:
                 backfilled_ranges = False
                 # Backfill exact offsets for saved extractions that predate positions.
                 for candidate in candidates:
+                    quote = str(candidate.get("source_quote") or "")
+                    resolved_ranges = extract_claims._exact_quote_ranges(text, quote)
+                    if not resolved_ranges:
+                        fallback_ranges = extract_claims._typographic_quote_ranges(text, quote)
+                        resolved_ranges = fallback_ranges if len(fallback_ranges) == 1 else []
+                    if resolved_ranges:
+                        exact_quote = text[slice(*resolved_ranges[0])]
+                        if exact_quote != quote:
+                            candidate["source_quote"] = exact_quote
+                            notes = list(candidate.get("extraction_notes") or [])
+                            note = "引文与原文仅大小写/标点不同，已替换为原文精确片段"
+                            if note not in notes:
+                                notes.append(note)
+                            candidate["extraction_notes"] = notes
+                            backfilled_ranges = True
+                        if candidate.get("source_ranges") != resolved_ranges:
+                            candidate["source_ranges"] = resolved_ranges
+                            backfilled_ranges = True
                     context_gaps = extract_claims.claim_context_gaps(
                         str(candidate.get("source_quote") or ""),
                         str(candidate.get("normalized_claim") or ""),
@@ -481,9 +499,7 @@ class ArticleBook:
                             backfilled_ranges = True
                     candidate["missing_context"] = existing_gaps
                     if not candidate.get("source_ranges"):
-                        candidate["source_ranges"] = extract_claims.find_quote_ranges(
-                            text, str(candidate.get("source_quote") or "")
-                        )
+                        candidate["source_ranges"] = resolved_ranges
                         backfilled_ranges = True
                 status = saved.get("status") or ("done" if selection else "extracted")
                 # A process that stopped mid-request leaves its last stage checkpoint
