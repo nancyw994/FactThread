@@ -1,0 +1,212 @@
+{
+  "claims": [
+    {
+      "id": "c1",
+      "source_quote": "there's \"zero\" information that the cascade of service outages, which snarled travel, cut off work, limited bank access and disrupted classified communications, are related to each other or to a malign actor",
+      "normalized_claim": "Secretary of State Marco Rubio said there is zero information that the cascade of service outages are related to each other or to a malign actor.",
+      "category": "checkable_fact",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c2",
+      "source_quote": "\"We have zero evidence or any reason to believe that any of these isolated or individual instances have anything to do with nefarious actors, with cyber hackers, with criminals, with another nation state, with a malign actor of any kind,\" Rubio said.",
+      "normalized_claim": "Marco Rubio said there is zero evidence or reason to believe that any of the isolated outage instances have anything to do with nefarious actors, cyber hackers, criminals, another nation state, or a malign actor.",
+      "category": "checkable_fact",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c3",
+      "source_quote": "In recent days, Microsoft, Chase Bank, air traffic control and the National Security Agency have all been affected by technical failures and outages.",
+      "normalized_claim": "Microsoft, Chase Bank, air traffic control, and the National Security Agency have been affected by technical failures and outages in recent days.",
+      "category": "checkable_fact",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c4",
+      "source_quote": "Trump has faced a groundswell of criticism as friends and foes alike said the White House must answer for disruptions — and even staunch Trump allies have accused the administration of lying to Americans or hiding information about the true cause.",
+      "normalized_claim": "Trump has faced criticism, with friends and foes saying the White House must answer for disruptions, and some Trump allies have accused the administration of lying to Americans or hiding information about the true cause.",
+      "category": "checkable_fact",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c5",
+      "source_quote": "Trump was dismissive when asked whether he was concerned about the Chase outage on Tuesday.",
+      "normalized_claim": "Trump was dismissive when asked if he was concerned about the Chase outage on Tuesday.",
+      "category": "checkable_fact",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c6",
+      "source_quote": "\"It's life. When you're big and powerful and you have all the money, things like that happen. It's fine,\" Trump said in Manila, declaring that \"things like that happen.\"",
+      "normalized_claim": "Trump said, \"It's life. When you're big and powerful and you have all the money, things like that happen. It's fine,\" and declared that \"things like that happen.\"",
+      "category": "opinion",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c7",
+      "source_quote": "The series of outages began Thursday, when Microsoft's email and other tools went down, paralyzing millions of workers who rely on them.",
+      "normalized_claim": "The series of outages began on Thursday when Microsoft's email and other tools went down, paralyzing millions of workers who rely on them.",
+      "category": "checkable_fact",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c8",
+      "source_quote": "Microsoft traced the issue to \"an earlier network capacity upgrade.\"",
+      "normalized_claim": "Microsoft said it traced the issue to an earlier network capacity upgrade.",
+      "category": "checkable_fact",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c9",
+      "source_quote": "Flights across the country were grounded the next day in the longest so-called ground stop since 9/11.",
+      "normalized_claim": "Flights across the country were grounded the next day, marking the longest ground stop since 9/11.",
+      "category": "checkable_fact",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c10",
+      "source_quote": "The Federal Aviation Administration blamed a router upgrade.",
+      "normalized_claim": "The Federal Aviation Administration blamed a router upgrade for the flight ground stop.",
+      "category": "checkable_fact",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c11",
+      "source_quote": "customers reported difficulty accessing online accounts at several major financial institutions and the money transfer service Zelle after a technical issue at JPMorgan Chase caused ripple effects throughout the financial system.",
+      "normalized_claim": "Customers reported difficulty accessing online accounts at several major financial institutions and Zelle after a technical issue at JPMorgan Chase caused ripple effects throughout the financial system.",
+      "category": "checkable_fact",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c12",
+      "source_quote": "Chase said it was caused by \"a software bug\" and was \"not cyber-related.\"",
+      "normalized_claim": "Chase said the technical issue was caused by a software bug and was not cyber-related.",
+      "category": "checkable_fact",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c13",
+      "source_quote": "United Airlines said it had resolved an internal system outage that delayed departing flights.",
+      "normalized_claim": "United Airlines said it resolved an internal system outage that delayed departing flights.",
+      "category": "checkable_fact",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c14",
+      "source_quote": "an internal network that the National Security Agency uses to communicate classified information was offline after what the agency described as \"routine maintenance.\"",
+      "normalized_claim": "The National Security Agency's internal network used to communicate classified information was offline after routine maintenance.",
+      "category": "checkable_fact",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c15",
+      "source_quote": "Karoline Leavitt, Trump's former press secretary, said the White House needed to do more to explain the situation.",
+      "normalized_claim": "Karoline Leavitt said the White House needed to do more to explain the situation.",
+      "category": "opinion",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c16",
+      "source_quote": "\"What I would say to the White House is: transparency is key,\" Leavitt said on Fox News.",
+      "normalized_claim": "Leavitt said, \"What I would say to the White House is: transparency is key.\"",
+      "category": "opinion",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c17",
+      "source_quote": "she praised the White House for having Director of National Intelligence Jay Clayton address the outages in an interview on Fox Business Network.",
+      "normalized_claim": "Leavitt praised the White House for having Director of National Intelligence Jay Clayton address the outages in an interview on Fox Business Network.",
+      "category": "checkable_fact",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c18",
+      "source_quote": "\"Looking very diligently across the landscape, we are not seeing this as a cyberattack incident,\" Clayton said",
+      "normalized_claim": "Jay Clayton said they are not seeing this as a cyberattack incident.",
+      "category": "opinion",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c19",
+      "source_quote": "the U.S. government believes the incidents were caused by security upgrades that took longer than planned or encountered unexpected hiccups.",
+      "normalized_claim": "The U.S. government believes the incidents were caused by security upgrades that took longer than planned or encountered unexpected hiccups.",
+      "category": "opinion",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c20",
+      "source_quote": "Tricia McLaughlin, a former spokesperson for Trump's Department of Homeland Security, was skeptical of the lack of information from the federal government.",
+      "normalized_claim": "Tricia McLaughlin was skeptical of the lack of information from the federal government.",
+      "category": "opinion",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c21",
+      "source_quote": "\"Americans aren't stupid,\" she posted on social media. \"We want and deserve to know what's really going on.\"",
+      "normalized_claim": "She posted that \"Americans aren't stupid\" and that \"we want and deserve to know what's really going on.\"",
+      "category": "opinion",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c22",
+      "source_quote": "\"Someone high in the administration needs to get on TV and tell the American people NOW what is going on,\" McCain, who is also the daughter of late GOP Sen. John McCain, wrote on X.",
+      "normalized_claim": "Meghan McCain wrote that someone high in the administration needs to get on TV and tell the American people now what is going on.",
+      "category": "opinion",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c23",
+      "source_quote": "\"No one who lived through COVID is believing this is all a coincidence.\"",
+      "normalized_claim": "She said no one who lived through COVID is believing this is all a coincidence.",
+      "category": "opinion",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c24",
+      "source_quote": "\"Our leaders are lying to us. This is very clearly a coordinated cyberattack,\" Laura Loomer, a right-wing personality known for her incendiary social media presence, wrote on X.",
+      "normalized_claim": "Laura Loomer wrote that our leaders are lying to us and that this is a coordinated cyberattack.",
+      "category": "opinion",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c25",
+      "source_quote": "The secretary of state is seen as a potential 2028 presidential candidate, though he lately has declined to comment on whether he would consider a campaign to try to succeed Trump.",
+      "normalized_claim": "The secretary of state is seen as a potential 2028 presidential candidate.",
+      "category": "checkable_fact",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    },
+    {
+      "id": "c26",
+      "source_quote": "The secretary of state is seen as a potential 2028 presidential candidate, though he lately has declined to comment on whether he would consider a campaign to try to succeed Trump.",
+      "normalized_claim": "He has declined to comment on whether he would consider a campaign to try to succeed Trump.",
+      "category": "checkable_fact",
+      "missing_context": [],
+      "verification_scope": "external_fact"
+    }
+  ]
+}

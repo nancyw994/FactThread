@@ -1,0 +1,154 @@
+{
+ "frozen_at": "2026-11-19T04:25:25-05:00",
+ "frozen_before": "first generation on these articles; do not edit after the run",
+ "scoring": "per checkpoint: covered_faithful | covered_partial | missing | flagged_by_diagnostic (reported separately)",
+ "checkpoints": [
+  {
+   "id": "PFAS-1",
+   "article": "pfas",
+   "type": "coverage",
+   "article_quote": "Women in the group with the highest PFOA levels had a 67% higher rate of ER-negative breast cancer than those in the lowest group.",
+   "must_keep": "PFOA; 67% higher rate; ER-negative breast cancer specifically; comparison is highest vs lowest PFOA group"
+  },
+  {
+   "id": "PFAS-2",
+   "article": "pfas",
+   "type": "coverage",
+   "article_quote": "For PFOS, the rate was 93% higher, or nearly twice as high.",
+   "must_keep": "PFOS; 93% higher rate (nearly twice as high); ER-negative rate and highest-vs-lowest baseline carried from previous sentence"
+  },
+  {
+   "id": "PFAS-3",
+   "article": "pfas",
+   "type": "coverage",
+   "article_quote": "For the PFAS study, researchers included 1,609 women who developed breast cancer and a comparison sample of 2,269 women.",
+   "must_keep": "1,609 women who developed breast cancer vs comparison sample of 2,269 women (drawn from Sister Study); both counts exact"
+  },
+  {
+   "id": "PFAS-4",
+   "article": "pfas",
+   "type": "fidelity",
+   "article_quote": "No clear association was observed between the two chemicals and breast cancer risk overall.",
+   "must_keep": "negation is 'no clear association' (not 'no association' / not 'no risk'); scope is breast cancer overall, for PFOA and PFOS"
+  },
+  {
+   "id": "PFAS-5",
+   "article": "pfas",
+   "type": "fidelity",
+   "article_quote": "These numbers describe relative differences between groups, not an individual woman’s chance of getting breast cancer.",
+   "must_keep": "percentages are relative differences between groups, not absolute/individual probability"
+  },
+  {
+   "id": "PFAS-6",
+   "article": "pfas",
+   "type": "fidelity",
+   "article_quote": "the authors suggest that PFAS may affect cancer risk through other non-hormonal biologic pathways",
+   "must_keep": "hedged mechanism: 'authors suggest' + 'may'; must not become a finding that PFAS cause cancer via these pathways (next sentences: study did not test them)"
+  },
+  {
+   "id": "PFAS-7",
+   "article": "pfas",
+   "type": "attribution",
+   "article_quote": "“This NIH study links two forever chemicals to a higher risk of ER-negative breast cancer and demands further investigation.",
+   "must_keep": "speaker is HHS Secretary Robert F. Kennedy, Jr. (official statement), not the study authors; 'links'/'higher risk' is his wording; ER-negative scope; 'demands further investigation'"
+  },
+  {
+   "id": "NAR-1",
+   "article": "nar_buyers",
+   "type": "coverage",
+   "article_quote": "The share of first-time homebuyers remains at a near-record low of 22%",
+   "must_keep": "22% share of first-time homebuyers; 'near-record low' (not record); per National Association of Realtors report"
+  },
+  {
+   "id": "NAR-2",
+   "article": "nar_buyers",
+   "type": "coverage",
+   "article_quote": "1 in 10 paid all cash, a record high since such data was collected starting in 2003",
+   "must_keep": "1 in 10 (of first-time buyers); all cash; record high; data collected since 2003"
+  },
+  {
+   "id": "NAR-3",
+   "article": "nar_buyers",
+   "type": "coverage",
+   "article_quote": "For first-time buyers who financed a purchase it was 38, while for those who paid all-cash it was 54.",
+   "must_keep": "median age of first-time buyers: financed 38 vs all-cash 54 (overall median 40 in previous sentence); 'median' and first-time-buyer scope"
+  },
+  {
+   "id": "NAR-4",
+   "article": "nar_buyers",
+   "type": "fidelity",
+   "article_quote": "First-time buyers who paid all-cash were more likely than those who financed a house to use an inheritance (28%) or proceeds from the sale of an inherited property (21%).",
+   "must_keep": "28% inheritance and 21% sale of inherited property apply to all-cash first-time buyers; comparative 'more likely than financed buyers'; not overall share of all buyers"
+  },
+  {
+   "id": "NAR-5",
+   "article": "nar_buyers",
+   "type": "fidelity",
+   "article_quote": "The share of first time buyers using an inheritance is likely to grow in coming years as boomers reach their 80's and beyond.",
+   "must_keep": "forecast hedge 'is likely to grow' (not 'will'); first-time buyers using inheritance; reason: boomers reaching 80s and beyond"
+  },
+  {
+   "id": "NAR-6",
+   "article": "nar_buyers",
+   "type": "fidelity",
+   "article_quote": "But in another shift, more people used assets – like a 401(k), stocks, or cryptocurrency – than financial help from family or friends.",
+   "must_keep": "comparison: more first-time buyers used assets (401(k), stocks, crypto) than help from family/friends for down payment; personal savings remained biggest source overall"
+  },
+  {
+   "id": "NAR-7",
+   "article": "nar_buyers",
+   "type": "attribution",
+   "article_quote": "\"I would say in the first 15 years of my career, I saw virtually zero first-time home buyers paying all cash,\" said Jason Miller, a broker with Trust Real Estate Company in St. Cloud, Minn.",
+   "must_keep": "speaker Jason Miller, broker in St. Cloud, Minn.; personal anecdotal observation ('I would say', first 15 years of his career), not a national statistic"
+  },
+  {
+   "id": "RUB-1",
+   "article": "rubio_outages",
+   "type": "coverage",
+   "article_quote": "Secretary of State Marco Rubio on Tuesday sought to assure Americans that there's \"zero\" information that the cascade of service outages",
+   "must_keep": "Rubio (Secretary of State), on Tuesday; 'sought to assure' / 'zero' information is his assertion; outages related to each other or to a malign actor"
+  },
+  {
+   "id": "RUB-2",
+   "article": "rubio_outages",
+   "type": "coverage",
+   "article_quote": "Flights across the country were grounded the next day in the longest so-called ground stop since 9/11.",
+   "must_keep": "flights grounded the day after Thursday's Microsoft outage; longest ground stop since 9/11; 'so-called'"
+  },
+  {
+   "id": "RUB-3",
+   "article": "rubio_outages",
+   "type": "coverage",
+   "article_quote": "an internal network that the National Security Agency uses to communicate classified information was offline after what the agency described as \"routine maintenance.\"",
+   "must_keep": "NSA internal classified-communications network offline on Tuesday; 'routine maintenance' is the agency's own description"
+  },
+  {
+   "id": "RUB-4",
+   "article": "rubio_outages",
+   "type": "fidelity",
+   "article_quote": "She did not present any evidence of an attack.",
+   "must_keep": "Laura Loomer's 'coordinated cyberattack' claim (on X) was unsupported: no evidence presented; claim must stay attributed/disputed, not stated as fact"
+  },
+  {
+   "id": "RUB-5",
+   "article": "rubio_outages",
+   "type": "fidelity",
+   "article_quote": "the U.S. government believes the incidents were caused by security upgrades that took longer than planned or encountered unexpected hiccups",
+   "must_keep": "hedge 'believes'; DNI Jay Clayton explaining; cause is the government's belief, not established fact; 'not seeing this as a cyberattack'"
+  },
+  {
+   "id": "RUB-6",
+   "article": "rubio_outages",
+   "type": "fidelity",
+   "article_quote": "even staunch Trump allies have accused the administration of lying to Americans or hiding information about the true cause",
+   "must_keep": "'accused' (allegation, not established); made by Trump allies about the administration; lying or hiding information about the cause"
+  },
+  {
+   "id": "RUB-7",
+   "article": "rubio_outages",
+   "type": "attribution",
+   "article_quote": "\"It's life. When you're big and powerful and you have all the money, things like that happen. It's fine,\" Trump said in Manila",
+   "must_keep": "speaker Donald Trump, in Manila, Tuesday, responding to a question about the Chase outage; exact stance 'It's fine'"
+  }
+ ]
+}

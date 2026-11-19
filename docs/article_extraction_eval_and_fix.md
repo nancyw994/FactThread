@@ -111,3 +111,25 @@ C 逐条核对了全部 11 条“从句中开始”提示：5 条合理，6 条�
 3. **泛化（2–3 次请求）。** 选 2–3 篇新主题短文，**运行前**为每篇冻结 3 条参考声明和一份忠实度检查点，然后每篇请求 1 次。这些文章不用于调参。
 
 最少 2 次请求（只做回归），建议 4–5 次（回归加 2–3 篇新文章），连同修复重试的上限约 10 次。
+
+## 附录：article-claims-v2 最小在线回归（2026-11-19）
+
+- 配置：Groq `openai/gpt-oss-120b`，上限 16384，OpenRouter/付费关闭，每篇 1 次请求、无修复；prompt sha256 `433aaed6…0c3d`。检查点先冻结于 `frozen_checkpoints_prompt_v2.json`。
+- 运行：`after/prompt-v2-16384/20261119T084848.429760Z/`。Chan Chan 31 条接受 / 0 拒绝；Heatwave 34 / 1；两篇 finish_reason=stop；共 25,328 token（Heatwave 第一次遇到每分钟限流 429，等待后 resume，未计费）。
+- 冻结检查点（7 项）：忠实覆盖 3（HW-64Y、CC-C9、CC-C27），部分覆盖 2（HW-H11 丢 “rarer situation” 限定；CC-C24 丢 “wasn’t involved”），遗漏 2（HW-H1 区域定义；CC-LOOT）。参考 claim 6/6 覆盖。
+- 新发现：(1) c19 因引文首字母大小写不同被精确校验拒绝，导致 “中太平洋 El Niño → 阿拉斯加湾热浪” 丢失；(2) Heatwave #8 出现无关的 needs_context 理由；(3) speaker 字段全为空，归属只写在 normalized_claim 里。
+- 结论：单次运行，仅作回归信号，不代表提取质量已验证；v2 修正了 C9 归属，但限定词保留和整句覆盖仍未达标。
+
+## 附录：held-out 泛化测试（2026-11-19）
+
+- 3 篇未参与调参的新文章（`data/dev/article_generalization/`）：NIH PFAS 新闻稿、NPR 首次购房者数据报道、NPR/AP Rubio 断网新闻（多发言人）。21 个检查点在模型运行前冻结（04:25:25-05:00，SHA256SUMS 校验通过）。
+- 配置同上（v2、gpt-oss-120b、16384、每篇 1 次）；共 31,948 token；全部 finish_reason=stop。接受/拒绝：PFAS 29/5，NAR 40/1，Rubio 26/0。
+- 结果：忠实覆盖 14，部分覆盖 7，遗漏 0。部分覆盖的共性：规范化时丢掉限定或归属（"so-called"、"what the agency described as"、Kennedy 引语被写成无主事实、未带 "did not present any evidence"），以及句中切分导致主语或比较基准缺失。
+- 被拒 7 条（含 dev 的 Heatwave c19）：3 条只差首字母大小写，2 条只差标点（直/弯引号、句尾多加句号），2 条是真实改写，拒绝是正确的。前 5 条属于可以安全修复的校验缺陷，前提是修复后引文必须换回原文的精确片段并留下记录。
+- 结论：新文章上没有退步，覆盖率可以接受；主要短板是限定词和归属的保留。这是单次运行，样本小，只作信号。
+
+## 附录：排版级引文匹配修复（2026-11-19，article-extraction-3）
+
+- 改动：`pipeline/extract_claims.py`。先做精确匹配；失败时才启用回退，回退只容忍首字母大小写、直/弯引号和撇号、连字符/破折号变体，以及引文末尾标点的差异。回退加了词边界保护（"no." 不能匹配到 "nothing" 里），而且必须唯一命中。命中后 source_quote 和 source_ranges 一律换成原文的精确片段，并写入 extraction_notes「引文与原文仅大小写/标点不同，已替换为原文精确片段」。`web/articles.py` 的版本号升到 `article-extraction-3`，旧缓存不会被复用。
+- 测试：`tests.test_extract_claims` 33 个全部通过（新增 4 个，含 2 个边界负例）；全量 166 个，只有 2 个是已知的 `test_check_server` 旧失败。
+- 离线重放：用已保存的输出重放，只重新跑校验和 finalize，没有发新的模型请求。原先被拒的 7 条里，5 条恢复（Heatwave c19、PFAS 4 条）；2 条真实改写仍然被拒。所有已接受 claim 重新校验后都不变。

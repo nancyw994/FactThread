@@ -1,0 +1,17 @@
+{
+  "frozen_at": "2026-11-19T03:45-05:00",
+  "frozen_before": "first article-claims-v2 generation; do not edit after the run",
+  "source": "docs/article_extraction_eval_and_fix.md section 1 (Agent A findings, main-agent adjudication) + gold_cases.json",
+  "scoring": "per checkpoint: covered_faithful | covered_partial | missing | flagged_by_diagnostic (diagnostic hit is reported separately, not counted as coverage)",
+  "checkpoints": [
+    {"id": "HW-64Y", "article": "heatwave", "type": "coverage", "article_quote": "In this case, the researchers’ CS-LIM used 64 years of real-world sea surface temperature and height data."},
+    {"id": "HW-H1", "article": "heatwave", "type": "fidelity", "must_keep": "region definition 'the open ocean area from California to Alaska' and that this region experienced The Blob (not joined by bare 'and')"},
+    {"id": "HW-H11", "article": "heatwave", "type": "fidelity", "must_keep": "'Alternatively, in a rarer situation' qualifier with the Eastern Pacific El Niño scenario"},
+    {"id": "CC-C24", "article": "chan_chan", "type": "fidelity", "must_keep": "Gabriel Prieto 'wasn’t involved in the research'"},
+    {"id": "CC-C9", "article": "chan_chan", "type": "attribution", "must_keep": "'There was no scientific data on the individuals...' attributed to Meneses, or speaker listed as missing (never guessed otherwise)"},
+    {"id": "CC-C27", "article": "chan_chan", "type": "attribution", "must_keep": "'Evidently, the citadel has much more to tell.' attributed to Meneses, or speaker listed as missing"},
+    {"id": "CC-LOOT", "article": "chan_chan", "type": "coverage", "article_quote": "making its survival, untouched by colonial and contemporary looters alike, even more impressive."},
+    {"id": "GOLD", "article": "chan_chan+heatwave", "type": "coverage", "note": "the 3 reference claims per article in gold_cases.json, scored as before"}
+  ],
+  "also_report": ["finish_reason", "accepted/rejected", "needs_context count", "uncovered_sentences", "mid_sentence and unattributed_quotation flags", "new errors vs before (added meaning, number/negation/hedge changes)"]
+}

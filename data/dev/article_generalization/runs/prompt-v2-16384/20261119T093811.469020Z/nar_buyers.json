@@ -1,0 +1,1045 @@
+{
+  "article_id": "nar_buyers",
+  "source_url": "https://www.npr.org/2026/11/05/nx-s1-6022491/real-estate-all-cash-offer",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "prompt_version": "sha256:433aaed68e7339843e452d439318c4551425f8d08b39eef451932faf41c00c3d",
+  "output_cap": 16384,
+  "input_sha256": "9b8938dee64844d2d7a59553c43cacf69f337a051df4b82e4e50c5fc93c90bd9",
+  "input_chars": 4561,
+  "truncated_input": false,
+  "submitted_article_chars": 4561,
+  "provider_chain": [
+    {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "base_url": "https://api.groq.com/openai/v1",
+      "route_reason": "groq_primary"
+    }
+  ],
+  "allow_paid": false,
+  "allow_openrouter_fallback": false,
+  "response_format": {
+    "type": "json_object"
+  },
+  "temperature": 0.0,
+  "output_parameter": "max_completion_tokens",
+  "request_count": 2,
+  "request_attempts": [
+    {
+      "sequence": 1,
+      "started_at": "2026-11-19T09:38:28.570044+00:00",
+      "request_parameters": {
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0.0,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Follow the YAML specification below when answering.\n\ninstructions: 'Prompt version: article-claims-v2.\n\n\n  You extract atomic claims from one article so a person can fact-check them later.\n  You do not search, and you do not assign a verdict.\n\n\n  Return only JSON:\n\n  {\"claims\":[{\"id\":\"c1\",\"source_quote\":\"exact substring of the article\",\"normalized_claim\":\"one\n  standalone claim\",\"category\":\"checkable_fact|opinion|prediction|needs_context\",\"missing_context\":[],\"verification_scope\":\"external_fact|document_content|text_analysis\"}]}\n\n\n  Rules:\n\n  - source_quote must be copied character for character from the article. Do not fix\n  spelling, and do not join text from two places.\n\n  - Split a sentence that states two independent facts into two claims. Each quote\n  must still be an exact substring.\n\n  - Keep limiters in normalized_claim: some, all, only, may, as of a date, a named\n  exam, a team, a tier, or a price category.\n\n  - Preserve the source quote''s asserted meaning in normalized_claim: keep its subject,\n  action, polarity, tense, certainty, time, quantities, and scope. Do not weaken a\n  forecast into a present fact, strengthen a possibility into certainty, reverse a\n  negation, or omit a limiting phrase. If a faithful normalization is unclear, use\n  the source wording and explain the missing context.\n\n  - Extract statements about the limits of current knowledge as claims too. Phrases\n  such as \"unknown,\" \"unclear,\" \"not known,\" or \"no data\" assert a state of knowledge;\n  do not omit them or turn them into a claim that an event or object did not exist.\n  Preserve whose knowledge is limited, which aspect is unknown, and any stated time\n  or scope.\n\n  - Do not add ordinal or superlative limits such as “first,” “earliest,” or “only”\n  unless the quote or one clear context explicitly states them. Never turn an unordered\n  event into a first event.\n\n  - In normalized_claim, resolve a pronoun or demonstrative such as \"it\", \"they\",\n  \"these actions\", \"that exam\", \"the same report\", \"the paper\", or \"that date\" from\n  the article context only when there is one clear antecedent. Preserve the source\n  quote exactly. If the antecedent is ambiguous or absent, keep the claim cautious\n  and list the missing referent in missing_context; never guess.\n\n  - Do not replace a claim with a neighboring sentence while resolving context. The\n  normalized claim must preserve the source quote''s subject, predicate, numbers,\n  and direction. If the quote is \"These actions allowed X to flourish\", do not turn\n  it into a claim about how a release was licensed. Keep the causal assertion and\n  list any unclear action, concrete outcome or measure, and causal basis in missing_context.\n\n  - For causal language such as \"caused\", \"allowed\", \"enabled\", \"led to\", or \"resulted\n  in\", check whether the article names the action, outcome, and a concrete indicator.\n  Vague outcomes such as \"flourish\" or \"improve\" need the missing object or measure\n  and evidence for the causal link listed in missing_context. Do not treat temporal\n  order alone as causal proof.\n\n  - When a claim reports that headlines or another speaker described a gain, improvement,\n  score, or other result with a comparison, preserve that attribution and identify\n  the result or measure being described. If the article does not make the referent\n  clear, include it in missing_context instead of guessing.\n\n  - If the article attributes the statement, keep that attribution in source_quote\n  and in normalized_claim. Phrases to keep include \"the report says\", \"the authors\n  add\", \"according to\", \"I think\", and \"headlines called\". Do not turn an attributed\n  statement into a bare fact.\n\n  - Keep a statement''s existing speaker, source, role, and attribution verb when\n  the article supplies them. If the attribution is outside quotation marks or is carried\n  by a clearly connected continuation, make source_quote one exact contiguous substring\n  that includes the statement and enough attribution context; keep the same attribution\n  in normalized_claim. Do not infer a speaker or source when the article leaves it\n  unclear.\n\n  - Do not extend an attribution across \"and\". \"The report says A, and B\" supports\n  \"The report says A\". It does not support \"The report says B\". Leave B as its own\n  claim without that attribution.\n\n  - Preserve semantic relationships between the subject, action, object, and any necessary\n  participants. Keep stated spatial and directional relationships (for example, which\n  place or object is inside, beside, connected to, or leads to another), as well as\n  causal direction. When splitting independent facts, make each claim''s quote and\n  normalization retain the relationship needed to understand that fact; do not keep\n  only a measurement or outcome while dropping the action or connection that gives\n  it meaning.\n\n  - Preserve appositive definitions and relationships that identify a place or entity,\n  likelihood qualifiers such as \"rarer\", \"alternatively\", and \"usually\", and qualifications\n  about a speaker''s role or independence. A quote must begin at a sentence or clause\n  boundary that retains these qualifiers. For a continued quotation, carry the speaker\n  only when the article makes the continuation explicit in the same paragraph; otherwise\n  list the missing speaker in missing_context without guessing.\n\n  - Include checkable method, data, and sample facts, including data spans, sample\n  sizes, and model inputs when stated. Keep each as a source-grounded claim; do not\n  add details the article does not state.\n\n  - A price claim needs the named product or service being billed. Fill that name\n  only when the price clause in the article states it. If it does not, list the missing\n  product or service in missing_context. Do not borrow a name from the other half\n  of an \"and\" sentence.\n\n  - missing_context names a gap in what that claim asserts. A claim that headlines\n  used a phrase needs the headline, not proof that the phrase''s comparison is true.\n\n  - verification_scope is document_content when the claim is about what one resolved\n  document says, lists, does not say, or does not report. It is text_analysis when\n  the sentence classifies another line as a forecast, preference, or opinion. Otherwise\n  it is external_fact.\n\n  - If a sentence says a line is a forecast or a preference, and then says it is not\n  in the report, return those as two claims.\n\n  - \"on purpose\", \"deliberately\", and \"meant to\" are intention, not opinion. \"I think\",\n  \"best\", and \"worst\" are opinion.\n\n  - Do not guess which document a pronoun or \"the document\" names. Leave it unresolved\n  when more than one document is possible.\n\n  - checkable_fact: a statement about a date, number, name, price, policy, or result\n  that could be checked against a source.\n\n  - opinion: the writer''s evaluation. Do not call it a fact.\n\n  - prediction: a claim about the future. Do not call it a fact.\n\n  - needs_context: use this category only when the claim''s own subject, date, or\n  baseline is missing. Name that gap in missing_context.\n\n  - Do not drop a checkable fact because it is narrow. Do not invent claims that the\n  article does not state.\n\n\n  If repair_errors is not empty, the previous quotes failed those checks. Return a\n  full replacement whose source_quote values occur in the article.\n\n  '\n"
+          },
+          {
+            "role": "user",
+            "content": "{\"article\": \"First-time homebuyers remain scarce, but a record share of them pay all cash\\nNovember 5, 2026 10:00 AM ET Heard on Morning Edition Jennifer Ludden\\nThe share of first-time homebuyers remains at a near-record low of 22% as a housing shortage and high prices sideline many, according to a new report by the National Association of Realtors. But those who are managing to buy are older and wealthier than in the past, and 1 in 10 paid all cash, a record high since such data was collected starting in 2003.\\n\\\"Inheritances are really driving this,\\\" said Jessica Lautz, deputy chief economist at the NAR.\\nFirst-time buyers who paid all-cash were more likely than those who financed a house to use an inheritance (28%) or proceeds from the sale of an inherited property (21%). They were also older.\\nNAR finds the median age of all first-time buyers remains at 40, a record high. For first-time buyers who financed a purchase it was 38, while for those who paid all-cash it was 54. \\\"They waited a significant period of time for that generational transfer of wealth to come through,\\\" Lautz said.\\nFor first-time buyers overall, personal savings was the biggest source of funding for a down payment. But in another shift, more people used assets – like a 401(k), stocks, or cryptocurrency – than financial help from family or friends. Older buyers have had more time to save up, Lautz said, but she thinks there's another factor: \\\"I think it's uncomfortable to ask mom and dad for a gift or loan when you're hitting 40 versus your young 30s.\\\"\\nThe share of first time buyers using an inheritance is likely to grow in coming years as boomers reach their 80's and beyond. As the report noted, \\\"there is a growing divide among those who are saving independently and priced out of homeownership, versus those who are waiting on the sidelines but then given a generational transfer of wealth.\\\"\\nReal estate agents around the country are seeing the change.\\n\\\"I would say in the first 15 years of my career, I saw virtually zero first-time home buyers paying all cash,\\\" said Jason Miller, a broker with Trust Real Estate Company in St. Cloud, Minn.\\nBut he's had a number of them since the COVID-19 pandemic, when homebuying surged. \\\"They knew they had to absolutely have the most sterling offer possible to compete in the competitive marketplace,\\\" he said.\\nHigh mortgage rates are also driving all-cash bids, Miller said, since they make it far more expensive to finance a home for 30 years. And not all families wait until death to pass on wealth. Miller sees more clients getting help from family members who may have paid off their own home, or have equity in a second property they can sell and \\\"are gifting some or all of that money.\\\" They're viewing it as a kind of \\\"future inheritance,\\\" he said.\\nFor some younger first-time buyers, relatives may only be \\\"lending them the cash\\\" to make a bid more attractive, said Nate Johnson, a broker associate with RedKey Realty Leaders in St. Louis. Even with much of the national housing market in a major slump, he said his local market is still intensely competitive for buyers.\\n\\\"They just know that if we're looking at five or six offers on the table, let's call it 10 offers on the table, which is not uncommon…maybe three of those offers will be all cash,\\\" he said.\\nAfter closing on a property, Johnson has seen some buyers refinance into a mortgage and pay back their family member.\\nThe rise of all-cash offers makes the market even tougher for those who struggle to save up for a down payment with today's sky-high home prices.\\n\\\"For a long time I thought I wanted to buy a house,\\\" said Seth Daphne Esmeson, who lives in Seattle and will soon turn 33. They and their spouse have good jobs, but also debt, including a car payment and student loans. Not only does Esmeson think they may never be in a position to buy, they've also decided it does not make sense at today's prices.\\n\\\"Being that debt burdened, and also having to fix things on your home, like, it sounds really terrible,\\\" they said.\\nEsmeson is also not convinced that home equity would outpace other investments. They like their current rental and landlord so are sticking with it for now.\\nStill, it's frustrating that the housing market worked better for previous generations. \\\"We have the short end of the deal,\\\" they said, and \\\"the gap is expanding.\\\"\\nThere's probably only one way they might ever be able to buy. \\\"If I received an inheritance,\\\" they said. But \\\"I love my mom dearly and I don't want to look forward to that, or really want to strategize around that.\\\"\", \"repair_errors\": []}"
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_completion_tokens": 16384
+      },
+      "request_status": "rate_limited",
+      "http_status": 429,
+      "error_type": "RateLimitError",
+      "error_code": "rate_limit_exceeded",
+      "error_body": {
+        "message": "Rate limit reached for model `openai/gpt-oss-120b` in organization `[REDACTED_ORG]` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 7909, Requested 2960. Please try again in 21.5175s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing",
+        "type": "tokens",
+        "code": "rate_limit_exceeded"
+      },
+      "rate_limit_headers": {
+        "retry-after": "22",
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "999",
+        "x-ratelimit-remaining-tokens": "91",
+        "x-ratelimit-reset-requests": "1m26.4s",
+        "x-ratelimit-reset-tokens": "59.317s"
+      },
+      "provider_attempts": [
+        {
+          "route_reason": "groq_primary",
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "cache_hit": false,
+          "ok": false,
+          "cost_usd": "unknown",
+          "error": "RateLimitError",
+          "http_status": 429,
+          "exception_type": "RateLimitError",
+          "error_type": "tokens",
+          "error_code": "rate_limit_exceeded",
+          "error_body": {
+            "message": "Rate limit reached for model `openai/gpt-oss-120b` in organization `[REDACTED_ORG]` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 7909, Requested 2960. Please try again in 21.5175s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing",
+            "type": "tokens",
+            "code": "rate_limit_exceeded"
+          },
+          "error_body_available": true,
+          "rate_limit_headers": {
+            "retry-after": "22",
+            "x-ratelimit-limit-requests": "1000",
+            "x-ratelimit-limit-tokens": "8000",
+            "x-ratelimit-remaining-requests": "999",
+            "x-ratelimit-remaining-tokens": "91",
+            "x-ratelimit-reset-requests": "1m26.4s",
+            "x-ratelimit-reset-tokens": "59.317s"
+          },
+          "request_parameters": {
+            "model": "openai/gpt-oss-120b",
+            "temperature": 0.0,
+            "messages": [
+              {
+                "role": "system",
+                "content": "Follow the YAML specification below when answering.\n\ninstructions: 'Prompt version: article-claims-v2.\n\n\n  You extract atomic claims from one article so a person can fact-check them later.\n  You do not search, and you do not assign a verdict.\n\n\n  Return only JSON:\n\n  {\"claims\":[{\"id\":\"c1\",\"source_quote\":\"exact substring of the article\",\"normalized_claim\":\"one\n  standalone claim\",\"category\":\"checkable_fact|opinion|prediction|needs_context\",\"missing_context\":[],\"verification_scope\":\"external_fact|document_content|text_analysis\"}]}\n\n\n  Rules:\n\n  - source_quote must be copied character for character from the article. Do not fix\n  spelling, and do not join text from two places.\n\n  - Split a sentence that states two independent facts into two claims. Each quote\n  must still be an exact substring.\n\n  - Keep limiters in normalized_claim: some, all, only, may, as of a date, a named\n  exam, a team, a tier, or a price category.\n\n  - Preserve the source quote''s asserted meaning in normalized_claim: keep its subject,\n  action, polarity, tense, certainty, time, quantities, and scope. Do not weaken a\n  forecast into a present fact, strengthen a possibility into certainty, reverse a\n  negation, or omit a limiting phrase. If a faithful normalization is unclear, use\n  the source wording and explain the missing context.\n\n  - Extract statements about the limits of current knowledge as claims too. Phrases\n  such as \"unknown,\" \"unclear,\" \"not known,\" or \"no data\" assert a state of knowledge;\n  do not omit them or turn them into a claim that an event or object did not exist.\n  Preserve whose knowledge is limited, which aspect is unknown, and any stated time\n  or scope.\n\n  - Do not add ordinal or superlative limits such as “first,” “earliest,” or “only”\n  unless the quote or one clear context explicitly states them. Never turn an unordered\n  event into a first event.\n\n  - In normalized_claim, resolve a pronoun or demonstrative such as \"it\", \"they\",\n  \"these actions\", \"that exam\", \"the same report\", \"the paper\", or \"that date\" from\n  the article context only when there is one clear antecedent. Preserve the source\n  quote exactly. If the antecedent is ambiguous or absent, keep the claim cautious\n  and list the missing referent in missing_context; never guess.\n\n  - Do not replace a claim with a neighboring sentence while resolving context. The\n  normalized claim must preserve the source quote''s subject, predicate, numbers,\n  and direction. If the quote is \"These actions allowed X to flourish\", do not turn\n  it into a claim about how a release was licensed. Keep the causal assertion and\n  list any unclear action, concrete outcome or measure, and causal basis in missing_context.\n\n  - For causal language such as \"caused\", \"allowed\", \"enabled\", \"led to\", or \"resulted\n  in\", check whether the article names the action, outcome, and a concrete indicator.\n  Vague outcomes such as \"flourish\" or \"improve\" need the missing object or measure\n  and evidence for the causal link listed in missing_context. Do not treat temporal\n  order alone as causal proof.\n\n  - When a claim reports that headlines or another speaker described a gain, improvement,\n  score, or other result with a comparison, preserve that attribution and identify\n  the result or measure being described. If the article does not make the referent\n  clear, include it in missing_context instead of guessing.\n\n  - If the article attributes the statement, keep that attribution in source_quote\n  and in normalized_claim. Phrases to keep include \"the report says\", \"the authors\n  add\", \"according to\", \"I think\", and \"headlines called\". Do not turn an attributed\n  statement into a bare fact.\n\n  - Keep a statement''s existing speaker, source, role, and attribution verb when\n  the article supplies them. If the attribution is outside quotation marks or is carried\n  by a clearly connected continuation, make source_quote one exact contiguous substring\n  that includes the statement and enough attribution context; keep the same attribution\n  in normalized_claim. Do not infer a speaker or source when the article leaves it\n  unclear.\n\n  - Do not extend an attribution across \"and\". \"The report says A, and B\" supports\n  \"The report says A\". It does not support \"The report says B\". Leave B as its own\n  claim without that attribution.\n\n  - Preserve semantic relationships between the subject, action, object, and any necessary\n  participants. Keep stated spatial and directional relationships (for example, which\n  place or object is inside, beside, connected to, or leads to another), as well as\n  causal direction. When splitting independent facts, make each claim''s quote and\n  normalization retain the relationship needed to understand that fact; do not keep\n  only a measurement or outcome while dropping the action or connection that gives\n  it meaning.\n\n  - Preserve appositive definitions and relationships that identify a place or entity,\n  likelihood qualifiers such as \"rarer\", \"alternatively\", and \"usually\", and qualifications\n  about a speaker''s role or independence. A quote must begin at a sentence or clause\n  boundary that retains these qualifiers. For a continued quotation, carry the speaker\n  only when the article makes the continuation explicit in the same paragraph; otherwise\n  list the missing speaker in missing_context without guessing.\n\n  - Include checkable method, data, and sample facts, including data spans, sample\n  sizes, and model inputs when stated. Keep each as a source-grounded claim; do not\n  add details the article does not state.\n\n  - A price claim needs the named product or service being billed. Fill that name\n  only when the price clause in the article states it. If it does not, list the missing\n  product or service in missing_context. Do not borrow a name from the other half\n  of an \"and\" sentence.\n\n  - missing_context names a gap in what that claim asserts. A claim that headlines\n  used a phrase needs the headline, not proof that the phrase''s comparison is true.\n\n  - verification_scope is document_content when the claim is about what one resolved\n  document says, lists, does not say, or does not report. It is text_analysis when\n  the sentence classifies another line as a forecast, preference, or opinion. Otherwise\n  it is external_fact.\n\n  - If a sentence says a line is a forecast or a preference, and then says it is not\n  in the report, return those as two claims.\n\n  - \"on purpose\", \"deliberately\", and \"meant to\" are intention, not opinion. \"I think\",\n  \"best\", and \"worst\" are opinion.\n\n  - Do not guess which document a pronoun or \"the document\" names. Leave it unresolved\n  when more than one document is possible.\n\n  - checkable_fact: a statement about a date, number, name, price, policy, or result\n  that could be checked against a source.\n\n  - opinion: the writer''s evaluation. Do not call it a fact.\n\n  - prediction: a claim about the future. Do not call it a fact.\n\n  - needs_context: use this category only when the claim''s own subject, date, or\n  baseline is missing. Name that gap in missing_context.\n\n  - Do not drop a checkable fact because it is narrow. Do not invent claims that the\n  article does not state.\n\n\n  If repair_errors is not empty, the previous quotes failed those checks. Return a\n  full replacement whose source_quote values occur in the article.\n\n  '\n"
+              },
+              {
+                "role": "user",
+                "content": "{\"article\": \"First-time homebuyers remain scarce, but a record share of them pay all cash\\nNovember 5, 2026 10:00 AM ET Heard on Morning Edition Jennifer Ludden\\nThe share of first-time homebuyers remains at a near-record low of 22% as a housing shortage and high prices sideline many, according to a new report by the National Association of Realtors. But those who are managing to buy are older and wealthier than in the past, and 1 in 10 paid all cash, a record high since such data was collected starting in 2003.\\n\\\"Inheritances are really driving this,\\\" said Jessica Lautz, deputy chief economist at the NAR.\\nFirst-time buyers who paid all-cash were more likely than those who financed a house to use an inheritance (28%) or proceeds from the sale of an inherited property (21%). They were also older.\\nNAR finds the median age of all first-time buyers remains at 40, a record high. For first-time buyers who financed a purchase it was 38, while for those who paid all-cash it was 54. \\\"They waited a significant period of time for that generational transfer of wealth to come through,\\\" Lautz said.\\nFor first-time buyers overall, personal savings was the biggest source of funding for a down payment. But in another shift, more people used assets – like a 401(k), stocks, or cryptocurrency – than financial help from family or friends. Older buyers have had more time to save up, Lautz said, but she thinks there's another factor: \\\"I think it's uncomfortable to ask mom and dad for a gift or loan when you're hitting 40 versus your young 30s.\\\"\\nThe share of first time buyers using an inheritance is likely to grow in coming years as boomers reach their 80's and beyond. As the report noted, \\\"there is a growing divide among those who are saving independently and priced out of homeownership, versus those who are waiting on the sidelines but then given a generational transfer of wealth.\\\"\\nReal estate agents around the country are seeing the change.\\n\\\"I would say in the first 15 years of my career, I saw virtually zero first-time home buyers paying all cash,\\\" said Jason Miller, a broker with Trust Real Estate Company in St. Cloud, Minn.\\nBut he's had a number of them since the COVID-19 pandemic, when homebuying surged. \\\"They knew they had to absolutely have the most sterling offer possible to compete in the competitive marketplace,\\\" he said.\\nHigh mortgage rates are also driving all-cash bids, Miller said, since they make it far more expensive to finance a home for 30 years. And not all families wait until death to pass on wealth. Miller sees more clients getting help from family members who may have paid off their own home, or have equity in a second property they can sell and \\\"are gifting some or all of that money.\\\" They're viewing it as a kind of \\\"future inheritance,\\\" he said.\\nFor some younger first-time buyers, relatives may only be \\\"lending them the cash\\\" to make a bid more attractive, said Nate Johnson, a broker associate with RedKey Realty Leaders in St. Louis. Even with much of the national housing market in a major slump, he said his local market is still intensely competitive for buyers.\\n\\\"They just know that if we're looking at five or six offers on the table, let's call it 10 offers on the table, which is not uncommon…maybe three of those offers will be all cash,\\\" he said.\\nAfter closing on a property, Johnson has seen some buyers refinance into a mortgage and pay back their family member.\\nThe rise of all-cash offers makes the market even tougher for those who struggle to save up for a down payment with today's sky-high home prices.\\n\\\"For a long time I thought I wanted to buy a house,\\\" said Seth Daphne Esmeson, who lives in Seattle and will soon turn 33. They and their spouse have good jobs, but also debt, including a car payment and student loans. Not only does Esmeson think they may never be in a position to buy, they've also decided it does not make sense at today's prices.\\n\\\"Being that debt burdened, and also having to fix things on your home, like, it sounds really terrible,\\\" they said.\\nEsmeson is also not convinced that home equity would outpace other investments. They like their current rental and landlord so are sticking with it for now.\\nStill, it's frustrating that the housing market worked better for previous generations. \\\"We have the short end of the deal,\\\" they said, and \\\"the gap is expanding.\\\"\\nThere's probably only one way they might ever be able to buy. \\\"If I received an inheritance,\\\" they said. But \\\"I love my mom dearly and I don't want to look forward to that, or really want to strategize around that.\\\"\", \"repair_errors\": []}"
+              }
+            ],
+            "response_format": {
+              "type": "json_object"
+            },
+            "max_completion_tokens": 16384
+          }
+        }
+      ],
+      "error": "Model request failed. groq openai/gpt-oss-120b: RateLimitError The fixed_rules baseline was not substituted."
+    },
+    {
+      "sequence": 2,
+      "started_at": "2026-11-19T09:39:44.933353+00:00",
+      "request_parameters": {
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0.0,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Follow the YAML specification below when answering.\n\ninstructions: 'Prompt version: article-claims-v2.\n\n\n  You extract atomic claims from one article so a person can fact-check them later.\n  You do not search, and you do not assign a verdict.\n\n\n  Return only JSON:\n\n  {\"claims\":[{\"id\":\"c1\",\"source_quote\":\"exact substring of the article\",\"normalized_claim\":\"one\n  standalone claim\",\"category\":\"checkable_fact|opinion|prediction|needs_context\",\"missing_context\":[],\"verification_scope\":\"external_fact|document_content|text_analysis\"}]}\n\n\n  Rules:\n\n  - source_quote must be copied character for character from the article. Do not fix\n  spelling, and do not join text from two places.\n\n  - Split a sentence that states two independent facts into two claims. Each quote\n  must still be an exact substring.\n\n  - Keep limiters in normalized_claim: some, all, only, may, as of a date, a named\n  exam, a team, a tier, or a price category.\n\n  - Preserve the source quote''s asserted meaning in normalized_claim: keep its subject,\n  action, polarity, tense, certainty, time, quantities, and scope. Do not weaken a\n  forecast into a present fact, strengthen a possibility into certainty, reverse a\n  negation, or omit a limiting phrase. If a faithful normalization is unclear, use\n  the source wording and explain the missing context.\n\n  - Extract statements about the limits of current knowledge as claims too. Phrases\n  such as \"unknown,\" \"unclear,\" \"not known,\" or \"no data\" assert a state of knowledge;\n  do not omit them or turn them into a claim that an event or object did not exist.\n  Preserve whose knowledge is limited, which aspect is unknown, and any stated time\n  or scope.\n\n  - Do not add ordinal or superlative limits such as “first,” “earliest,” or “only”\n  unless the quote or one clear context explicitly states them. Never turn an unordered\n  event into a first event.\n\n  - In normalized_claim, resolve a pronoun or demonstrative such as \"it\", \"they\",\n  \"these actions\", \"that exam\", \"the same report\", \"the paper\", or \"that date\" from\n  the article context only when there is one clear antecedent. Preserve the source\n  quote exactly. If the antecedent is ambiguous or absent, keep the claim cautious\n  and list the missing referent in missing_context; never guess.\n\n  - Do not replace a claim with a neighboring sentence while resolving context. The\n  normalized claim must preserve the source quote''s subject, predicate, numbers,\n  and direction. If the quote is \"These actions allowed X to flourish\", do not turn\n  it into a claim about how a release was licensed. Keep the causal assertion and\n  list any unclear action, concrete outcome or measure, and causal basis in missing_context.\n\n  - For causal language such as \"caused\", \"allowed\", \"enabled\", \"led to\", or \"resulted\n  in\", check whether the article names the action, outcome, and a concrete indicator.\n  Vague outcomes such as \"flourish\" or \"improve\" need the missing object or measure\n  and evidence for the causal link listed in missing_context. Do not treat temporal\n  order alone as causal proof.\n\n  - When a claim reports that headlines or another speaker described a gain, improvement,\n  score, or other result with a comparison, preserve that attribution and identify\n  the result or measure being described. If the article does not make the referent\n  clear, include it in missing_context instead of guessing.\n\n  - If the article attributes the statement, keep that attribution in source_quote\n  and in normalized_claim. Phrases to keep include \"the report says\", \"the authors\n  add\", \"according to\", \"I think\", and \"headlines called\". Do not turn an attributed\n  statement into a bare fact.\n\n  - Keep a statement''s existing speaker, source, role, and attribution verb when\n  the article supplies them. If the attribution is outside quotation marks or is carried\n  by a clearly connected continuation, make source_quote one exact contiguous substring\n  that includes the statement and enough attribution context; keep the same attribution\n  in normalized_claim. Do not infer a speaker or source when the article leaves it\n  unclear.\n\n  - Do not extend an attribution across \"and\". \"The report says A, and B\" supports\n  \"The report says A\". It does not support \"The report says B\". Leave B as its own\n  claim without that attribution.\n\n  - Preserve semantic relationships between the subject, action, object, and any necessary\n  participants. Keep stated spatial and directional relationships (for example, which\n  place or object is inside, beside, connected to, or leads to another), as well as\n  causal direction. When splitting independent facts, make each claim''s quote and\n  normalization retain the relationship needed to understand that fact; do not keep\n  only a measurement or outcome while dropping the action or connection that gives\n  it meaning.\n\n  - Preserve appositive definitions and relationships that identify a place or entity,\n  likelihood qualifiers such as \"rarer\", \"alternatively\", and \"usually\", and qualifications\n  about a speaker''s role or independence. A quote must begin at a sentence or clause\n  boundary that retains these qualifiers. For a continued quotation, carry the speaker\n  only when the article makes the continuation explicit in the same paragraph; otherwise\n  list the missing speaker in missing_context without guessing.\n\n  - Include checkable method, data, and sample facts, including data spans, sample\n  sizes, and model inputs when stated. Keep each as a source-grounded claim; do not\n  add details the article does not state.\n\n  - A price claim needs the named product or service being billed. Fill that name\n  only when the price clause in the article states it. If it does not, list the missing\n  product or service in missing_context. Do not borrow a name from the other half\n  of an \"and\" sentence.\n\n  - missing_context names a gap in what that claim asserts. A claim that headlines\n  used a phrase needs the headline, not proof that the phrase''s comparison is true.\n\n  - verification_scope is document_content when the claim is about what one resolved\n  document says, lists, does not say, or does not report. It is text_analysis when\n  the sentence classifies another line as a forecast, preference, or opinion. Otherwise\n  it is external_fact.\n\n  - If a sentence says a line is a forecast or a preference, and then says it is not\n  in the report, return those as two claims.\n\n  - \"on purpose\", \"deliberately\", and \"meant to\" are intention, not opinion. \"I think\",\n  \"best\", and \"worst\" are opinion.\n\n  - Do not guess which document a pronoun or \"the document\" names. Leave it unresolved\n  when more than one document is possible.\n\n  - checkable_fact: a statement about a date, number, name, price, policy, or result\n  that could be checked against a source.\n\n  - opinion: the writer''s evaluation. Do not call it a fact.\n\n  - prediction: a claim about the future. Do not call it a fact.\n\n  - needs_context: use this category only when the claim''s own subject, date, or\n  baseline is missing. Name that gap in missing_context.\n\n  - Do not drop a checkable fact because it is narrow. Do not invent claims that the\n  article does not state.\n\n\n  If repair_errors is not empty, the previous quotes failed those checks. Return a\n  full replacement whose source_quote values occur in the article.\n\n  '\n"
+          },
+          {
+            "role": "user",
+            "content": "{\"article\": \"First-time homebuyers remain scarce, but a record share of them pay all cash\\nNovember 5, 2026 10:00 AM ET Heard on Morning Edition Jennifer Ludden\\nThe share of first-time homebuyers remains at a near-record low of 22% as a housing shortage and high prices sideline many, according to a new report by the National Association of Realtors. But those who are managing to buy are older and wealthier than in the past, and 1 in 10 paid all cash, a record high since such data was collected starting in 2003.\\n\\\"Inheritances are really driving this,\\\" said Jessica Lautz, deputy chief economist at the NAR.\\nFirst-time buyers who paid all-cash were more likely than those who financed a house to use an inheritance (28%) or proceeds from the sale of an inherited property (21%). They were also older.\\nNAR finds the median age of all first-time buyers remains at 40, a record high. For first-time buyers who financed a purchase it was 38, while for those who paid all-cash it was 54. \\\"They waited a significant period of time for that generational transfer of wealth to come through,\\\" Lautz said.\\nFor first-time buyers overall, personal savings was the biggest source of funding for a down payment. But in another shift, more people used assets – like a 401(k), stocks, or cryptocurrency – than financial help from family or friends. Older buyers have had more time to save up, Lautz said, but she thinks there's another factor: \\\"I think it's uncomfortable to ask mom and dad for a gift or loan when you're hitting 40 versus your young 30s.\\\"\\nThe share of first time buyers using an inheritance is likely to grow in coming years as boomers reach their 80's and beyond. As the report noted, \\\"there is a growing divide among those who are saving independently and priced out of homeownership, versus those who are waiting on the sidelines but then given a generational transfer of wealth.\\\"\\nReal estate agents around the country are seeing the change.\\n\\\"I would say in the first 15 years of my career, I saw virtually zero first-time home buyers paying all cash,\\\" said Jason Miller, a broker with Trust Real Estate Company in St. Cloud, Minn.\\nBut he's had a number of them since the COVID-19 pandemic, when homebuying surged. \\\"They knew they had to absolutely have the most sterling offer possible to compete in the competitive marketplace,\\\" he said.\\nHigh mortgage rates are also driving all-cash bids, Miller said, since they make it far more expensive to finance a home for 30 years. And not all families wait until death to pass on wealth. Miller sees more clients getting help from family members who may have paid off their own home, or have equity in a second property they can sell and \\\"are gifting some or all of that money.\\\" They're viewing it as a kind of \\\"future inheritance,\\\" he said.\\nFor some younger first-time buyers, relatives may only be \\\"lending them the cash\\\" to make a bid more attractive, said Nate Johnson, a broker associate with RedKey Realty Leaders in St. Louis. Even with much of the national housing market in a major slump, he said his local market is still intensely competitive for buyers.\\n\\\"They just know that if we're looking at five or six offers on the table, let's call it 10 offers on the table, which is not uncommon…maybe three of those offers will be all cash,\\\" he said.\\nAfter closing on a property, Johnson has seen some buyers refinance into a mortgage and pay back their family member.\\nThe rise of all-cash offers makes the market even tougher for those who struggle to save up for a down payment with today's sky-high home prices.\\n\\\"For a long time I thought I wanted to buy a house,\\\" said Seth Daphne Esmeson, who lives in Seattle and will soon turn 33. They and their spouse have good jobs, but also debt, including a car payment and student loans. Not only does Esmeson think they may never be in a position to buy, they've also decided it does not make sense at today's prices.\\n\\\"Being that debt burdened, and also having to fix things on your home, like, it sounds really terrible,\\\" they said.\\nEsmeson is also not convinced that home equity would outpace other investments. They like their current rental and landlord so are sticking with it for now.\\nStill, it's frustrating that the housing market worked better for previous generations. \\\"We have the short end of the deal,\\\" they said, and \\\"the gap is expanding.\\\"\\nThere's probably only one way they might ever be able to buy. \\\"If I received an inheritance,\\\" they said. But \\\"I love my mom dearly and I don't want to look forward to that, or really want to strategize around that.\\\"\", \"repair_errors\": []}"
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_completion_tokens": 16384
+      },
+      "request_status": "completed",
+      "http_status": 200,
+      "served_model": "openai/gpt-oss-120b",
+      "finish_reason": "stop",
+      "usage": {
+        "queue_time": 0.085651981,
+        "prompt_time": 0.168049502,
+        "completion_time": 18.964216113,
+        "total_time": 19.132265615,
+        "completion_tokens": 8858,
+        "prompt_tokens": 2774,
+        "total_tokens": 11632,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 6025,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": null
+      },
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "999",
+        "x-ratelimit-remaining-tokens": "5032",
+        "x-ratelimit-reset-requests": "1m26.4s",
+        "x-ratelimit-reset-tokens": "22.259s"
+      },
+      "cost_usd": "unknown",
+      "elapsed_seconds": 20.616115459008142,
+      "raw_reply_chars": 13531,
+      "raw_reply_file": "runs/prompt-v2-16384/20261119T093811.469020Z/raw/nar_buyers-attempt-2.txt",
+      "parse_status": "parsed",
+      "parsed_items": 41,
+      "accepted_items": 40,
+      "rejected_items": 1,
+      "rejection_reasons": [
+        "source_quote is not in the article"
+      ]
+    }
+  ],
+  "accepted_claims": [
+    {
+      "source_quote": "The share of first-time homebuyers remains at a near-record low of 22% as a housing shortage and high prices sideline many, according to a new report by the National Association of Realtors.",
+      "source_ranges": [
+        [
+          147,
+          337
+        ]
+      ],
+      "normalized_claim": "The share of first-time homebuyers remains at a near-record low of 22% according to a new NAR report",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "those who are managing to buy are older",
+      "source_ranges": [
+        [
+          342,
+          381
+        ]
+      ],
+      "normalized_claim": "Those who are managing to buy are older",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": [
+        "引文从句中开始，可能省略了该句前面的限定或分句"
+      ]
+    },
+    {
+      "source_quote": "1 in 10 paid all cash, a record high since such data was collected starting in 2003.",
+      "source_ranges": [
+        [
+          418,
+          502
+        ]
+      ],
+      "normalized_claim": "1 in 10 paid all cash, a record high since such data was collected starting in 2003",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": [
+        "引文从句中开始，可能省略了该句前面的限定或分句"
+      ]
+    },
+    {
+      "source_quote": "\"Inheritances are really driving this,\" said Jessica Lautz, deputy chief economist at the NAR.",
+      "source_ranges": [
+        [
+          503,
+          597
+        ]
+      ],
+      "normalized_claim": "Jessica Lautz said that inheritances are really driving this",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "First-time buyers who paid all-cash were more likely than those who financed a house to use an inheritance (28%) or proceeds from the sale of an inherited property (21%).",
+      "source_ranges": [
+        [
+          598,
+          768
+        ]
+      ],
+      "normalized_claim": "First-time buyers who paid all-cash were more likely than those who financed a house to use an inheritance (28%) or proceeds from the sale of an inherited property (21%)",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "They were also older.",
+      "source_ranges": [
+        [
+          769,
+          790
+        ]
+      ],
+      "normalized_claim": "They were also older.",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [
+        "模型添加了原文没有的顺序限定，已回退为原文措辞"
+      ],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "NAR finds the median age of all first-time buyers remains at 40, a record high.",
+      "source_ranges": [
+        [
+          791,
+          870
+        ]
+      ],
+      "normalized_claim": "NAR finds the median age of all first-time buyers remains at 40, a record high",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "For first-time buyers who financed a purchase it was 38",
+      "source_ranges": [
+        [
+          871,
+          926
+        ]
+      ],
+      "normalized_claim": "The median age for first-time buyers who financed a purchase was 38",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "while for those who paid all-cash it was 54",
+      "source_ranges": [
+        [
+          928,
+          971
+        ]
+      ],
+      "normalized_claim": "while for those who paid all-cash it was 54",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [
+        "模型添加了原文没有的顺序限定，已回退为原文措辞"
+      ],
+      "extraction_notes": [
+        "引文从句中开始，可能省略了该句前面的限定或分句"
+      ]
+    },
+    {
+      "source_quote": "\"They waited a significant period of time for that generational transfer of wealth to come through,\" Lautz said.",
+      "source_ranges": [
+        [
+          973,
+          1085
+        ]
+      ],
+      "normalized_claim": "Lautz said that they waited a significant period of time for that generational transfer of wealth to come through",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "For first-time buyers overall, personal savings was the biggest source of funding for a down payment.",
+      "source_ranges": [
+        [
+          1086,
+          1187
+        ]
+      ],
+      "normalized_claim": "For first-time buyers overall, personal savings was the biggest source of funding for a down payment",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "But in another shift, more people used assets – like a 401(k), stocks, or cryptocurrency – than financial help from family or friends.",
+      "source_ranges": [
+        [
+          1188,
+          1322
+        ]
+      ],
+      "normalized_claim": "More people used assets such as a 401(k), stocks, or cryptocurrency than financial help from family or friends",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "Older buyers have had more time to save up",
+      "source_ranges": [
+        [
+          1323,
+          1365
+        ]
+      ],
+      "normalized_claim": "Older buyers have had more time to save up",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "she thinks there's another factor: \"I think it's uncomfortable to ask mom and dad for a gift or loan when you're hitting 40 versus your young 30s.\"",
+      "source_ranges": [
+        [
+          1383,
+          1530
+        ]
+      ],
+      "normalized_claim": "Lautz thinks it is uncomfortable to ask mom and dad for a gift or loan when you're hitting 40 versus your young 30s",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": [
+        "引文从句中开始，可能省略了该句前面的限定或分句"
+      ]
+    },
+    {
+      "source_quote": "The share of first time buyers using an inheritance is likely to grow in coming years as boomers reach their 80's and beyond.",
+      "source_ranges": [
+        [
+          1531,
+          1656
+        ]
+      ],
+      "normalized_claim": "The share of first-time buyers using an inheritance is likely to grow in coming years as boomers reach their 80's and beyond",
+      "fact_type": "prediction",
+      "category": "prediction",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "prediction is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "there is a growing divide among those who are saving independently and priced out of homeownership, versus those who are waiting on the sidelines but then given a generational transfer of wealth.",
+      "source_ranges": [
+        [
+          1679,
+          1874
+        ]
+      ],
+      "normalized_claim": "The report noted that there is a growing divide among those who are saving independently and priced out of homeownership, versus those who are waiting on the sidelines but then given a generational transfer of wealth",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "document_content",
+      "status": "needs_context",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [
+        "which document is referred to"
+      ],
+      "normalization_notes": [],
+      "extraction_notes": [
+        "引文从句中开始，可能省略了该句前面的限定或分句"
+      ]
+    },
+    {
+      "source_quote": "\"I would say in the first 15 years of my career, I saw virtually zero first-time home buyers paying all cash,\" said Jason Miller, a broker with Trust Real Estate Company in St. Cloud, Minn.",
+      "source_ranges": [
+        [
+          1937,
+          2126
+        ]
+      ],
+      "normalized_claim": "\"I would say in the first 15 years of my career, I saw virtually zero first-time home buyers paying all cash,\" said Jason Miller, a broker with Trust Real Estate Company in St. Cloud, Minn.",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [
+        "模型规范化改变了时态/确定程度，已回退为原文措辞"
+      ],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "But he's had a number of them since the COVID-19 pandemic, when homebuying surged.",
+      "source_ranges": [
+        [
+          2127,
+          2209
+        ]
+      ],
+      "normalized_claim": "But he's had a number of them since the COVID-19 pandemic, when homebuying surged.",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [
+        "模型添加了原文没有的顺序限定，已回退为原文措辞"
+      ],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "\"They knew they had to absolutely have the most sterling offer possible to compete in the competitive marketplace,\" he said.",
+      "source_ranges": [
+        [
+          2210,
+          2334
+        ]
+      ],
+      "normalized_claim": "Miller said that they knew they had to absolutely have the most sterling offer possible to compete in the competitive marketplace",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "High mortgage rates are also driving all-cash bids, Miller said",
+      "source_ranges": [
+        [
+          2335,
+          2398
+        ]
+      ],
+      "normalized_claim": "Miller said high mortgage rates are also driving all-cash bids",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "they make it far more expensive to finance a home for 30 years",
+      "source_ranges": [
+        [
+          2406,
+          2468
+        ]
+      ],
+      "normalized_claim": "High mortgage rates make it far more expensive to finance a home for 30 years",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": [
+        "引文从句中开始，可能省略了该句前面的限定或分句"
+      ]
+    },
+    {
+      "source_quote": "Miller sees more clients getting help from family members who may have paid off their own home",
+      "source_ranges": [
+        [
+          2527,
+          2621
+        ]
+      ],
+      "normalized_claim": "Miller sees more clients getting help from family members who may have paid off their own home",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "or have equity in a second property they can sell and \"are gifting some or all of that money.\"",
+      "source_ranges": [
+        [
+          2623,
+          2717
+        ]
+      ],
+      "normalized_claim": "Miller sees more clients getting help from family members who have equity in a second property they can sell and are gifting some or all of that money",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": [
+        "引文从句中开始，可能省略了该句前面的限定或分句"
+      ]
+    },
+    {
+      "source_quote": "They're viewing it as a kind of \"future inheritance,\" he said.",
+      "source_ranges": [
+        [
+          2718,
+          2780
+        ]
+      ],
+      "normalized_claim": "Miller said they are viewing it as a kind of \"future inheritance\"",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "For some younger first-time buyers, relatives may only be \"lending them the cash\" to make a bid more attractive, said Nate Johnson, a broker associate with RedKey Realty Leaders in St. Louis.",
+      "source_ranges": [
+        [
+          2781,
+          2972
+        ]
+      ],
+      "normalized_claim": "Nate Johnson said that for some younger first-time buyers, relatives may only be \"lending them the cash\" to make a bid more attractive",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "Even with much of the national housing market in a major slump, he said his local market is still intensely competitive for buyers.",
+      "source_ranges": [
+        [
+          2973,
+          3104
+        ]
+      ],
+      "normalized_claim": "Johnson said his local market is still intensely competitive for buyers despite a national housing market slump",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "\"They just know that if we're looking at five or six offers on the table, let's call it 10 offers on the table, which is not uncommon…maybe three of those offers will be all cash,\" he said.",
+      "source_ranges": [
+        [
+          3105,
+          3294
+        ]
+      ],
+      "normalized_claim": "\"They just know that if we're looking at five or six offers on the table, let's call it 10 offers on the table, which is not uncommon…maybe three of those offers will be all cash,\" he said.",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [
+        "模型规范化改变了时态/确定程度，已回退为原文措辞"
+      ],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "After closing on a property, Johnson has seen some buyers refinance into a mortgage and pay back their family member.",
+      "source_ranges": [
+        [
+          3295,
+          3412
+        ]
+      ],
+      "normalized_claim": "Johnson has seen some buyers refinance into a mortgage and pay back their family member after closing on a property",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "The rise of all-cash offers makes the market even tougher for those who struggle to save up for a down payment with today's sky-high home prices.",
+      "source_ranges": [
+        [
+          3413,
+          3558
+        ]
+      ],
+      "normalized_claim": "The rise of all-cash offers makes the market even tougher for those who struggle to save up for a down payment with today's sky-high home prices",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "\"For a long time I thought I wanted to buy a house,\" said Seth Daphne Esmeson, who lives in Seattle and will soon turn 33.",
+      "source_ranges": [
+        [
+          3559,
+          3681
+        ]
+      ],
+      "normalized_claim": "\"For a long time I thought I wanted to buy a house,\" said Seth Daphne Esmeson, who lives in Seattle and will soon turn 33.",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [
+        "规范化声明未保留原文中的数字或年份"
+      ],
+      "normalization_notes": [
+        "模型规范化改变了时态/确定程度，已回退为原文措辞"
+      ],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "They and their spouse have good jobs, but also debt, including a car payment and student loans.",
+      "source_ranges": [
+        [
+          3682,
+          3777
+        ]
+      ],
+      "normalized_claim": "Esmeson and their spouse have good jobs and also debt, including a car payment and student loans",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "Not only does Esmeson think they may never be in a position to buy",
+      "source_ranges": [
+        [
+          3778,
+          3844
+        ]
+      ],
+      "normalized_claim": "Not only does Esmeson think they may never be in a position to buy",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [
+        "模型规范化改变了时态/确定程度，已回退为原文措辞"
+      ],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "they've also decided it does not make sense at today's prices.",
+      "source_ranges": [
+        [
+          3846,
+          3908
+        ]
+      ],
+      "normalized_claim": "Esmeson has decided it does not make sense to buy at today's prices",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": [
+        "引文从句中开始，可能省略了该句前面的限定或分句"
+      ]
+    },
+    {
+      "source_quote": "\"Being that debt burdened, and also having to fix things on your home, like, it sounds really terrible,\" they said.",
+      "source_ranges": [
+        [
+          3909,
+          4024
+        ]
+      ],
+      "normalized_claim": "Esmeson said that being debt burdened and having to fix things on their home sounds really terrible",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "Esmeson is also not convinced that home equity would outpace other investments.",
+      "source_ranges": [
+        [
+          4025,
+          4104
+        ]
+      ],
+      "normalized_claim": "Esmeson is not convinced that home equity would outpace other investments",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "They like their current rental and landlord so are sticking with it for now.",
+      "source_ranges": [
+        [
+          4105,
+          4181
+        ]
+      ],
+      "normalized_claim": "Esmeson likes their current rental and landlord and is sticking with it for now",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "\"We have the short end of the deal,\" they said",
+      "source_ranges": [
+        [
+          4270,
+          4316
+        ]
+      ],
+      "normalized_claim": "Esmeson said \"We have the short end of the deal\"",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "\"the gap is expanding.\"",
+      "source_ranges": [
+        [
+          4322,
+          4345
+        ]
+      ],
+      "normalized_claim": "Esmeson said \"the gap is expanding\"",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": [
+        "引文从句中开始，可能省略了该句前面的限定或分句"
+      ]
+    },
+    {
+      "source_quote": "\"If I received an inheritance,\" they said.",
+      "source_ranges": [
+        [
+          4408,
+          4450
+        ]
+      ],
+      "normalized_claim": "Esmeson said that if they received an inheritance they might be able to buy",
+      "fact_type": "prediction",
+      "category": "prediction",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "prediction is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    },
+    {
+      "source_quote": "But \"I love my mom dearly and I don't want to look forward to that, or really want to strategize around that.\"",
+      "source_ranges": [
+        [
+          4451,
+          4561
+        ]
+      ],
+      "normalized_claim": "Esmeson said they love their mom dearly and do not want to look forward to receiving an inheritance or strategize around that",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [],
+      "normalization_notes": [],
+      "extraction_notes": []
+    }
+  ],
+  "rejected_claims": [
+    {
+      "claim": {
+        "id": "c3",
+        "source_quote": "those who are managing to buy are wealthier",
+        "normalized_claim": "Those who are managing to buy are wealthier",
+        "category": "checkable_fact",
+        "missing_context": [],
+        "verification_scope": "external_fact"
+      },
+      "errors": [
+        "source_quote is not in the article"
+      ]
+    }
+  ],
+  "cache_reused": false,
+  "status": "completed",
+  "http_status": 200,
+  "rate_limit_headers": {
+    "x-ratelimit-limit-requests": "1000",
+    "x-ratelimit-limit-tokens": "8000",
+    "x-ratelimit-remaining-requests": "999",
+    "x-ratelimit-remaining-tokens": "5032",
+    "x-ratelimit-reset-requests": "1m26.4s",
+    "x-ratelimit-reset-tokens": "22.259s"
+  },
+  "error_type": "RateLimitError",
+  "error_code": "rate_limit_exceeded",
+  "error_body": {
+    "message": "Rate limit reached for model `openai/gpt-oss-120b` in organization `[REDACTED_ORG]` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 7909, Requested 2960. Please try again in 21.5175s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing",
+    "type": "tokens",
+    "code": "rate_limit_exceeded"
+  },
+  "error": "Model request failed. groq openai/gpt-oss-120b: RateLimitError The fixed_rules baseline was not substituted.",
+  "retry_after_seconds": 22.0,
+  "resume_not_before_utc": "2026-11-19T09:38:51.570599+00:00",
+  "served_model": "openai/gpt-oss-120b",
+  "finish_reason": "stop",
+  "usage": {
+    "queue_time": 0.085651981,
+    "prompt_time": 0.168049502,
+    "completion_time": 18.964216113,
+    "total_time": 19.132265615,
+    "completion_tokens": 8858,
+    "prompt_tokens": 2774,
+    "total_tokens": 11632,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 6025,
+      "rejected_prediction_tokens": null,
+      "text_tokens": null
+    },
+    "prompt_tokens_details": null
+  },
+  "cost_usd": "unknown",
+  "elapsed_seconds": 20.616115459008142,
+  "raw_reply_chars": 13531,
+  "raw_reply_file": "runs/prompt-v2-16384/20261119T093811.469020Z/raw/nar_buyers-attempt-2.txt",
+  "parsed_items": 41,
+  "accepted_items": 40,
+  "rejected_items": 1,
+  "parse_method": "articles._parse_extract; extract_claims._split exact-source-quote validation",
+  "rejection_reasons": [
+    "source_quote is not in the article"
+  ]
+}

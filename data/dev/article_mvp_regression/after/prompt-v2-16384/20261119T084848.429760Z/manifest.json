@@ -1,0 +1,1694 @@
+{
+  "run_id": "20261119T084848.429760Z",
+  "order": [
+    "chan_chan",
+    "heatwave"
+  ],
+  "provider": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "route_reason": "groq_primary"
+  },
+  "model": "openai/gpt-oss-120b",
+  "prompt_version": "sha256:433aaed68e7339843e452d439318c4551425f8d08b39eef451932faf41c00c3d",
+  "output_cap": 16384,
+  "allow_paid": false,
+  "allow_openrouter_fallback": false,
+  "requests_per_article_limit": 1,
+  "no_search_or_judge": true,
+  "status": "completed",
+  "results": [
+    {
+      "article_id": "chan_chan",
+      "source_url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "prompt_version": "sha256:433aaed68e7339843e452d439318c4551425f8d08b39eef451932faf41c00c3d",
+      "output_cap": 16384,
+      "input_sha256": "785df4792b277555c254ff0a8f56f67db6b88c5d9b85f0274aaa65ea4d81034c",
+      "input_chars": 5234,
+      "truncated_input": false,
+      "submitted_article_chars": 5234,
+      "provider_chain": [
+        {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "base_url": "https://api.groq.com/openai/v1",
+          "route_reason": "groq_primary"
+        }
+      ],
+      "allow_paid": false,
+      "allow_openrouter_fallback": false,
+      "response_format": {
+        "type": "json_object"
+      },
+      "temperature": 0.0,
+      "output_parameter": "max_completion_tokens",
+      "request_count": 1,
+      "request_attempts": [
+        {
+          "sequence": 1,
+          "started_at": "2026-11-19T08:48:48.434448+00:00",
+          "request_parameters": {
+            "model": "openai/gpt-oss-120b",
+            "temperature": 0.0,
+            "messages": [
+              {
+                "role": "system",
+                "content": "Follow the YAML specification below when answering.\n\ninstructions: 'Prompt version: article-claims-v2.\n\n\n  You extract atomic claims from one article so a person can fact-check them later.\n  You do not search, and you do not assign a verdict.\n\n\n  Return only JSON:\n\n  {\"claims\":[{\"id\":\"c1\",\"source_quote\":\"exact substring of the article\",\"normalized_claim\":\"one\n  standalone claim\",\"category\":\"checkable_fact|opinion|prediction|needs_context\",\"missing_context\":[],\"verification_scope\":\"external_fact|document_content|text_analysis\"}]}\n\n\n  Rules:\n\n  - source_quote must be copied character for character from the article. Do not fix\n  spelling, and do not join text from two places.\n\n  - Split a sentence that states two independent facts into two claims. Each quote\n  must still be an exact substring.\n\n  - Keep limiters in normalized_claim: some, all, only, may, as of a date, a named\n  exam, a team, a tier, or a price category.\n\n  - Preserve the source quote''s asserted meaning in normalized_claim: keep its subject,\n  action, polarity, tense, certainty, time, quantities, and scope. Do not weaken a\n  forecast into a present fact, strengthen a possibility into certainty, reverse a\n  negation, or omit a limiting phrase. If a faithful normalization is unclear, use\n  the source wording and explain the missing context.\n\n  - Extract statements about the limits of current knowledge as claims too. Phrases\n  such as \"unknown,\" \"unclear,\" \"not known,\" or \"no data\" assert a state of knowledge;\n  do not omit them or turn them into a claim that an event or object did not exist.\n  Preserve whose knowledge is limited, which aspect is unknown, and any stated time\n  or scope.\n\n  - Do not add ordinal or superlative limits such as “first,” “earliest,” or “only”\n  unless the quote or one clear context explicitly states them. Never turn an unordered\n  event into a first event.\n\n  - In normalized_claim, resolve a pronoun or demonstrative such as \"it\", \"they\",\n  \"these actions\", \"that exam\", \"the same report\", \"the paper\", or \"that date\" from\n  the article context only when there is one clear antecedent. Preserve the source\n  quote exactly. If the antecedent is ambiguous or absent, keep the claim cautious\n  and list the missing referent in missing_context; never guess.\n\n  - Do not replace a claim with a neighboring sentence while resolving context. The\n  normalized claim must preserve the source quote''s subject, predicate, numbers,\n  and direction. If the quote is \"These actions allowed X to flourish\", do not turn\n  it into a claim about how a release was licensed. Keep the causal assertion and\n  list any unclear action, concrete outcome or measure, and causal basis in missing_context.\n\n  - For causal language such as \"caused\", \"allowed\", \"enabled\", \"led to\", or \"resulted\n  in\", check whether the article names the action, outcome, and a concrete indicator.\n  Vague outcomes such as \"flourish\" or \"improve\" need the missing object or measure\n  and evidence for the causal link listed in missing_context. Do not treat temporal\n  order alone as causal proof.\n\n  - When a claim reports that headlines or another speaker described a gain, improvement,\n  score, or other result with a comparison, preserve that attribution and identify\n  the result or measure being described. If the article does not make the referent\n  clear, include it in missing_context instead of guessing.\n\n  - If the article attributes the statement, keep that attribution in source_quote\n  and in normalized_claim. Phrases to keep include \"the report says\", \"the authors\n  add\", \"according to\", \"I think\", and \"headlines called\". Do not turn an attributed\n  statement into a bare fact.\n\n  - Keep a statement''s existing speaker, source, role, and attribution verb when\n  the article supplies them. If the attribution is outside quotation marks or is carried\n  by a clearly connected continuation, make source_quote one exact contiguous substring\n  that includes the statement and enough attribution context; keep the same attribution\n  in normalized_claim. Do not infer a speaker or source when the article leaves it\n  unclear.\n\n  - Do not extend an attribution across \"and\". \"The report says A, and B\" supports\n  \"The report says A\". It does not support \"The report says B\". Leave B as its own\n  claim without that attribution.\n\n  - Preserve semantic relationships between the subject, action, object, and any necessary\n  participants. Keep stated spatial and directional relationships (for example, which\n  place or object is inside, beside, connected to, or leads to another), as well as\n  causal direction. When splitting independent facts, make each claim''s quote and\n  normalization retain the relationship needed to understand that fact; do not keep\n  only a measurement or outcome while dropping the action or connection that gives\n  it meaning.\n\n  - Preserve appositive definitions and relationships that identify a place or entity,\n  likelihood qualifiers such as \"rarer\", \"alternatively\", and \"usually\", and qualifications\n  about a speaker''s role or independence. A quote must begin at a sentence or clause\n  boundary that retains these qualifiers. For a continued quotation, carry the speaker\n  only when the article makes the continuation explicit in the same paragraph; otherwise\n  list the missing speaker in missing_context without guessing.\n\n  - Include checkable method, data, and sample facts, including data spans, sample\n  sizes, and model inputs when stated. Keep each as a source-grounded claim; do not\n  add details the article does not state.\n\n  - A price claim needs the named product or service being billed. Fill that name\n  only when the price clause in the article states it. If it does not, list the missing\n  product or service in missing_context. Do not borrow a name from the other half\n  of an \"and\" sentence.\n\n  - missing_context names a gap in what that claim asserts. A claim that headlines\n  used a phrase needs the headline, not proof that the phrase''s comparison is true.\n\n  - verification_scope is document_content when the claim is about what one resolved\n  document says, lists, does not say, or does not report. It is text_analysis when\n  the sentence classifies another line as a forecast, preference, or opinion. Otherwise\n  it is external_fact.\n\n  - If a sentence says a line is a forecast or a preference, and then says it is not\n  in the report, return those as two claims.\n\n  - \"on purpose\", \"deliberately\", and \"meant to\" are intention, not opinion. \"I think\",\n  \"best\", and \"worst\" are opinion.\n\n  - Do not guess which document a pronoun or \"the document\" names. Leave it unresolved\n  when more than one document is possible.\n\n  - checkable_fact: a statement about a date, number, name, price, policy, or result\n  that could be checked against a source.\n\n  - opinion: the writer''s evaluation. Do not call it a fact.\n\n  - prediction: a claim about the future. Do not call it a fact.\n\n  - needs_context: use this category only when the claim''s own subject, date, or\n  baseline is missing. Name that gap in missing_context.\n\n  - Do not drop a checkable fact because it is narrow. Do not invent claims that the\n  article does not state.\n\n\n  If repair_errors is not empty, the previous quotes failed those checks. Return a\n  full replacement whose source_quote values occur in the article.\n\n  '\n"
+              },
+              {
+                "role": "user",
+                "content": "{\"article\": \"Unsealed for the First Time in 600 Years, This Tomb in Peru Was Just Declared the ‘Discovery of the Decade’ Archaeologists excavating Chan Chan, the capital of the pre-Inca Chimú civilization, found an undisturbed mausoleum that held the remains of at least 38 individuals, as well as a trove of rich funerary goods Meilan Solly | Senior Associate Digital Editor, History Some 600 years ago, members of the pre-Inca Chimú civilization buried more than three dozen people in a mausoleum near modern-day Trujillo, Peru. The dead were interred alongside a rich array of grave goods, including metal weapons, copper and gold artifacts, ornate jewelry, and colorful textiles—suggesting that they were high-status individuals, perhaps even royalty. The mausoleum remained largely intact until this year, when excavations uncovered its entrance beneath layers of sand, soil and stone at Chan Chan , a UNESCO World Heritage Site that was once the Chimú capital. The tomb dates to during or just before the Inca conquest of the region in the mid-15th century, making its survival, untouched by colonial and contemporary looters alike, even more impressive. As lead archaeologist Jorge Meneses tells BBC News , the find marks “the first time that Peruvian archaeologists have been able to come across an almost intact [funerary] platform, with unaltered contents, a platform that was designed for an elite individual, whose main chamber has remained sealed for almost 600 years.” Previously, “what was known about elite burials in Chimú society came from looted platforms, private collections and museum holdings,” Meneses tells El País ’ Renzo Gómez Vega. “There was no scientific data on the individuals and their corresponding artifacts and associations.” The Chimú thrived in what is now northern Peru between roughly 900 and 1470. The civilization was the “first true engineering society in the New World,” devising a network of irrigation canals that enabled its people to thrive in a desert valley, hydraulic engineer Charles Ortloff told Smithsonian magazine ’s Bruce Hathaway in 2009. Chimú kings lived in walled palaces , with each ruler building a new royal compound upon their accession. Many of Chan Chan’s surviving palaces feature funerary platforms where rulers were laid to rest with members of their retinue. Fun fact: The Chimú capital The newly discovered mausoleum is located in Chan Chan’s Utzh An complex. A staircase leads down into the tomb’s central chamber, which measures roughly 4 feet wide and 16 feet deep, according to the state-run Andina news agency. Inside this main room, archaeologists identified the remains of a single individual whose skull bore traces of a red pigment, possibly cinnabar , a crystalline form of mercury sulfide. Some of the skeleton’s bones are missing, leading the researchers to posit that the remains were later moved or reburied. This was a common practice among Andean societies at the time, with communities continuing to interact with and even worship the bodies of their loved ones and leaders after death. Two rooms flank the central chamber on either side. One was virtually empty, while the other held roughly 20 sets of human remains, as well as miscellaneous artifacts. Archaeologists found an additional 17 skeletons while excavating the funerary platform, bringing the total number of people buried there to at least 38. Much about the tomb remains unknown, from the individuals’ ages and genders to the circumstances of their deaths. “What is clear to us so far is that these people were part of the elite or were associated with the elite,” Henry Luis Gayoso , an official with the Peruvian Ministry of Culture, tells the New York Times ’ Alan Yuhas. Gabriel Prieto , an anthropologist at the University of Florida who wasn’t involved in the research, tells the Times that the find is “the discovery of the decade in terms of it’s the very first time that, as archaeologists, we are able to see an elite Chimú burial.” Researchers hope that the undisturbed tomb will shed light on Chimú funerary practices and social hierarchies at a time of great upheaval. The discovery also underscores how much of the Chimú capital remains unexplored. To date, archaeologists have excavated “no more than 7 percent of Chan Chan’s total area,” Meneses tells El País . “Evidently, the citadel has much more to tell.” You Might Also Like Mass Grave of Women, Children Found in Pre-Hispanic City in Peru November 12, 2021 Archaeologists in Peru Discover Graves of Men, Women and Children Killed in Battle, Then Buried With Honor April 21, 2025 Archaeologists Discover a 4,000-Year-Old Tomb With a False Door at Egypt's Ancient Saqqara Necropolis September 2, 2026 Archaeologists Excavating a Monastery in Spain Identified the Remains of a 14th-Century Queen—and Multiple Skeletons Buried in the Wrong Graves June 3, 2026 Why Were These Ancient Adults Buried in Jars on the Island of Corsica? April 15, 2021 Meilan Solly is a senior associate digital editor at Smithsonian magazine, where she oversees the online history section and writes about everything from archaeology to the British royal family. Solly’s specialties are Tudor England, Renaissance and modern art, and World War II.\", \"repair_errors\": []}"
+              }
+            ],
+            "response_format": {
+              "type": "json_object"
+            },
+            "max_completion_tokens": 16384
+          },
+          "request_status": "completed",
+          "http_status": 200,
+          "served_model": "openai/gpt-oss-120b",
+          "finish_reason": "stop",
+          "usage": {
+            "queue_time": 0.022780113,
+            "prompt_time": 0.142354297,
+            "completion_time": 20.634365594,
+            "total_time": 20.776719891,
+            "completion_tokens": 9765,
+            "prompt_tokens": 2869,
+            "total_tokens": 12634,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 7125,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_tokens_details": null
+          },
+          "rate_limit_headers": {
+            "x-ratelimit-limit-requests": "1000",
+            "x-ratelimit-limit-tokens": "8000",
+            "x-ratelimit-remaining-requests": "999",
+            "x-ratelimit-remaining-tokens": "4871",
+            "x-ratelimit-reset-requests": "1m26.4s",
+            "x-ratelimit-reset-tokens": "23.467s"
+          },
+          "cost_usd": "unknown",
+          "elapsed_seconds": 21.38879995897878,
+          "raw_reply_chars": 12894,
+          "raw_reply_file": "after/prompt-v2-16384/20261119T084848.429760Z/raw/chan_chan-attempt-1.txt",
+          "parse_status": "parsed",
+          "parsed_items": 31,
+          "accepted_items": 31,
+          "rejected_items": 0,
+          "rejection_reasons": []
+        }
+      ],
+      "accepted_claims": [
+        {
+          "source_quote": "Archaeologists excavating Chan Chan, the capital of the pre-Inca Chimú civilization, found an undisturbed mausoleum that held the remains of at least 38 individuals, as well as a trove of rich funerary goods",
+          "source_ranges": [
+            [
+              108,
+              315
+            ]
+          ],
+          "normalized_claim": "Archaeologists excavating Chan Chan, the capital of the pre-Inca Chimú civilization, found an undisturbed mausoleum that held the remains of at least 38 individuals and a trove of rich funerary goods",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": [
+            "引文从句中开始，可能省略了该句前面的限定或分句"
+          ]
+        },
+        {
+          "source_quote": "Some 600 years ago, members of the pre-Inca Chimú civilization buried more than three dozen people in a mausoleum near modern-day Trujillo, Peru.",
+          "source_ranges": [
+            [
+              372,
+              517
+            ]
+          ],
+          "normalized_claim": "Members of the pre-Inca Chimú civilization buried more than three dozen people in a mausoleum near modern-day Trujillo, Peru, about 600 years ago",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": [
+            "引文从句中开始，可能省略了该句前面的限定或分句"
+          ]
+        },
+        {
+          "source_quote": "The dead were interred alongside a rich array of grave goods, including metal weapons, copper and gold artifacts, ornate jewelry, and colorful textiles—suggesting that they were high-status individuals, perhaps even royalty.",
+          "source_ranges": [
+            [
+              518,
+              742
+            ]
+          ],
+          "normalized_claim": "The dead were interred alongside a rich array of grave goods, including metal weapons, copper and gold artifacts, ornate jewelry, and colorful textiles",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "The dead were interred alongside a rich array of grave goods, including metal weapons, copper and gold artifacts, ornate jewelry, and colorful textiles—suggesting that they were high-status individuals, perhaps even royalty.",
+          "source_ranges": [
+            [
+              518,
+              742
+            ]
+          ],
+          "normalized_claim": "The grave goods suggest that the interred individuals were high-status individuals, perhaps even royalty",
+          "fact_type": "opinion",
+          "category": "opinion",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "opinion is not given a factual check",
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "The mausoleum remained largely intact until this year, when excavations uncovered its entrance beneath layers of sand, soil and stone at Chan Chan , a UNESCO World Heritage Site that was once the Chimú capital.",
+          "source_ranges": [
+            [
+              743,
+              953
+            ]
+          ],
+          "normalized_claim": "The mausoleum remained largely intact until this year, when excavations uncovered its entrance beneath layers of sand, soil and stone at Chan Chan, a UNESCO World Heritage Site that was once the Chimú capital",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "The tomb dates to during or just before the Inca conquest of the region in the mid-15th century",
+          "source_ranges": [
+            [
+              954,
+              1049
+            ]
+          ],
+          "normalized_claim": "The tomb dates to during or just before the Inca conquest of the region in the mid-15th century",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "As lead archaeologist Jorge Meneses tells BBC News , the find marks “the first time that Peruvian archaeologists have been able to come across an almost intact [funerary] platform, with unaltered contents, a platform that was designed for an elite individual, whose main chamber has remained sealed for almost 600 years.”",
+          "source_ranges": [
+            [
+              1148,
+              1469
+            ]
+          ],
+          "normalized_claim": "Lead archaeologist Jorge Meneses told BBC News that the find marks the first time that Peruvian archaeologists have been able to come across an almost intact funerary platform with unaltered contents, designed for an elite individual whose main chamber has remained sealed for almost 600 years",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Previously, “what was known about elite burials in Chimú society came from looted platforms, private collections and museum holdings,” Meneses tells El País ’ Renzo Gómez Vega.",
+          "source_ranges": [
+            [
+              1470,
+              1646
+            ]
+          ],
+          "normalized_claim": "Meneses told El País that what was known about elite burials in Chimú society came from looted platforms, private collections and museum holdings",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "“There was no scientific data on the individuals and their corresponding artifacts and associations.”",
+          "source_ranges": [
+            [
+              1647,
+              1748
+            ]
+          ],
+          "normalized_claim": "Meneses said there was no scientific data on the individuals and their corresponding artifacts and associations",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "The Chimú thrived in what is now northern Peru between roughly 900 and 1470.",
+          "source_ranges": [
+            [
+              1749,
+              1825
+            ]
+          ],
+          "normalized_claim": "The Chimú civilization thrived in what is now northern Peru between roughly 900 and 1470",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "The civilization was the “first true engineering society in the New World,” devising a network of irrigation canals that enabled its people to thrive in a desert valley, hydraulic engineer Charles Ortloff told Smithsonian magazine ’s Bruce Hathaway in 2009.",
+          "source_ranges": [
+            [
+              1826,
+              2083
+            ]
+          ],
+          "normalized_claim": "Hydraulic engineer Charles Ortloff told Smithsonian magazine in 2009 that the Chimú civilization was the first true engineering society in the New World, devising a network of irrigation canals that enabled its people to thrive in a desert valley",
+          "fact_type": "opinion",
+          "category": "opinion",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "opinion is not given a factual check",
+          "document_ref": null,
+          "missing_context": [
+            "需要说明因果结果的具体对象或衡量指标",
+            "需要提供所述行动导致该结果的因果依据"
+          ],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Chimú kings lived in walled palaces , with each ruler building a new royal compound upon their accession.",
+          "source_ranges": [
+            [
+              2084,
+              2189
+            ]
+          ],
+          "normalized_claim": "Chimú kings lived in walled palaces, with each ruler building a new royal compound upon their accession",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Many of Chan Chan’s surviving palaces feature funerary platforms where rulers were laid to rest with members of their retinue.",
+          "source_ranges": [
+            [
+              2190,
+              2316
+            ]
+          ],
+          "normalized_claim": "Many of Chan Chan’s surviving palaces feature funerary platforms where rulers were laid to rest with members of their retinue",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "The newly discovered mausoleum is located in Chan Chan’s Utzh An complex.",
+          "source_ranges": [
+            [
+              2345,
+              2418
+            ]
+          ],
+          "normalized_claim": "The newly discovered mausoleum is located in Chan Chan’s Utzh An complex",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": [
+            "引文从句中开始，可能省略了该句前面的限定或分句"
+          ]
+        },
+        {
+          "source_quote": "A staircase leads down into the tomb’s central chamber, which measures roughly 4 feet wide and 16 feet deep, according to the state-run Andina news agency.",
+          "source_ranges": [
+            [
+              2419,
+              2574
+            ]
+          ],
+          "normalized_claim": "A staircase leads down into the tomb’s central chamber, which measures roughly 4 feet wide and 16 feet deep, according to the state-run Andina news agency",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Inside this main room, archaeologists identified the remains of a single individual whose skull bore traces of a red pigment, possibly cinnabar , a crystalline form of mercury sulfide.",
+          "source_ranges": [
+            [
+              2575,
+              2759
+            ]
+          ],
+          "normalized_claim": "Archaeologists identified the remains of a single individual in the main room whose skull bore traces of a red pigment, possibly cinnabar, a crystalline form of mercury sulfide",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Some of the skeleton’s bones are missing, leading the researchers to posit that the remains were later moved or reburied.",
+          "source_ranges": [
+            [
+              2760,
+              2881
+            ]
+          ],
+          "normalized_claim": "Some of the skeleton’s bones are missing, leading researchers to posit that the remains were later moved or reburied",
+          "fact_type": "opinion",
+          "category": "opinion",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "opinion is not given a factual check",
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "This was a common practice among Andean societies at the time, with communities continuing to interact with and even worship the bodies of their loved ones and leaders after death.",
+          "source_ranges": [
+            [
+              2882,
+              3062
+            ]
+          ],
+          "normalized_claim": "The practice of moving or reburial was common among Andean societies at the time, with communities continuing to interact with and even worship the bodies of their loved ones and leaders after death",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Two rooms flank the central chamber on either side.",
+          "source_ranges": [
+            [
+              3063,
+              3114
+            ]
+          ],
+          "normalized_claim": "Two rooms flank the central chamber on either side",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "One was virtually empty",
+          "source_ranges": [
+            [
+              3115,
+              3138
+            ]
+          ],
+          "normalized_claim": "One of the rooms was virtually empty",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "the other held roughly 20 sets of human remains, as well as miscellaneous artifacts.",
+          "source_ranges": [
+            [
+              3146,
+              3230
+            ]
+          ],
+          "normalized_claim": "The other room held roughly 20 sets of human remains and miscellaneous artifacts",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": [
+            "引文从句中开始，可能省略了该句前面的限定或分句"
+          ]
+        },
+        {
+          "source_quote": "Archaeologists found an additional 17 skeletons while excavating the funerary platform, bringing the total number of people buried there to at least 38.",
+          "source_ranges": [
+            [
+              3231,
+              3383
+            ]
+          ],
+          "normalized_claim": "Archaeologists found an additional 17 skeletons while excavating the funerary platform, bringing the total number of people buried there to at least 38",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Much about the tomb remains unknown, from the individuals’ ages and genders to the circumstances of their deaths.",
+          "source_ranges": [
+            [
+              3384,
+              3497
+            ]
+          ],
+          "normalized_claim": "Much about the tomb remains unknown, including the individuals’ ages, genders, and the circumstances of their deaths",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "“What is clear to us so far is that these people were part of the elite or were associated with the elite,” Henry Luis Gayoso , an official with the Peruvian Ministry of Culture, tells the New York Times ’ Alan Yuhas.",
+          "source_ranges": [
+            [
+              3498,
+              3715
+            ]
+          ],
+          "normalized_claim": "Henry Luis Gayoso said that what is clear so far is that these people were part of the elite or were associated with the elite",
+          "fact_type": "opinion",
+          "category": "opinion",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "opinion is not given a factual check",
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Gabriel Prieto , an anthropologist at the University of Florida who wasn’t involved in the research, tells the Times that the find is “the discovery of the decade in terms of it’s the very first time that, as archaeologists, we are able to see an elite Chimú burial.”",
+          "source_ranges": [
+            [
+              3716,
+              3983
+            ]
+          ],
+          "normalized_claim": "Gabriel Prieto said the find is the discovery of the decade, being the very first time archaeologists are able to see an elite Chimú burial",
+          "fact_type": "opinion",
+          "category": "opinion",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "opinion is not given a factual check",
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Researchers hope that the undisturbed tomb will shed light on Chimú funerary practices and social hierarchies at a time of great upheaval.",
+          "source_ranges": [
+            [
+              3984,
+              4122
+            ]
+          ],
+          "normalized_claim": "Researchers hope that the undisturbed tomb will shed light on Chimú funerary practices and social hierarchies at a time of great upheaval",
+          "fact_type": "prediction",
+          "category": "prediction",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "prediction is not given a factual check",
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "The discovery also underscores how much of the Chimú capital remains unexplored.",
+          "source_ranges": [
+            [
+              4123,
+              4203
+            ]
+          ],
+          "normalized_claim": "The discovery underscores how much of the Chimú capital remains unexplored",
+          "fact_type": "opinion",
+          "category": "opinion",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "opinion is not given a factual check",
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "To date, archaeologists have excavated “no more than 7 percent of Chan Chan’s total area,” Meneses tells El País .",
+          "source_ranges": [
+            [
+              4204,
+              4318
+            ]
+          ],
+          "normalized_claim": "Meneses told El País that to date archaeologists have excavated no more than 7 percent of Chan Chan’s total area",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "“Evidently, the citadel has much more to tell.”",
+          "source_ranges": [
+            [
+              4319,
+              4366
+            ]
+          ],
+          "normalized_claim": "Meneses said, “Evidently, the citadel has much more to tell.”",
+          "fact_type": "opinion",
+          "category": "opinion",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "opinion is not given a factual check",
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Meilan Solly is a senior associate digital editor at Smithsonian magazine, where she oversees the online history section and writes about everything from archaeology to the British royal family.",
+          "source_ranges": [
+            [
+              4955,
+              5149
+            ]
+          ],
+          "normalized_claim": "Meilan Solly is a senior associate digital editor at Smithsonian magazine, where she oversees the online history section and writes about everything from archaeology to the British royal family",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": [
+            "引文从句中开始，可能省略了该句前面的限定或分句"
+          ]
+        },
+        {
+          "source_quote": "Solly’s specialties are Tudor England, Renaissance and modern art, and World War II.",
+          "source_ranges": [
+            [
+              5150,
+              5234
+            ]
+          ],
+          "normalized_claim": "Solly’s specialties are Tudor England, Renaissance and modern art, and World War II",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        }
+      ],
+      "rejected_claims": [],
+      "cache_reused": false,
+      "status": "completed",
+      "http_status": 200,
+      "served_model": "openai/gpt-oss-120b",
+      "finish_reason": "stop",
+      "usage": {
+        "queue_time": 0.022780113,
+        "prompt_time": 0.142354297,
+        "completion_time": 20.634365594,
+        "total_time": 20.776719891,
+        "completion_tokens": 9765,
+        "prompt_tokens": 2869,
+        "total_tokens": 12634,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 7125,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": null
+      },
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "999",
+        "x-ratelimit-remaining-tokens": "4871",
+        "x-ratelimit-reset-requests": "1m26.4s",
+        "x-ratelimit-reset-tokens": "23.467s"
+      },
+      "cost_usd": "unknown",
+      "elapsed_seconds": 21.38879995897878,
+      "raw_reply_chars": 12894,
+      "raw_reply_file": "after/prompt-v2-16384/20261119T084848.429760Z/raw/chan_chan-attempt-1.txt",
+      "parsed_items": 31,
+      "accepted_items": 31,
+      "rejected_items": 0,
+      "parse_method": "articles._parse_extract; extract_claims._split exact-source-quote validation",
+      "rejection_reasons": []
+    },
+    {
+      "article_id": "heatwave",
+      "source_url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "prompt_version": "sha256:433aaed68e7339843e452d439318c4551425f8d08b39eef451932faf41c00c3d",
+      "output_cap": 16384,
+      "input_sha256": "b9b1f7f09eae245cfd5cd203e4a17395c1bf90996553636b5f0d6fc843312fee",
+      "input_chars": 6885,
+      "truncated_input": false,
+      "submitted_article_chars": 6885,
+      "provider_chain": [
+        {
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "base_url": "https://api.groq.com/openai/v1",
+          "route_reason": "groq_primary"
+        }
+      ],
+      "allow_paid": false,
+      "allow_openrouter_fallback": false,
+      "response_format": {
+        "type": "json_object"
+      },
+      "temperature": 0.0,
+      "output_parameter": "max_completion_tokens",
+      "request_count": 2,
+      "request_attempts": [
+        {
+          "sequence": 1,
+          "started_at": "2026-11-19T08:49:09.851449+00:00",
+          "request_parameters": {
+            "model": "openai/gpt-oss-120b",
+            "temperature": 0.0,
+            "messages": [
+              {
+                "role": "system",
+                "content": "Follow the YAML specification below when answering.\n\ninstructions: 'Prompt version: article-claims-v2.\n\n\n  You extract atomic claims from one article so a person can fact-check them later.\n  You do not search, and you do not assign a verdict.\n\n\n  Return only JSON:\n\n  {\"claims\":[{\"id\":\"c1\",\"source_quote\":\"exact substring of the article\",\"normalized_claim\":\"one\n  standalone claim\",\"category\":\"checkable_fact|opinion|prediction|needs_context\",\"missing_context\":[],\"verification_scope\":\"external_fact|document_content|text_analysis\"}]}\n\n\n  Rules:\n\n  - source_quote must be copied character for character from the article. Do not fix\n  spelling, and do not join text from two places.\n\n  - Split a sentence that states two independent facts into two claims. Each quote\n  must still be an exact substring.\n\n  - Keep limiters in normalized_claim: some, all, only, may, as of a date, a named\n  exam, a team, a tier, or a price category.\n\n  - Preserve the source quote''s asserted meaning in normalized_claim: keep its subject,\n  action, polarity, tense, certainty, time, quantities, and scope. Do not weaken a\n  forecast into a present fact, strengthen a possibility into certainty, reverse a\n  negation, or omit a limiting phrase. If a faithful normalization is unclear, use\n  the source wording and explain the missing context.\n\n  - Extract statements about the limits of current knowledge as claims too. Phrases\n  such as \"unknown,\" \"unclear,\" \"not known,\" or \"no data\" assert a state of knowledge;\n  do not omit them or turn them into a claim that an event or object did not exist.\n  Preserve whose knowledge is limited, which aspect is unknown, and any stated time\n  or scope.\n\n  - Do not add ordinal or superlative limits such as “first,” “earliest,” or “only”\n  unless the quote or one clear context explicitly states them. Never turn an unordered\n  event into a first event.\n\n  - In normalized_claim, resolve a pronoun or demonstrative such as \"it\", \"they\",\n  \"these actions\", \"that exam\", \"the same report\", \"the paper\", or \"that date\" from\n  the article context only when there is one clear antecedent. Preserve the source\n  quote exactly. If the antecedent is ambiguous or absent, keep the claim cautious\n  and list the missing referent in missing_context; never guess.\n\n  - Do not replace a claim with a neighboring sentence while resolving context. The\n  normalized claim must preserve the source quote''s subject, predicate, numbers,\n  and direction. If the quote is \"These actions allowed X to flourish\", do not turn\n  it into a claim about how a release was licensed. Keep the causal assertion and\n  list any unclear action, concrete outcome or measure, and causal basis in missing_context.\n\n  - For causal language such as \"caused\", \"allowed\", \"enabled\", \"led to\", or \"resulted\n  in\", check whether the article names the action, outcome, and a concrete indicator.\n  Vague outcomes such as \"flourish\" or \"improve\" need the missing object or measure\n  and evidence for the causal link listed in missing_context. Do not treat temporal\n  order alone as causal proof.\n\n  - When a claim reports that headlines or another speaker described a gain, improvement,\n  score, or other result with a comparison, preserve that attribution and identify\n  the result or measure being described. If the article does not make the referent\n  clear, include it in missing_context instead of guessing.\n\n  - If the article attributes the statement, keep that attribution in source_quote\n  and in normalized_claim. Phrases to keep include \"the report says\", \"the authors\n  add\", \"according to\", \"I think\", and \"headlines called\". Do not turn an attributed\n  statement into a bare fact.\n\n  - Keep a statement''s existing speaker, source, role, and attribution verb when\n  the article supplies them. If the attribution is outside quotation marks or is carried\n  by a clearly connected continuation, make source_quote one exact contiguous substring\n  that includes the statement and enough attribution context; keep the same attribution\n  in normalized_claim. Do not infer a speaker or source when the article leaves it\n  unclear.\n\n  - Do not extend an attribution across \"and\". \"The report says A, and B\" supports\n  \"The report says A\". It does not support \"The report says B\". Leave B as its own\n  claim without that attribution.\n\n  - Preserve semantic relationships between the subject, action, object, and any necessary\n  participants. Keep stated spatial and directional relationships (for example, which\n  place or object is inside, beside, connected to, or leads to another), as well as\n  causal direction. When splitting independent facts, make each claim''s quote and\n  normalization retain the relationship needed to understand that fact; do not keep\n  only a measurement or outcome while dropping the action or connection that gives\n  it meaning.\n\n  - Preserve appositive definitions and relationships that identify a place or entity,\n  likelihood qualifiers such as \"rarer\", \"alternatively\", and \"usually\", and qualifications\n  about a speaker''s role or independence. A quote must begin at a sentence or clause\n  boundary that retains these qualifiers. For a continued quotation, carry the speaker\n  only when the article makes the continuation explicit in the same paragraph; otherwise\n  list the missing speaker in missing_context without guessing.\n\n  - Include checkable method, data, and sample facts, including data spans, sample\n  sizes, and model inputs when stated. Keep each as a source-grounded claim; do not\n  add details the article does not state.\n\n  - A price claim needs the named product or service being billed. Fill that name\n  only when the price clause in the article states it. If it does not, list the missing\n  product or service in missing_context. Do not borrow a name from the other half\n  of an \"and\" sentence.\n\n  - missing_context names a gap in what that claim asserts. A claim that headlines\n  used a phrase needs the headline, not proof that the phrase''s comparison is true.\n\n  - verification_scope is document_content when the claim is about what one resolved\n  document says, lists, does not say, or does not report. It is text_analysis when\n  the sentence classifies another line as a forecast, preference, or opinion. Otherwise\n  it is external_fact.\n\n  - If a sentence says a line is a forecast or a preference, and then says it is not\n  in the report, return those as two claims.\n\n  - \"on purpose\", \"deliberately\", and \"meant to\" are intention, not opinion. \"I think\",\n  \"best\", and \"worst\" are opinion.\n\n  - Do not guess which document a pronoun or \"the document\" names. Leave it unresolved\n  when more than one document is possible.\n\n  - checkable_fact: a statement about a date, number, name, price, policy, or result\n  that could be checked against a source.\n\n  - opinion: the writer''s evaluation. Do not call it a fact.\n\n  - prediction: a claim about the future. Do not call it a fact.\n\n  - needs_context: use this category only when the claim''s own subject, date, or\n  baseline is missing. Name that gap in missing_context.\n\n  - Do not drop a checkable fact because it is narrow. Do not invent claims that the\n  article does not state.\n\n\n  If repair_errors is not empty, the previous quotes failed those checks. Return a\n  full replacement whose source_quote values occur in the article.\n\n  '\n"
+              },
+              {
+                "role": "user",
+                "content": "{\"article\": \"Severity and persistence of Northeast Pacific marine heatwaves vary by season, new PSL research shows Posted: July 28, 2026 Some of the largest, longest, and most intense marine heatwaves on record have occurred in the Northeast Pacific Ocean, the open ocean area from California to Alaska which most notably experienced “ The Blob ” marine heatwave that started in late 2013 and lasted a little over two years. A marine heatwave occurs when the ocean’s near-surface waters are unusually warm for days to months. These elevated temperatures can have devastating impacts on the marine ecosystem, blue economy , and coastal communities. Because of these negative effects, better understanding of what makes marine heatwaves in this region tick from season to season is key to improving their prediction. Tongtong Xu of the NOAA Physical Sciences Laboratory and the Cooperative Institute for Research In Environmental Sciences ( CIRES ) at CU Boulder has studied Northeast Pacific marine heatwaves for years. Building off of her previous work, Xu wanted to understand how marine heatwaves in this region responded to tropical dynamics versus local ocean processes, particularly from season to season. The question Marine heatwaves result from a number of different drivers. Globally, one major driver is ENSO , the El Niño Southern Oscillation. This large climate pattern of warm (El Niño) and cool (La Niña) ocean temperature in the tropical Pacific follows a seasonal timeline, usually starting in the spring and peaking in the winter. It additionally has “flavors” - sometimes happening in the central Pacific and sometimes farther east along the equator. More locally, the Northeast Pacific also has an “ocean memory” through a process called \\\"reemergence.\\\" In the winter, the ocean mixes deeply and warm surface water gets pushed down deep where it can get trapped during the summer months. As winter returns, the ocean begins to mix again, bringing the trapped warm water back to the surface and reestablishing the warmer conditions. Xu and her colleagues wondered to what extent tropical ENSO dynamics versus local reemergence and internal ocean processes determine the type of marine heatwave in the Northeast Pacific. The result is their study published recently in Communications Earth & Environment . The approach The historical record itself has provided relatively few marine heatwaves. To discover how marine heatwaves behave in different seasons, the team needed more marine heatwaves to study. The authors turned to an emulator based on a Cyclostationary Linear Inverse Model (CS-LIM) to generate hypothetical marine heatwaves. A CS-LIM is a data-driven model that uses real-world observations to simulate global conditions over different time periods. In this case, the researchers’ CS-LIM used 64 years of real-world sea surface temperature and height data. Using their specific CS-LIM, the researchers generated thousands of “synthetic” marine heatwaves, creating a large sample by which they could better analyze how marine heatwaves starting in one season evolve differently than those starting in another, and what potentially influenced them. The CS-LIM generated simulations spanning the Pacific Ocean so that researchers could analyze ENSO while also looking at the Northeast Pacific local patterns that would indicate the presence of processes such as reemergence. Why was this approach different? A CS-LIM specifically factors in seasons, whereas a traditional LIM, known as a Stationary Linear Inverse Model, assumes background conditions are constant throughout the year. The results The researchers found that different regions of the Northeast Pacific respond to the different ENSO “flavors.” For example, an El Niño in the Central Pacific can help trigger a marine heatwave in the Gulf of Alaska, while a La Niña in the Eastern Pacific can contribute to one in the Central North Pacific. Apart from ENSO influence, local processes such as “ocean memory” reemergence also play a role in generating warm ocean conditions. Marine heatwaves that start in the winter last longer due to the combination of ENSO impact and the reemergence process, which gives the heatwave staying power. Ones that start in the summer can be much more intense, but they generally end quickly. The impact The study highlighted the importance of the season and the heat hiding below the surface when predicting marine heatwaves. Is it starting in the summer? If so, there is a good chance it will be hotter but fade quickly. Starting in the winter? Then it won’t be as intense, but it could last awhile, even over years, similar to “The Blob.” The study results advance the knowledge and understanding of marine heatwave seasonal dynamics in the hotbed region of the Northeast Pacific. The methods used in this study could potentially be applied elsewhere to better understand the dynamics in other regions. With improved understanding of the seasonal heatwave drivers in the Northeast Pacific from this and future studies, prediction of marine heatwaves through improved models and tools can give communities and industries more time to prepare for these extreme events, potentially reducing the amount of harm caused. What about now? In a blog post accompanying the study, Xu applied the findings to current ocean conditions: This spring we watched a North Pacific meridional mode-like pattern unfold, with ocean warming extending from California toward the central tropics and reaching marine heatwave conditions. Historically, this is a classic early-warning signal for El Niño development. Our CS-LIM initialized from Spring 2026 conditions also points toward El Niño development in Winter 2026/27, with characteristics resembling a Central Pacific event. If that happens, we might expect some warming in the Gulf of Alaska. However, because Winter 2025/26 did not produce substantial warm anomalies in that region, there is little subsurface heat storage to ‘reemerge’, without which the surface warming may not be too extreme. Alternatively, in a rarer situation that an Eastern Pacific El Niño develops, we might not see open ocean heatwaves in the broader Northeast Pacific at all. Back to PSL News Bold denotes PSL-affiliated author Tongtong Xu, PSL/CIRES | Bio Matthew Newman, PSL | Bio Sang-Ik Shin, PSL/CIRES | Bio Antonietta Capotondi, PSL/CIRES | Bio Daniel Vimont, University of Wisconsin-Madison | Bio Michael Alexander, PSL Emanuele Di Lorenzo, Brown University | Bio PSL has an experimental Marine Heatwave Forecast tool that helps researchers visualize current and future ocean temperatures that are or could develop into a marine heatwave. Behind the paper blog: Northeast Pacific marine heatwaves, why do we care and what did we find? by Tongtong Xu NOAA Research News - In hot water: exploring marine heatwaves PSL Resource: Marine Heatwaves and Forecast Tool\", \"repair_errors\": []}"
+              }
+            ],
+            "response_format": {
+              "type": "json_object"
+            },
+            "max_completion_tokens": 16384
+          },
+          "request_status": "rate_limited",
+          "http_status": 429,
+          "error_type": "RateLimitError",
+          "error_code": "rate_limit_exceeded",
+          "error_body": {
+            "message": "Rate limit reached for model `openai/gpt-oss-120b` in organization `[REDACTED_ORG]` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 7980, Requested 3258. Please try again in 24.285s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing",
+            "type": "tokens",
+            "code": "rate_limit_exceeded"
+          },
+          "rate_limit_headers": {
+            "retry-after": "25",
+            "x-ratelimit-limit-requests": "1000",
+            "x-ratelimit-limit-tokens": "8000",
+            "x-ratelimit-remaining-requests": "999",
+            "x-ratelimit-remaining-tokens": "20",
+            "x-ratelimit-reset-requests": "1m26.4s",
+            "x-ratelimit-reset-tokens": "59.85s"
+          },
+          "provider_attempts": [
+            {
+              "route_reason": "groq_primary",
+              "provider": "groq",
+              "model": "openai/gpt-oss-120b",
+              "cache_hit": false,
+              "ok": false,
+              "cost_usd": "unknown",
+              "error": "RateLimitError",
+              "http_status": 429,
+              "exception_type": "RateLimitError",
+              "error_type": "tokens",
+              "error_code": "rate_limit_exceeded",
+              "error_body": {
+                "message": "Rate limit reached for model `openai/gpt-oss-120b` in organization `[REDACTED_ORG]` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 7980, Requested 3258. Please try again in 24.285s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing",
+                "type": "tokens",
+                "code": "rate_limit_exceeded"
+              },
+              "error_body_available": true,
+              "rate_limit_headers": {
+                "retry-after": "25",
+                "x-ratelimit-limit-requests": "1000",
+                "x-ratelimit-limit-tokens": "8000",
+                "x-ratelimit-remaining-requests": "999",
+                "x-ratelimit-remaining-tokens": "20",
+                "x-ratelimit-reset-requests": "1m26.4s",
+                "x-ratelimit-reset-tokens": "59.85s"
+              },
+              "request_parameters": {
+                "model": "openai/gpt-oss-120b",
+                "temperature": 0.0,
+                "messages": [
+                  {
+                    "role": "system",
+                    "content": "Follow the YAML specification below when answering.\n\ninstructions: 'Prompt version: article-claims-v2.\n\n\n  You extract atomic claims from one article so a person can fact-check them later.\n  You do not search, and you do not assign a verdict.\n\n\n  Return only JSON:\n\n  {\"claims\":[{\"id\":\"c1\",\"source_quote\":\"exact substring of the article\",\"normalized_claim\":\"one\n  standalone claim\",\"category\":\"checkable_fact|opinion|prediction|needs_context\",\"missing_context\":[],\"verification_scope\":\"external_fact|document_content|text_analysis\"}]}\n\n\n  Rules:\n\n  - source_quote must be copied character for character from the article. Do not fix\n  spelling, and do not join text from two places.\n\n  - Split a sentence that states two independent facts into two claims. Each quote\n  must still be an exact substring.\n\n  - Keep limiters in normalized_claim: some, all, only, may, as of a date, a named\n  exam, a team, a tier, or a price category.\n\n  - Preserve the source quote''s asserted meaning in normalized_claim: keep its subject,\n  action, polarity, tense, certainty, time, quantities, and scope. Do not weaken a\n  forecast into a present fact, strengthen a possibility into certainty, reverse a\n  negation, or omit a limiting phrase. If a faithful normalization is unclear, use\n  the source wording and explain the missing context.\n\n  - Extract statements about the limits of current knowledge as claims too. Phrases\n  such as \"unknown,\" \"unclear,\" \"not known,\" or \"no data\" assert a state of knowledge;\n  do not omit them or turn them into a claim that an event or object did not exist.\n  Preserve whose knowledge is limited, which aspect is unknown, and any stated time\n  or scope.\n\n  - Do not add ordinal or superlative limits such as “first,” “earliest,” or “only”\n  unless the quote or one clear context explicitly states them. Never turn an unordered\n  event into a first event.\n\n  - In normalized_claim, resolve a pronoun or demonstrative such as \"it\", \"they\",\n  \"these actions\", \"that exam\", \"the same report\", \"the paper\", or \"that date\" from\n  the article context only when there is one clear antecedent. Preserve the source\n  quote exactly. If the antecedent is ambiguous or absent, keep the claim cautious\n  and list the missing referent in missing_context; never guess.\n\n  - Do not replace a claim with a neighboring sentence while resolving context. The\n  normalized claim must preserve the source quote''s subject, predicate, numbers,\n  and direction. If the quote is \"These actions allowed X to flourish\", do not turn\n  it into a claim about how a release was licensed. Keep the causal assertion and\n  list any unclear action, concrete outcome or measure, and causal basis in missing_context.\n\n  - For causal language such as \"caused\", \"allowed\", \"enabled\", \"led to\", or \"resulted\n  in\", check whether the article names the action, outcome, and a concrete indicator.\n  Vague outcomes such as \"flourish\" or \"improve\" need the missing object or measure\n  and evidence for the causal link listed in missing_context. Do not treat temporal\n  order alone as causal proof.\n\n  - When a claim reports that headlines or another speaker described a gain, improvement,\n  score, or other result with a comparison, preserve that attribution and identify\n  the result or measure being described. If the article does not make the referent\n  clear, include it in missing_context instead of guessing.\n\n  - If the article attributes the statement, keep that attribution in source_quote\n  and in normalized_claim. Phrases to keep include \"the report says\", \"the authors\n  add\", \"according to\", \"I think\", and \"headlines called\". Do not turn an attributed\n  statement into a bare fact.\n\n  - Keep a statement''s existing speaker, source, role, and attribution verb when\n  the article supplies them. If the attribution is outside quotation marks or is carried\n  by a clearly connected continuation, make source_quote one exact contiguous substring\n  that includes the statement and enough attribution context; keep the same attribution\n  in normalized_claim. Do not infer a speaker or source when the article leaves it\n  unclear.\n\n  - Do not extend an attribution across \"and\". \"The report says A, and B\" supports\n  \"The report says A\". It does not support \"The report says B\". Leave B as its own\n  claim without that attribution.\n\n  - Preserve semantic relationships between the subject, action, object, and any necessary\n  participants. Keep stated spatial and directional relationships (for example, which\n  place or object is inside, beside, connected to, or leads to another), as well as\n  causal direction. When splitting independent facts, make each claim''s quote and\n  normalization retain the relationship needed to understand that fact; do not keep\n  only a measurement or outcome while dropping the action or connection that gives\n  it meaning.\n\n  - Preserve appositive definitions and relationships that identify a place or entity,\n  likelihood qualifiers such as \"rarer\", \"alternatively\", and \"usually\", and qualifications\n  about a speaker''s role or independence. A quote must begin at a sentence or clause\n  boundary that retains these qualifiers. For a continued quotation, carry the speaker\n  only when the article makes the continuation explicit in the same paragraph; otherwise\n  list the missing speaker in missing_context without guessing.\n\n  - Include checkable method, data, and sample facts, including data spans, sample\n  sizes, and model inputs when stated. Keep each as a source-grounded claim; do not\n  add details the article does not state.\n\n  - A price claim needs the named product or service being billed. Fill that name\n  only when the price clause in the article states it. If it does not, list the missing\n  product or service in missing_context. Do not borrow a name from the other half\n  of an \"and\" sentence.\n\n  - missing_context names a gap in what that claim asserts. A claim that headlines\n  used a phrase needs the headline, not proof that the phrase''s comparison is true.\n\n  - verification_scope is document_content when the claim is about what one resolved\n  document says, lists, does not say, or does not report. It is text_analysis when\n  the sentence classifies another line as a forecast, preference, or opinion. Otherwise\n  it is external_fact.\n\n  - If a sentence says a line is a forecast or a preference, and then says it is not\n  in the report, return those as two claims.\n\n  - \"on purpose\", \"deliberately\", and \"meant to\" are intention, not opinion. \"I think\",\n  \"best\", and \"worst\" are opinion.\n\n  - Do not guess which document a pronoun or \"the document\" names. Leave it unresolved\n  when more than one document is possible.\n\n  - checkable_fact: a statement about a date, number, name, price, policy, or result\n  that could be checked against a source.\n\n  - opinion: the writer''s evaluation. Do not call it a fact.\n\n  - prediction: a claim about the future. Do not call it a fact.\n\n  - needs_context: use this category only when the claim''s own subject, date, or\n  baseline is missing. Name that gap in missing_context.\n\n  - Do not drop a checkable fact because it is narrow. Do not invent claims that the\n  article does not state.\n\n\n  If repair_errors is not empty, the previous quotes failed those checks. Return a\n  full replacement whose source_quote values occur in the article.\n\n  '\n"
+                  },
+                  {
+                    "role": "user",
+                    "content": "{\"article\": \"Severity and persistence of Northeast Pacific marine heatwaves vary by season, new PSL research shows Posted: July 28, 2026 Some of the largest, longest, and most intense marine heatwaves on record have occurred in the Northeast Pacific Ocean, the open ocean area from California to Alaska which most notably experienced “ The Blob ” marine heatwave that started in late 2013 and lasted a little over two years. A marine heatwave occurs when the ocean’s near-surface waters are unusually warm for days to months. These elevated temperatures can have devastating impacts on the marine ecosystem, blue economy , and coastal communities. Because of these negative effects, better understanding of what makes marine heatwaves in this region tick from season to season is key to improving their prediction. Tongtong Xu of the NOAA Physical Sciences Laboratory and the Cooperative Institute for Research In Environmental Sciences ( CIRES ) at CU Boulder has studied Northeast Pacific marine heatwaves for years. Building off of her previous work, Xu wanted to understand how marine heatwaves in this region responded to tropical dynamics versus local ocean processes, particularly from season to season. The question Marine heatwaves result from a number of different drivers. Globally, one major driver is ENSO , the El Niño Southern Oscillation. This large climate pattern of warm (El Niño) and cool (La Niña) ocean temperature in the tropical Pacific follows a seasonal timeline, usually starting in the spring and peaking in the winter. It additionally has “flavors” - sometimes happening in the central Pacific and sometimes farther east along the equator. More locally, the Northeast Pacific also has an “ocean memory” through a process called \\\"reemergence.\\\" In the winter, the ocean mixes deeply and warm surface water gets pushed down deep where it can get trapped during the summer months. As winter returns, the ocean begins to mix again, bringing the trapped warm water back to the surface and reestablishing the warmer conditions. Xu and her colleagues wondered to what extent tropical ENSO dynamics versus local reemergence and internal ocean processes determine the type of marine heatwave in the Northeast Pacific. The result is their study published recently in Communications Earth & Environment . The approach The historical record itself has provided relatively few marine heatwaves. To discover how marine heatwaves behave in different seasons, the team needed more marine heatwaves to study. The authors turned to an emulator based on a Cyclostationary Linear Inverse Model (CS-LIM) to generate hypothetical marine heatwaves. A CS-LIM is a data-driven model that uses real-world observations to simulate global conditions over different time periods. In this case, the researchers’ CS-LIM used 64 years of real-world sea surface temperature and height data. Using their specific CS-LIM, the researchers generated thousands of “synthetic” marine heatwaves, creating a large sample by which they could better analyze how marine heatwaves starting in one season evolve differently than those starting in another, and what potentially influenced them. The CS-LIM generated simulations spanning the Pacific Ocean so that researchers could analyze ENSO while also looking at the Northeast Pacific local patterns that would indicate the presence of processes such as reemergence. Why was this approach different? A CS-LIM specifically factors in seasons, whereas a traditional LIM, known as a Stationary Linear Inverse Model, assumes background conditions are constant throughout the year. The results The researchers found that different regions of the Northeast Pacific respond to the different ENSO “flavors.” For example, an El Niño in the Central Pacific can help trigger a marine heatwave in the Gulf of Alaska, while a La Niña in the Eastern Pacific can contribute to one in the Central North Pacific. Apart from ENSO influence, local processes such as “ocean memory” reemergence also play a role in generating warm ocean conditions. Marine heatwaves that start in the winter last longer due to the combination of ENSO impact and the reemergence process, which gives the heatwave staying power. Ones that start in the summer can be much more intense, but they generally end quickly. The impact The study highlighted the importance of the season and the heat hiding below the surface when predicting marine heatwaves. Is it starting in the summer? If so, there is a good chance it will be hotter but fade quickly. Starting in the winter? Then it won’t be as intense, but it could last awhile, even over years, similar to “The Blob.” The study results advance the knowledge and understanding of marine heatwave seasonal dynamics in the hotbed region of the Northeast Pacific. The methods used in this study could potentially be applied elsewhere to better understand the dynamics in other regions. With improved understanding of the seasonal heatwave drivers in the Northeast Pacific from this and future studies, prediction of marine heatwaves through improved models and tools can give communities and industries more time to prepare for these extreme events, potentially reducing the amount of harm caused. What about now? In a blog post accompanying the study, Xu applied the findings to current ocean conditions: This spring we watched a North Pacific meridional mode-like pattern unfold, with ocean warming extending from California toward the central tropics and reaching marine heatwave conditions. Historically, this is a classic early-warning signal for El Niño development. Our CS-LIM initialized from Spring 2026 conditions also points toward El Niño development in Winter 2026/27, with characteristics resembling a Central Pacific event. If that happens, we might expect some warming in the Gulf of Alaska. However, because Winter 2025/26 did not produce substantial warm anomalies in that region, there is little subsurface heat storage to ‘reemerge’, without which the surface warming may not be too extreme. Alternatively, in a rarer situation that an Eastern Pacific El Niño develops, we might not see open ocean heatwaves in the broader Northeast Pacific at all. Back to PSL News Bold denotes PSL-affiliated author Tongtong Xu, PSL/CIRES | Bio Matthew Newman, PSL | Bio Sang-Ik Shin, PSL/CIRES | Bio Antonietta Capotondi, PSL/CIRES | Bio Daniel Vimont, University of Wisconsin-Madison | Bio Michael Alexander, PSL Emanuele Di Lorenzo, Brown University | Bio PSL has an experimental Marine Heatwave Forecast tool that helps researchers visualize current and future ocean temperatures that are or could develop into a marine heatwave. Behind the paper blog: Northeast Pacific marine heatwaves, why do we care and what did we find? by Tongtong Xu NOAA Research News - In hot water: exploring marine heatwaves PSL Resource: Marine Heatwaves and Forecast Tool\", \"repair_errors\": []}"
+                  }
+                ],
+                "response_format": {
+                  "type": "json_object"
+                },
+                "max_completion_tokens": 16384
+              }
+            }
+          ],
+          "error": "Model request failed. groq openai/gpt-oss-120b: RateLimitError The fixed_rules baseline was not substituted."
+        },
+        {
+          "sequence": 2,
+          "started_at": "2026-11-19T08:52:10.031494+00:00",
+          "request_parameters": {
+            "model": "openai/gpt-oss-120b",
+            "temperature": 0.0,
+            "messages": [
+              {
+                "role": "system",
+                "content": "Follow the YAML specification below when answering.\n\ninstructions: 'Prompt version: article-claims-v2.\n\n\n  You extract atomic claims from one article so a person can fact-check them later.\n  You do not search, and you do not assign a verdict.\n\n\n  Return only JSON:\n\n  {\"claims\":[{\"id\":\"c1\",\"source_quote\":\"exact substring of the article\",\"normalized_claim\":\"one\n  standalone claim\",\"category\":\"checkable_fact|opinion|prediction|needs_context\",\"missing_context\":[],\"verification_scope\":\"external_fact|document_content|text_analysis\"}]}\n\n\n  Rules:\n\n  - source_quote must be copied character for character from the article. Do not fix\n  spelling, and do not join text from two places.\n\n  - Split a sentence that states two independent facts into two claims. Each quote\n  must still be an exact substring.\n\n  - Keep limiters in normalized_claim: some, all, only, may, as of a date, a named\n  exam, a team, a tier, or a price category.\n\n  - Preserve the source quote''s asserted meaning in normalized_claim: keep its subject,\n  action, polarity, tense, certainty, time, quantities, and scope. Do not weaken a\n  forecast into a present fact, strengthen a possibility into certainty, reverse a\n  negation, or omit a limiting phrase. If a faithful normalization is unclear, use\n  the source wording and explain the missing context.\n\n  - Extract statements about the limits of current knowledge as claims too. Phrases\n  such as \"unknown,\" \"unclear,\" \"not known,\" or \"no data\" assert a state of knowledge;\n  do not omit them or turn them into a claim that an event or object did not exist.\n  Preserve whose knowledge is limited, which aspect is unknown, and any stated time\n  or scope.\n\n  - Do not add ordinal or superlative limits such as “first,” “earliest,” or “only”\n  unless the quote or one clear context explicitly states them. Never turn an unordered\n  event into a first event.\n\n  - In normalized_claim, resolve a pronoun or demonstrative such as \"it\", \"they\",\n  \"these actions\", \"that exam\", \"the same report\", \"the paper\", or \"that date\" from\n  the article context only when there is one clear antecedent. Preserve the source\n  quote exactly. If the antecedent is ambiguous or absent, keep the claim cautious\n  and list the missing referent in missing_context; never guess.\n\n  - Do not replace a claim with a neighboring sentence while resolving context. The\n  normalized claim must preserve the source quote''s subject, predicate, numbers,\n  and direction. If the quote is \"These actions allowed X to flourish\", do not turn\n  it into a claim about how a release was licensed. Keep the causal assertion and\n  list any unclear action, concrete outcome or measure, and causal basis in missing_context.\n\n  - For causal language such as \"caused\", \"allowed\", \"enabled\", \"led to\", or \"resulted\n  in\", check whether the article names the action, outcome, and a concrete indicator.\n  Vague outcomes such as \"flourish\" or \"improve\" need the missing object or measure\n  and evidence for the causal link listed in missing_context. Do not treat temporal\n  order alone as causal proof.\n\n  - When a claim reports that headlines or another speaker described a gain, improvement,\n  score, or other result with a comparison, preserve that attribution and identify\n  the result or measure being described. If the article does not make the referent\n  clear, include it in missing_context instead of guessing.\n\n  - If the article attributes the statement, keep that attribution in source_quote\n  and in normalized_claim. Phrases to keep include \"the report says\", \"the authors\n  add\", \"according to\", \"I think\", and \"headlines called\". Do not turn an attributed\n  statement into a bare fact.\n\n  - Keep a statement''s existing speaker, source, role, and attribution verb when\n  the article supplies them. If the attribution is outside quotation marks or is carried\n  by a clearly connected continuation, make source_quote one exact contiguous substring\n  that includes the statement and enough attribution context; keep the same attribution\n  in normalized_claim. Do not infer a speaker or source when the article leaves it\n  unclear.\n\n  - Do not extend an attribution across \"and\". \"The report says A, and B\" supports\n  \"The report says A\". It does not support \"The report says B\". Leave B as its own\n  claim without that attribution.\n\n  - Preserve semantic relationships between the subject, action, object, and any necessary\n  participants. Keep stated spatial and directional relationships (for example, which\n  place or object is inside, beside, connected to, or leads to another), as well as\n  causal direction. When splitting independent facts, make each claim''s quote and\n  normalization retain the relationship needed to understand that fact; do not keep\n  only a measurement or outcome while dropping the action or connection that gives\n  it meaning.\n\n  - Preserve appositive definitions and relationships that identify a place or entity,\n  likelihood qualifiers such as \"rarer\", \"alternatively\", and \"usually\", and qualifications\n  about a speaker''s role or independence. A quote must begin at a sentence or clause\n  boundary that retains these qualifiers. For a continued quotation, carry the speaker\n  only when the article makes the continuation explicit in the same paragraph; otherwise\n  list the missing speaker in missing_context without guessing.\n\n  - Include checkable method, data, and sample facts, including data spans, sample\n  sizes, and model inputs when stated. Keep each as a source-grounded claim; do not\n  add details the article does not state.\n\n  - A price claim needs the named product or service being billed. Fill that name\n  only when the price clause in the article states it. If it does not, list the missing\n  product or service in missing_context. Do not borrow a name from the other half\n  of an \"and\" sentence.\n\n  - missing_context names a gap in what that claim asserts. A claim that headlines\n  used a phrase needs the headline, not proof that the phrase''s comparison is true.\n\n  - verification_scope is document_content when the claim is about what one resolved\n  document says, lists, does not say, or does not report. It is text_analysis when\n  the sentence classifies another line as a forecast, preference, or opinion. Otherwise\n  it is external_fact.\n\n  - If a sentence says a line is a forecast or a preference, and then says it is not\n  in the report, return those as two claims.\n\n  - \"on purpose\", \"deliberately\", and \"meant to\" are intention, not opinion. \"I think\",\n  \"best\", and \"worst\" are opinion.\n\n  - Do not guess which document a pronoun or \"the document\" names. Leave it unresolved\n  when more than one document is possible.\n\n  - checkable_fact: a statement about a date, number, name, price, policy, or result\n  that could be checked against a source.\n\n  - opinion: the writer''s evaluation. Do not call it a fact.\n\n  - prediction: a claim about the future. Do not call it a fact.\n\n  - needs_context: use this category only when the claim''s own subject, date, or\n  baseline is missing. Name that gap in missing_context.\n\n  - Do not drop a checkable fact because it is narrow. Do not invent claims that the\n  article does not state.\n\n\n  If repair_errors is not empty, the previous quotes failed those checks. Return a\n  full replacement whose source_quote values occur in the article.\n\n  '\n"
+              },
+              {
+                "role": "user",
+                "content": "{\"article\": \"Severity and persistence of Northeast Pacific marine heatwaves vary by season, new PSL research shows Posted: July 28, 2026 Some of the largest, longest, and most intense marine heatwaves on record have occurred in the Northeast Pacific Ocean, the open ocean area from California to Alaska which most notably experienced “ The Blob ” marine heatwave that started in late 2013 and lasted a little over two years. A marine heatwave occurs when the ocean’s near-surface waters are unusually warm for days to months. These elevated temperatures can have devastating impacts on the marine ecosystem, blue economy , and coastal communities. Because of these negative effects, better understanding of what makes marine heatwaves in this region tick from season to season is key to improving their prediction. Tongtong Xu of the NOAA Physical Sciences Laboratory and the Cooperative Institute for Research In Environmental Sciences ( CIRES ) at CU Boulder has studied Northeast Pacific marine heatwaves for years. Building off of her previous work, Xu wanted to understand how marine heatwaves in this region responded to tropical dynamics versus local ocean processes, particularly from season to season. The question Marine heatwaves result from a number of different drivers. Globally, one major driver is ENSO , the El Niño Southern Oscillation. This large climate pattern of warm (El Niño) and cool (La Niña) ocean temperature in the tropical Pacific follows a seasonal timeline, usually starting in the spring and peaking in the winter. It additionally has “flavors” - sometimes happening in the central Pacific and sometimes farther east along the equator. More locally, the Northeast Pacific also has an “ocean memory” through a process called \\\"reemergence.\\\" In the winter, the ocean mixes deeply and warm surface water gets pushed down deep where it can get trapped during the summer months. As winter returns, the ocean begins to mix again, bringing the trapped warm water back to the surface and reestablishing the warmer conditions. Xu and her colleagues wondered to what extent tropical ENSO dynamics versus local reemergence and internal ocean processes determine the type of marine heatwave in the Northeast Pacific. The result is their study published recently in Communications Earth & Environment . The approach The historical record itself has provided relatively few marine heatwaves. To discover how marine heatwaves behave in different seasons, the team needed more marine heatwaves to study. The authors turned to an emulator based on a Cyclostationary Linear Inverse Model (CS-LIM) to generate hypothetical marine heatwaves. A CS-LIM is a data-driven model that uses real-world observations to simulate global conditions over different time periods. In this case, the researchers’ CS-LIM used 64 years of real-world sea surface temperature and height data. Using their specific CS-LIM, the researchers generated thousands of “synthetic” marine heatwaves, creating a large sample by which they could better analyze how marine heatwaves starting in one season evolve differently than those starting in another, and what potentially influenced them. The CS-LIM generated simulations spanning the Pacific Ocean so that researchers could analyze ENSO while also looking at the Northeast Pacific local patterns that would indicate the presence of processes such as reemergence. Why was this approach different? A CS-LIM specifically factors in seasons, whereas a traditional LIM, known as a Stationary Linear Inverse Model, assumes background conditions are constant throughout the year. The results The researchers found that different regions of the Northeast Pacific respond to the different ENSO “flavors.” For example, an El Niño in the Central Pacific can help trigger a marine heatwave in the Gulf of Alaska, while a La Niña in the Eastern Pacific can contribute to one in the Central North Pacific. Apart from ENSO influence, local processes such as “ocean memory” reemergence also play a role in generating warm ocean conditions. Marine heatwaves that start in the winter last longer due to the combination of ENSO impact and the reemergence process, which gives the heatwave staying power. Ones that start in the summer can be much more intense, but they generally end quickly. The impact The study highlighted the importance of the season and the heat hiding below the surface when predicting marine heatwaves. Is it starting in the summer? If so, there is a good chance it will be hotter but fade quickly. Starting in the winter? Then it won’t be as intense, but it could last awhile, even over years, similar to “The Blob.” The study results advance the knowledge and understanding of marine heatwave seasonal dynamics in the hotbed region of the Northeast Pacific. The methods used in this study could potentially be applied elsewhere to better understand the dynamics in other regions. With improved understanding of the seasonal heatwave drivers in the Northeast Pacific from this and future studies, prediction of marine heatwaves through improved models and tools can give communities and industries more time to prepare for these extreme events, potentially reducing the amount of harm caused. What about now? In a blog post accompanying the study, Xu applied the findings to current ocean conditions: This spring we watched a North Pacific meridional mode-like pattern unfold, with ocean warming extending from California toward the central tropics and reaching marine heatwave conditions. Historically, this is a classic early-warning signal for El Niño development. Our CS-LIM initialized from Spring 2026 conditions also points toward El Niño development in Winter 2026/27, with characteristics resembling a Central Pacific event. If that happens, we might expect some warming in the Gulf of Alaska. However, because Winter 2025/26 did not produce substantial warm anomalies in that region, there is little subsurface heat storage to ‘reemerge’, without which the surface warming may not be too extreme. Alternatively, in a rarer situation that an Eastern Pacific El Niño develops, we might not see open ocean heatwaves in the broader Northeast Pacific at all. Back to PSL News Bold denotes PSL-affiliated author Tongtong Xu, PSL/CIRES | Bio Matthew Newman, PSL | Bio Sang-Ik Shin, PSL/CIRES | Bio Antonietta Capotondi, PSL/CIRES | Bio Daniel Vimont, University of Wisconsin-Madison | Bio Michael Alexander, PSL Emanuele Di Lorenzo, Brown University | Bio PSL has an experimental Marine Heatwave Forecast tool that helps researchers visualize current and future ocean temperatures that are or could develop into a marine heatwave. Behind the paper blog: Northeast Pacific marine heatwaves, why do we care and what did we find? by Tongtong Xu NOAA Research News - In hot water: exploring marine heatwaves PSL Resource: Marine Heatwaves and Forecast Tool\", \"repair_errors\": []}"
+              }
+            ],
+            "response_format": {
+              "type": "json_object"
+            },
+            "max_completion_tokens": 16384
+          },
+          "request_status": "completed",
+          "http_status": 200,
+          "served_model": "openai/gpt-oss-120b",
+          "finish_reason": "stop",
+          "usage": {
+            "queue_time": 0.228950521,
+            "prompt_time": 0.250057845,
+            "completion_time": 20.116789804,
+            "total_time": 20.366847649,
+            "completion_tokens": 9602,
+            "prompt_tokens": 3092,
+            "total_tokens": 12694,
+            "completion_tokens_details": {
+              "accepted_prediction_tokens": null,
+              "audio_tokens": null,
+              "reasoning_tokens": 6978,
+              "rejected_prediction_tokens": null,
+              "text_tokens": null
+            },
+            "prompt_tokens_details": null
+          },
+          "rate_limit_headers": {
+            "x-ratelimit-limit-requests": "1000",
+            "x-ratelimit-limit-tokens": "8000",
+            "x-ratelimit-remaining-requests": "999",
+            "x-ratelimit-remaining-tokens": "4683",
+            "x-ratelimit-reset-requests": "1m26.4s",
+            "x-ratelimit-reset-tokens": "24.877s"
+          },
+          "cost_usd": "unknown",
+          "elapsed_seconds": 21.097778957919218,
+          "raw_reply_chars": 13174,
+          "raw_reply_file": "after/prompt-v2-16384/20261119T084848.429760Z/raw/heatwave-attempt-2.txt",
+          "parse_status": "parsed",
+          "parsed_items": 35,
+          "accepted_items": 34,
+          "rejected_items": 1,
+          "rejection_reasons": [
+            "source_quote is not in the article"
+          ]
+        }
+      ],
+      "accepted_claims": [
+        {
+          "source_quote": "Some of the largest, longest, and most intense marine heatwaves on record have occurred in the Northeast Pacific Ocean",
+          "source_ranges": [
+            [
+              124,
+              242
+            ]
+          ],
+          "normalized_claim": "Some of the largest, longest, and most intense marine heatwaves on record have occurred in the Northeast Pacific Ocean",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": [
+            "引文从句中开始，可能省略了该句前面的限定或分句"
+          ]
+        },
+        {
+          "source_quote": "The Blob ” marine heatwave that started in late 2013 and lasted a little over two years",
+          "source_ranges": [
+            [
+              323,
+              410
+            ]
+          ],
+          "normalized_claim": "The Blob marine heatwave started in late 2013 and lasted a little over two years",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": [
+            "引文从句中开始，可能省略了该句前面的限定或分句"
+          ]
+        },
+        {
+          "source_quote": "A marine heatwave occurs when the ocean’s near-surface waters are unusually warm for days to months",
+          "source_ranges": [
+            [
+              412,
+              511
+            ]
+          ],
+          "normalized_claim": "A marine heatwave occurs when the ocean’s near-surface waters are unusually warm for days to months",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "These elevated temperatures can have devastating impacts on the marine ecosystem, blue economy , and coastal communities",
+          "source_ranges": [
+            [
+              513,
+              633
+            ]
+          ],
+          "normalized_claim": "These elevated temperatures can have devastating impacts on the marine ecosystem, blue economy, and coastal communities",
+          "fact_type": "opinion",
+          "category": "opinion",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "opinion is not given a factual check",
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Tongtong Xu of the NOAA Physical Sciences Laboratory and the Cooperative Institute for Research In Environmental Sciences ( CIRES ) at CU Boulder has studied Northeast Pacific marine heatwaves for years",
+          "source_ranges": [
+            [
+              802,
+              1004
+            ]
+          ],
+          "normalized_claim": "Tongtong Xu of the NOAA Physical Sciences Laboratory and the Cooperative Institute for Research In Environmental Sciences (CIRES) at CU Boulder has studied Northeast Pacific marine heatwaves for years",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Globally, one major driver is ENSO , the El Niño Southern Oscillation",
+          "source_ranges": [
+            [
+              1271,
+              1340
+            ]
+          ],
+          "normalized_claim": "Globally, one major driver of marine heatwaves is ENSO, the El Niño Southern Oscillation",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "This large climate pattern of warm (El Niño) and cool (La Niña) ocean temperature in the tropical Pacific follows a seasonal timeline, usually starting in the spring and peaking in the winter",
+          "source_ranges": [
+            [
+              1342,
+              1533
+            ]
+          ],
+          "normalized_claim": "ENSO follows a seasonal timeline, usually starting in the spring and peaking in the winter",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "It additionally has “flavors” - sometimes happening in the central Pacific and sometimes farther east along the equator",
+          "source_ranges": [
+            [
+              1535,
+              1654
+            ]
+          ],
+          "normalized_claim": "ENSO has “flavors” – sometimes happening in the central Pacific and sometimes farther east along the equator",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "document_content",
+          "status": "needs_context",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [
+            "which document is referred to"
+          ],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "More locally, the Northeast Pacific also has an “ocean memory” through a process called \"reemergence.\"",
+          "source_ranges": [
+            [
+              1656,
+              1758
+            ]
+          ],
+          "normalized_claim": "The Northeast Pacific has an “ocean memory” process called reemergence",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "In the winter, the ocean mixes deeply and warm surface water gets pushed down deep where it can get trapped during the summer months",
+          "source_ranges": [
+            [
+              1759,
+              1891
+            ]
+          ],
+          "normalized_claim": "In the winter, the ocean mixes deeply and warm surface water gets pushed down deep where it can get trapped during the summer months",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "As winter returns, the ocean begins to mix again, bringing the trapped warm water back to the surface and reestablishing the warmer conditions",
+          "source_ranges": [
+            [
+              1893,
+              2035
+            ]
+          ],
+          "normalized_claim": "As winter returns, the ocean begins to mix again, bringing the trapped warm water back to the surface and reestablishing the warmer conditions",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "their study published recently in Communications Earth & Environment",
+          "source_ranges": [
+            [
+              2238,
+              2306
+            ]
+          ],
+          "normalized_claim": "Their study was published recently in Communications Earth & Environment",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": [
+            "引文从句中开始，可能省略了该句前面的限定或分句"
+          ]
+        },
+        {
+          "source_quote": "The historical record itself has provided relatively few marine heatwaves",
+          "source_ranges": [
+            [
+              2322,
+              2395
+            ]
+          ],
+          "normalized_claim": "The historical record itself has provided relatively few marine heatwaves",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": [
+            "引文从句中开始，可能省略了该句前面的限定或分句"
+          ]
+        },
+        {
+          "source_quote": "The authors turned to an emulator based on a Cyclostationary Linear Inverse Model (CS-LIM) to generate hypothetical marine heatwaves",
+          "source_ranges": [
+            [
+              2507,
+              2639
+            ]
+          ],
+          "normalized_claim": "The authors turned to an emulator based on a Cyclostationary Linear Inverse Model (CS-LIM) to generate hypothetical marine heatwaves",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "A CS-LIM is a data-driven model that uses real-world observations to simulate global conditions over different time periods",
+          "source_ranges": [
+            [
+              2641,
+              2764
+            ]
+          ],
+          "normalized_claim": "A CS-LIM is a data-driven model that uses real-world observations to simulate global conditions over different time periods",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "In this case, the researchers’ CS-LIM used 64 years of real-world sea surface temperature and height data",
+          "source_ranges": [
+            [
+              2766,
+              2871
+            ]
+          ],
+          "normalized_claim": "In this case, the researchers’ CS-LIM used 64 years of real-world sea surface temperature and height data",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Using their specific CS-LIM, the researchers generated thousands of “synthetic” marine heatwaves",
+          "source_ranges": [
+            [
+              2873,
+              2969
+            ]
+          ],
+          "normalized_claim": "Using their specific CS-LIM, the researchers generated thousands of synthetic marine heatwaves",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "A CS-LIM specifically factors in seasons, whereas a traditional LIM, known as a Stationary Linear Inverse Model, assumes background conditions are constant throughout the year",
+          "source_ranges": [
+            [
+              3421,
+              3596
+            ]
+          ],
+          "normalized_claim": "A CS-LIM specifically factors in seasons, whereas a traditional LIM (Stationary Linear Inverse Model) assumes background conditions are constant throughout the year",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "while a La Niña in the Eastern Pacific can contribute to one in the Central North Pacific",
+          "source_ranges": [
+            [
+              3826,
+              3915
+            ]
+          ],
+          "normalized_claim": "A La Niña in the Eastern Pacific can contribute to a marine heatwave in the Central North Pacific",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": [
+            "引文从句中开始，可能省略了该句前面的限定或分句"
+          ]
+        },
+        {
+          "source_quote": "local processes such as “ocean memory” reemergence also play a role in generating warm ocean conditions",
+          "source_ranges": [
+            [
+              3944,
+              4047
+            ]
+          ],
+          "normalized_claim": "Local processes such as ocean‑memory reemergence also play a role in generating warm ocean conditions",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": [
+            "引文从句中开始，可能省略了该句前面的限定或分句"
+          ]
+        },
+        {
+          "source_quote": "Marine heatwaves that start in the winter last longer due to the combination of ENSO impact and the reemergence process, which gives the heatwave staying power",
+          "source_ranges": [
+            [
+              4049,
+              4208
+            ]
+          ],
+          "normalized_claim": "Marine heatwaves that start in the winter last longer due to the combination of ENSO impact and the reemergence process, which gives the heatwave staying power",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Ones that start in the summer can be much more intense, but they generally end quickly",
+          "source_ranges": [
+            [
+              4210,
+              4296
+            ]
+          ],
+          "normalized_claim": "Marine heatwaves that start in the summer can be much more intense, but they generally end quickly",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "If so, there is a good chance it will be hotter but fade quickly",
+          "source_ranges": [
+            [
+              4462,
+              4526
+            ]
+          ],
+          "normalized_claim": "If a marine heatwave starts in the summer, there is a good chance it will be hotter but fade quickly",
+          "fact_type": "prediction",
+          "category": "prediction",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "prediction is not given a factual check",
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Then it won’t be as intense, but it could last awhile, even over years, similar to “The Blob.”",
+          "source_ranges": [
+            [
+              4552,
+              4646
+            ]
+          ],
+          "normalized_claim": "If a marine heatwave starts in the winter, it won’t be as intense, but it could last awhile, even over years, similar to the Blob",
+          "fact_type": "prediction",
+          "category": "prediction",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "prediction is not given a factual check",
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "The methods used in this study could potentially be applied elsewhere to better understand the dynamics in other regions",
+          "source_ranges": [
+            [
+              4789,
+              4909
+            ]
+          ],
+          "normalized_claim": "The methods used in this study could potentially be applied elsewhere to better understand the dynamics in other regions",
+          "fact_type": "opinion",
+          "category": "opinion",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "opinion is not given a factual check",
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "With improved understanding of the seasonal heatwave drivers in the Northeast Pacific from this and future studies, prediction of marine heatwaves through improved models and tools can give communities and industries more time to prepare for these extreme events, potentially reducing the amount of harm caused",
+          "source_ranges": [
+            [
+              4911,
+              5221
+            ]
+          ],
+          "normalized_claim": "With improved understanding of the seasonal heatwave drivers in the Northeast Pacific from this and future studies, prediction of marine heatwaves through improved models and tools can give communities and industries more time to prepare for these extreme events, potentially reducing the amount of harm caused",
+          "fact_type": "prediction",
+          "category": "prediction",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "prediction is not given a factual check",
+          "document_ref": null,
+          "missing_context": [
+            "需要说明因果结果的具体对象或衡量指标",
+            "需要提供所述行动导致该结果的因果依据"
+          ],
+          "normalization_notes": [
+            "模型规范化改变了时态/确定程度，已回退为原文措辞"
+          ],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "This spring we watched a North Pacific meridional mode-like pattern unfold, with ocean warming extending from California toward the central tropics and reaching marine heatwave conditions",
+          "source_ranges": [
+            [
+              5331,
+              5518
+            ]
+          ],
+          "normalized_claim": "In spring 2026 a North Pacific meridional mode‑like pattern unfolded, with ocean warming extending from California toward the central tropics and reaching marine heatwave conditions",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": [
+            "引文从句中开始，可能省略了该句前面的限定或分句"
+          ]
+        },
+        {
+          "source_quote": "Historically, this is a classic early-warning signal for El Niño development",
+          "source_ranges": [
+            [
+              5520,
+              5596
+            ]
+          ],
+          "normalized_claim": "Historically, the observed pattern is a classic early‑warning signal for El Niño development",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Our CS-LIM initialized from Spring 2026 conditions also points toward El Niño development in Winter 2026/27, with characteristics resembling a Central Pacific event",
+          "source_ranges": [
+            [
+              5598,
+              5762
+            ]
+          ],
+          "normalized_claim": "The CS-LIM initialized from Spring 2026 conditions points toward El Niño development in Winter 2026/27, with characteristics resembling a Central Pacific event",
+          "fact_type": "prediction",
+          "category": "prediction",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "prediction is not given a factual check",
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "If that happens, we might expect some warming in the Gulf of Alaska",
+          "source_ranges": [
+            [
+              5764,
+              5831
+            ]
+          ],
+          "normalized_claim": "If the predicted El Niño develops, we might expect some warming in the Gulf of Alaska",
+          "fact_type": "prediction",
+          "category": "prediction",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "prediction is not given a factual check",
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": []
+        },
+        {
+          "source_quote": "Winter 2025/26 did not produce substantial warm anomalies in that region",
+          "source_ranges": [
+            [
+              5850,
+              5922
+            ]
+          ],
+          "normalized_claim": "Winter 2025/26 did not produce substantial warm anomalies in that region",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": [
+            "引文从句中开始，可能省略了该句前面的限定或分句"
+          ]
+        },
+        {
+          "source_quote": "there is little subsurface heat storage to ‘reemerge’, without which the surface warming may not be too extreme",
+          "source_ranges": [
+            [
+              5924,
+              6035
+            ]
+          ],
+          "normalized_claim": "There is little subsurface heat storage to reemerge, and without it the surface warming may not be too extreme",
+          "fact_type": "opinion",
+          "category": "opinion",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "opinion is not given a factual check",
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": [
+            "引文从句中开始，可能省略了该句前面的限定或分句"
+          ]
+        },
+        {
+          "source_quote": "in a rarer situation that an Eastern Pacific El Niño develops, we might not see open ocean heatwaves in the broader Northeast Pacific at all",
+          "source_ranges": [
+            [
+              6052,
+              6192
+            ]
+          ],
+          "normalized_claim": "If an Eastern Pacific El Niño develops, we might not see open‑ocean heatwaves in the broader Northeast Pacific at all",
+          "fact_type": "prediction",
+          "category": "prediction",
+          "verification_scope": "external_fact",
+          "status": "skipped",
+          "status_reason": "prediction is not given a factual check",
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": [
+            "引文从句中开始，可能省略了该句前面的限定或分句"
+          ]
+        },
+        {
+          "source_quote": "PSL has an experimental Marine Heatwave Forecast tool that helps researchers visualize current and future ocean temperatures that are or could develop into a marine heatwave",
+          "source_ranges": [
+            [
+              6489,
+              6662
+            ]
+          ],
+          "normalized_claim": "PSL has an experimental Marine Heatwave Forecast tool that helps researchers visualize current and future ocean temperatures that are or could develop into a marine heatwave",
+          "fact_type": "checkable_fact",
+          "category": "checkable_fact",
+          "verification_scope": "external_fact",
+          "status": "ready",
+          "status_reason": null,
+          "document_ref": null,
+          "missing_context": [],
+          "normalization_notes": [],
+          "extraction_notes": [
+            "引文从句中开始，可能省略了该句前面的限定或分句"
+          ]
+        }
+      ],
+      "rejected_claims": [
+        {
+          "claim": {
+            "id": "c19",
+            "source_quote": "An El Niño in the Central Pacific can help trigger a marine heatwave in the Gulf of Alaska",
+            "normalized_claim": "An El Niño in the Central Pacific can help trigger a marine heatwave in the Gulf of Alaska",
+            "category": "checkable_fact",
+            "missing_context": [],
+            "verification_scope": "external_fact"
+          },
+          "errors": [
+            "source_quote is not in the article"
+          ]
+        }
+      ],
+      "cache_reused": false,
+      "status": "completed",
+      "http_status": 200,
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "999",
+        "x-ratelimit-remaining-tokens": "4683",
+        "x-ratelimit-reset-requests": "1m26.4s",
+        "x-ratelimit-reset-tokens": "24.877s"
+      },
+      "error_type": "RateLimitError",
+      "error_code": "rate_limit_exceeded",
+      "error_body": {
+        "message": "Rate limit reached for model `openai/gpt-oss-120b` in organization `[REDACTED_ORG]` service tier `on_demand` on tokens per minute (TPM): Limit 8000, Used 7980, Requested 3258. Please try again in 24.285s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing",
+        "type": "tokens",
+        "code": "rate_limit_exceeded"
+      },
+      "error": "Model request failed. groq openai/gpt-oss-120b: RateLimitError The fixed_rules baseline was not substituted.",
+      "retry_after_seconds": 25.0,
+      "resume_not_before_utc": "2026-11-19T08:49:34.960581+00:00",
+      "served_model": "openai/gpt-oss-120b",
+      "finish_reason": "stop",
+      "usage": {
+        "queue_time": 0.228950521,
+        "prompt_time": 0.250057845,
+        "completion_time": 20.116789804,
+        "total_time": 20.366847649,
+        "completion_tokens": 9602,
+        "prompt_tokens": 3092,
+        "total_tokens": 12694,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 6978,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": null
+      },
+      "cost_usd": "unknown",
+      "elapsed_seconds": 21.097778957919218,
+      "raw_reply_chars": 13174,
+      "raw_reply_file": "after/prompt-v2-16384/20261119T084848.429760Z/raw/heatwave-attempt-2.txt",
+      "parsed_items": 35,
+      "accepted_items": 34,
+      "rejected_items": 1,
+      "parse_method": "articles._parse_extract; extract_claims._split exact-source-quote validation",
+      "rejection_reasons": [
+        "source_quote is not in the article"
+      ]
+    }
+  ],
+  "pending": [],
+  "completed_articles": 2,
+  "completion_rate": {
+    "completed": 2,
+    "total": 2
+  },
+  "aggregate_usage": {
+    "prompt_tokens": 5961,
+    "completion_tokens": 19367,
+    "total_tokens": 25328
+  },
+  "aggregate_elapsed_seconds": 42.486578916898,
+  "paused_article": "heatwave"
+}
