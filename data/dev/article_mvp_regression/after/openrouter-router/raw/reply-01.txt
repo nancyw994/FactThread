@@ -1,0 +1,95 @@
+Here's a thinking process:
+
+1.  **Analyze User Input:**
+   - **Article text:** "Apollo 11 landed the first humans on the Moon on July 20, 1969. The first Moon landing happened in 1972. Apollo 11 was humanity's greatest achievement. NASA will establish a permanent lunar base by 2030."
+   - **repair_errors:** [] (empty, so no error repair needed from previous turn)
+   - **Task:** Extract atomic claims from the article following the YAML/JSON specification provided.
+
+2.  **Understand the Specification:**
+   - Return only JSON with `{"claims":[{"id":"c1","source_quote":"exact substring of the article","normalized_claim":"one standalone claim","category":"checkable_fact|opinion|prediction|needs_context","missing_context":[],"verification_scope":"external_fact|document_content|text_analysis"}]`
+   - Rules:
+     - `source_quote` must be exact substring, copy char for char, don't fix spelling, don't join from two places.
+     - Split a sentence stating two independent facts into two claims. Each quote must still be exact substring.
+     - Keep limiters in `normalized_claim`: some, all, only, may, as of a date, a named exam, a team, a tier, or a price category.
+     - Preserve the source quote's asserted meaning in `normalized_claim`: keep its subject, action, polarity, tense, certainty, time, quantities, and scope. Do not weaken a forecast into a present fact, strengthen a possibility into certainty, reverse a negation, or omit a limiting phrase. If faithful normalization is unclear, use source wording and explain missing context.
+     - Do not add ordinal or superlative limits such as "first," "earliest," or "only" unless explicitly stated. Never turn an unordered event into a first event.
+     - Resolve pronouns/demonstratives from article context only when one clear antecedent. Preserve source quote exactly. If ambiguous/absent, keep claim cautious and list missing referent in `missing_context`; never guess.
+     - Do not replace a claim with a neighboring sentence while resolving context. Keep subject, predicate, numbers, direction. If quote is "These actions allowed X to flourish", do not turn it into a claim about how a release was licensed. Keep causal assertion and list any unclear action, concrete outcome or measure, and causal basis in `missing_context`.
+     - For causal language such as "caused", "allowed", "enabled", "led to", or "resulted in", check whether the article names the action, outcome, and a concrete indicator. Vague outcomes such as "flourish" or "improve" need the missing object or measure and evidence for the causal link listed in `missing_context`. Do not treat temporal order alone as causal proof.
+     - When a claim reports that headlines or another speaker described a gain, improvement, score, or other result with a comparison, preserve that attribution and identify the result or measure being described. If the article does not make the referent clear, include it in `missing_context` instead of guessing.
+     - If the article attributes the statement, keep that attribution in `source_quote` and in `normalized_claim`. Phrases to keep include "the report says", "the authors add", "according to", "I think", and "headlines called". Do not turn an attributed statement into a bare fact.
+     - Do not extend an attribution across "and". "The report says A, and B" supports "The report says A". It does not support "The report says B". Leave B as its own claim without that attribution.
+     - A price claim needs the named product or service being billed. Fill that name only when the price clause in the article states it. If it does not, list the missing product or service in `missing_context`. Do not borrow a name from the other half of an "and" sentence.
+     - `missing_context` names a gap in what that claim asserts. A claim that headlines used a phrase needs the headline, not proof that the phrase's comparison is true.
+     - `verification_scope` is `document_content` when the claim is about what one resolved document says, lists, does not say, or does not report. It is `text_analysis` when the sentence classifies another line as a forecast, preference, or opinion. Otherwise it is `external_fact`.
+     - If a sentence says a line is a forecast or a preference, and then says it is not in the report, return those as two claims.
+     - "on purpose", "deliberately", and "meant to" are intention, not opinion. "I think", "best", and "worst" are opinion.
+     - Do not guess which document a pronoun or "the document" names. Leave it unresolved when more than one document is possible.
+     - `checkable_fact`: a statement about a date, number, name, price, policy, or result that could be checked against a source.
+     - `opinion`: the writer's evaluation. Do not call it a fact.
+     - `prediction`: a claim about the future. Do not call it a fact.
+     - `needs_context`: use this category only when the claim's own subject, date, or baseline is missing. Name that gap in `missing_context`.
+     - Do not drop a checkable fact because it is narrow. Do not invent claims that the article does not state.
+
+3.  **Process the Article Sentence by Sentence:**
+   Article: "Apollo 11 landed the first humans on the Moon on July 20, 1969. The first Moon landing happened in 1972. Apollo 11 was humanity's greatest achievement. NASA will establish a permanent lunar base by 2030."
+
+   Let's break it down sentence by sentence.
+
+   **Sentence 1:** "Apollo 11 landed the first humans on the Moon on July 20, 1969."
+   - This is a checkable fact. It states a date, mission, and event.
+   - Need to produce one claim for this.
+   - `source_quote`: "Apollo 11 landed the first humans on the Moon on July 20, 1969." (exact substring)
+   - `normalized_claim`: Should preserve subject, action, polarity, tense, certainty, time, quantities, scope. This is a straightforward fact: Apollo 11 landed the first humans on the Moon on July 20, 1969. I need to make sure I don't alter it. Keep "the first humans", "July 20, 1969". Category: checkable_fact.
+   - `missing_context`: likely none, unless there's ambiguity. The statement is clear.
+   - `verification_scope`: external_fact (could be checked against historical records).
+
+   **Sentence 2:** "The first Moon landing happened in 1972."
+   - Wait, this contradicts sentence 1, which says Apollo 11 landed first humans on July 20, 1969. Sentence 2 says first Moon landing happened in 1972. This is likely a test or error in the article, or maybe it's intentionally false/contradictory. I need to extract claims as they appear, not resolve the contradiction unless rules say otherwise.
+   - The sentence states: "The first Moon landing happened in 1972." This is a claim. It's a checkable fact about the year of the first Moon landing, but it contradicts the first sentence. I'll treat it as a separate claim.
+   - `source_quote`: "The first Moon landing happened in 1972."
+   - `normalized_claim`: "The first Moon landing happened in 1972." Category: checkable_fact. (It's a statement about a date, could be checked.)
+   - `missing_context`: none really, but note the contradiction? The rules don't say to resolve contradictions between sentences, just to extract atomic claims. I'll keep it as is.
+   - `verification_scope`: external_fact.
+
+   **Sentence 3:** "Apollo 11 was humanity's greatest achievement."
+   - This contains "greatest achievement", which is a superlative evaluation. The rules say: "Do not add ordinal or superlative limits such as 'first,' 'earliest,' or 'only' unless the quote or one clear context explicitly states them. Never turn an unordered event into a first event." Also: ""I think", "best", and "worst" are opinion." Here it's "greatest achievement". That's an opinion/evaluation.
+   - Category: opinion.
+   - `source_quote`: "Apollo 11 was humanity's greatest achievement."
+   - `normalized_claim`: "Apollo 11 was humanity's greatest achievement." But category should be "opinion". Wait, the rules: ""I think", "best", and "worst" are opinion." "greatest" might fall under that. Also: "opinion: the writer's evaluation. Do not call it a fact." So I'll set category to "opinion".
+   - `missing_context`: maybe none, but the claim is evaluative. I'll keep it as opinion.
+   - `verification_scope`: text_analysis? The rules: "It is text_analysis when the sentence classifies another line as a forecast, preference, or opinion." This sentence is itself an opinion, so verification_scope might be text_analysis? Or external_fact? Let's read carefully: "verification_scope is document_content when the claim is about what one resolved document says, lists, does not say, or does not report. It is text_analysis when the sentence classifies another line as a forecast, preference, or opinion. Otherwise it is external_fact." Since this sentence is an opinion, it classifies as opinion, so verification_scope = text_analysis. But wait, the claim itself is the opinion. I think verification_scope should be text_analysis because the sentence is expressing an opinion/evaluation, not stating a fact to be verified against content. I'll set it to text_analysis.
+
+   **Sentence 4:** "NASA will establish a permanent lunar base by 2030."
+   - This is a prediction about the future. Rules: "prediction: a claim about the future. Do not call it a fact." Also: "Keep limiters in normalized_claim: some, all, only, may, as of a date, a named exam, a team, a tier, or a price category." Here "will establish" is a future prediction, but "will" indicates certainty from the source. However, the category should be "prediction". The rules say: "If a sentence says a line is a forecast or a preference, and then says it is not in the report, return those as two claims." Not applicable here.
+   - `source_quote`: "NASA will establish a permanent lunar base by 2030."
+   - `normalized_claim`: "NASA will establish a permanent lunar base by 2030." Category: prediction.
+   - `missing_context`: none, the claim is clear.
+   - `verification_scope`: external_fact? It's a prediction about future NASA action. The rules: "It is text_analysis when the sentence classifies another line as a forecast, preference, or opinion." This sentence is a prediction/forecast. So verification_scope could be text_analysis? Wait, let's re-read: "verification_scope is document_content when the claim is about what one resolved document says, lists, does not say, or does not report. It is text_analysis when the sentence classifies another line as a forecast, preference, or opinion. Otherwise it is external_fact." Since this sentence is a forecast/prediction, it classifies as forecast, so verification_scope = text_analysis. But the claim itself is a prediction. I think the intent is: if the sentence is making a forecast claim, verification_scope is text_analysis because it's about classifying it as a forecast. However, the alternative is external_fact. Let's look at the exact wording: "It is text_analysis when the sentence classifies another line as a forecast, preference, or opinion." This sentence IS a forecast/opinion/prediction. So yes, verification_scope = text_analysis. But I'm not 100% sure. Let's keep it as external_fact maybe? No, the rule is clear: if the sentence classifies as forecast/preference/opinion, it's text_analysis. I'll follow that.
+
+   Wait, let's re-evaluate sentence 3 and 4 categories carefully.
+   - Sentence 3: "Apollo 11 was humanity's greatest achievement." This is an opinion. verification_scope = text_analysis.
+   - Sentence 4: "NASA will establish a permanent lunar base by 2030." This is a prediction. The rule says: "It is text_analysis when the sentence classifies another line as a forecast, preference, or opinion." A prediction is a forecast. So verification_scope = text_analysis. But maybe the rule means: if the sentence is about classifying something else as a forecast, then text_analysis. Actually, reading the bullet: "- If a sentence says a line is a forecast or a preference, and then says it is not in the report, return those as two claims." That's separate. The verification_scope rule: "verification_scope is document_content when the claim is about what one resolved document says, lists, does not say, or does not report. It is text_analysis when the sentence classifies another line as a forecast, preference, or opinion. Otherwise it is external_fact." I think it means: if the claim itself is a forecast/preference/opinion expressed in the sentence, then verification_scope is text_analysis. Because it's not a fact to be checked against a document, it's a classification of the sentence type. I'll go with text_analysis for both opinion and prediction sentences.
+
+   Let's check sentence 1 and 2 again. They are checkable facts. verification_scope = external_fact.
+
+   Now, about splitting sentences: The rules say "Split a sentence that states two independent facts into two claims. Each quote must still be an exact substring." None of the sentences here have two independent facts joined by "and" or something that should be split. Sentence 1 has one fact. Sentence 2 one fact. Sentence 3 one opinion. Sentence 4 one prediction. So no splitting needed.
+
+   Check for limiters: Sentence 1: "Apollo 11 landed the first humans on the Moon on July 20, 1969." No limiters like some/all/only, but "the first" is a superlative. The rule: "Do not add ordinal or superlative limits such as 'first,' 'earliest,' or 'only' unless the quote or one clear context explicitly states them. Never turn an unordered event into a first event." Here "the first humans" is in the source quote, so I must keep it in source_quote. In normalized_claim, I should keep it as is, because it's in the source quote. The rule says do not add them unless explicitly stated, but since they are in the quote, I preserve them. The normalized_claim should preserve the source quote's asserted meaning. So "the first humans" stays. Category: checkable_fact, because it's a statement about a date/number/result that could be checked.
+
+   Sentence 2: "The first Moon landing happened in 1972." Again "the first" is in the quote. Keep as checkable_fact? But it's factually incorrect historically, but I'm not to assign verdict, just extract claims. Category: checkable_fact.
+
+   Sentence 3: "Apollo 11 was humanity's greatest achievement." "greatest" is a superlative. The rule: ""I think", "best", and "worst" are opinion." "greatest" likely falls under opinion. Category: opinion. I need to ensure normalized_claim keeps the wording, and category is opinion. verification_scope: text_analysis.
+
+   Sentence 4: "NASA will establish a permanent lunar base by 2030." "will" indicates future prediction. Category: prediction. verification_scope: text_analysis (since it's a forecast/prediction).
+
+   Wait, let's re-verify the verification_scope rule: "- verification_scope is document_content when the claim is about what one resolved document says, lists, does not say, or does not report. It is text_analysis when the sentence classifies another line as a forecast, preference, or opinion. Otherwise it is external_fact." 
+   For sentence 1: "Apollo 11 landed the first humans on the Moon on July 20, 1969." This is a claim about a historical event. It's not classifying another line as forecast/opinion. So verification_scope = external_fact.
+   For sentence 2: same, external_fact.
+   For sentence 3: "Apollo 11 was humanity's greatest achievement." The sentence is expressing an opinion. Does it "classify another line as a forecast, preference, or opinion"? The sentence itself is the opinion. I think the rule means: if the sentence is like "This is a forecast" or "This is an opinion", then text_analysis. But the bullet also says: "- If a sentence says a line is a forecast or a preference, and then says it is not in the report, return those as two claims." That's about explicit classification. The verification_scope rule might be: if the claim's category is opinion/forecast/prediction, then verification_scope is text_analysis because it's not a document_content fact. Let's read carefully: "It is text_analysis when the sentence classifies another line as a forecast, preference, or opinion." This could mean: when the sentence is doing the classifying of something else, not when the sentence itself is the claim. But the context of the whole instruction is about extracting claims. I think it's safer to interpret: if the claim is of category opinion/forecast/prediction, then verification_scope = text_analysis. Because the purpose is to verify the claim; if it's an opinion, you don't verify it as a fact, you analyze the text. I'll set:
+   - Sentence 1: checkable_fact, verification_scope external_fact
+   - Sentence 2: checkable_fact, verification_scope external_fact
+   - Sentence 3: opinion, verification_scope text_analysis
+   - Sentence 4: prediction, verification_scope text_analysis
+
+   Let's double-check with the rule: "verification_scope is document_content when the claim is about what one resolved document says, lists, does not say, or does not report. It is text_analysis when the sentence class

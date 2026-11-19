@@ -1,0 +1,26 @@
+before {'search_ok': 12, 'queries': 15, 'query_success': 14, 'query_errors': 1, 'candidates': 60, 'selected': 36, 'fetches': 36, 'passage_claims': 4, 'passage_items': 5, 'search_unavailable_claims': 0}
+chan_chan_c1 Q: 38 || Archaeologists found the remains of at least 38 people in a mausoleum P: 
+chan_chan_c2 Q: 4 16 P: 
+chan_chan_c3 Q: 7 || Archaeologists have excavated no more than 7 percent of Chan Chan’s total P: https://www.newsbreak.com/gizmodo-399763864/4890204887779-archaeologists-just-opened-a-pre-incan-tomb-sealed-for-600-years-here-s-what-they-found
+heatwave_c1 Q: researchers CS-LIM used 64 years real-world sea-surface temperature height data P: 
+heatwave_c2 Q: ENSO P: 
+heatwave_c3 Q: heatwaves can more intense but generally end quickly P: 
+lucy_c1 Q: 650 20, 2025 P: 
+lucy_c2 Q: 10.5 26.5 P: 
+lucy_c3 Q: Donaldjohanson indicate liquid water present briefly distant past || Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in P: https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/; https://svs.gsfc.nasa.gov/5628
+dengue_c1 Q: 4.6 2,400 2023, 13 8,200 2024 P: https://www.cdc.gov/han/php/notices/han00523.html
+dengue_c2 Q: 6, 2025, 760,000 15 P: 
+dengue_c3 Q: 6,291 2024; 3,292 13 P: https://www.cdc.gov/han/php/notices/han00523.html
+after {'search_ok': 9, 'queries': 18, 'query_success': 9, 'query_errors': 9, 'candidates': 45, 'selected': 27, 'fetches': 27, 'passage_claims': 7, 'passage_items': 13, 'search_unavailable_claims': 3}
+chan_chan_c1 Q: Archaeologists found remains least 38 people mausoleum Chan Chan P: https://www.heritagedaily.com/2026/09/excavations-reveal-elite-chan-chan-funerary-platform/159207
+chan_chan_c2 Q: tomb’s central chamber about 4 feet wide 16 feet deep P: 
+chan_chan_c3 Q: Archaeologists have excavated no more than 7 percent Chan Chan’s total area || Archaeologists have excavated no more than 7 percent of Chan Chan’s total area P: 
+heatwave_c1 Q: researchers’ CS-LIM used 64 years real-world sea-surface temperature height data || The researchers’ CS-LIM used 64 years of real-world sea-surface temperature and height data P: 
+heatwave_c2 Q: Winter-starting Northeast Pacific marine heatwaves last longer because ENSO impacts ocean reemergence || Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence P: https://psl.noaa.gov/news/2026/nepmarineheatwaves.html; https://www.nature.com/articles/s43247-026-03442-x?error=cookies_not_supported&code=fa35583b-4b07-4ce2-9741-cb0df4870520; https://oceanvines.org/news/2026-07-31-marine-heatwave-forecast-seabed2030
+heatwave_c3 Q: Summer-starting marine heatwaves can more intense but generally end quickly P: https://psl.noaa.gov/news/2026/nepmarineheatwaves.html
+lucy_c1 Q: Lucy passed about 650 miles Donaldjohanson April 20 2025 || Lucy passed about 650 miles from Donaldjohanson on April 20, 2025 P: 
+lucy_c2 Q: Donaldjohanson rotates end-over-end once every 10.5 Earth days wobbles around long axis every 26.5 days P: https://en.wikipedia.org/wiki/52246_Donaldjohanson; https://phys.org/news/2026-06-asteroid-donaldjohanson-rotates-lucy-flyby.html; https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/
+lucy_c3 Q: Iron-rich clays Donaldjohanson indicate liquid water present briefly distant past P: https://svs.gsfc.nasa.gov/5628; https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/
+dengue_c1 Q: Americas reported 4.6 million dengue cases 2,400 deaths 2023 followed 13 million cases 8,200 deaths 2024 || The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024 P: https://www.cdc.gov/han/php/notices/han00523.html; https://www.dengue.com/dengue-cases-soared-record-highs-americas-region-during-2024
+dengue_c2 Q: March 6 2025 more than 760,000 dengue cases had reported Americas 15 percent above previous five-year average || As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average P: 
+dengue_c3 Q: Puerto Rico reported 6,291 dengue cases 2024 3,292 required hospitalization 13 people died P: https://www.cdc.gov/mmwr/volumes/74/wr/mm7405a1.htm

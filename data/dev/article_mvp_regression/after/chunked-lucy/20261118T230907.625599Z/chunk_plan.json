@@ -1,0 +1,45 @@
+{
+  "article_id": "lucy",
+  "source_url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+  "input_chars": 7045,
+  "input_sha256": "b2267b7e57b11545d44bcbb4a6b6ffb516c9bf032dbe14471733585a7479370b",
+  "truncated": false,
+  "provider": "gemini",
+  "model": "gemini-3.8-flash",
+  "prompt_version": "sha256:e52cb13057888cc38bba9f73e2e6ac7fd229593d848a6b16829203269ade1f77",
+  "output_cap": 8192,
+  "allow_paid": false,
+  "allow_openrouter_fallback": false,
+  "strategy": "sentence-boundary chunks from flattened one-paragraph article",
+  "context_rule": "previous up to 500 chars is read-only; only quotes wholly inside core chunk are retained",
+  "chunks": [
+    {
+      "index": 1,
+      "start": 0,
+      "end": 2087,
+      "chars": 2087,
+      "sha256": "d81ce899c84a84f1a4dd2ccaa3a1e266e4008e5ba9e25f8b68c815424ab53b29"
+    },
+    {
+      "index": 2,
+      "start": 2087,
+      "end": 4189,
+      "chars": 2102,
+      "sha256": "e3fd11836e277d79f0ec4174131d6e6929c494a4df2543b492c2807198c6e348"
+    },
+    {
+      "index": 3,
+      "start": 4189,
+      "end": 6213,
+      "chars": 2024,
+      "sha256": "4618948903555b807d2df65289565adf4deac467e55877f9a7839f3cc8d30fbd"
+    },
+    {
+      "index": 4,
+      "start": 6213,
+      "end": 7045,
+      "chars": 832,
+      "sha256": "44f6b14e7e7201f136c8b43fce6e204cc576a898fe4bc0371f2347a5dd95fabf"
+    }
+  ]
+}

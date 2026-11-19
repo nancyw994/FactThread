@@ -1,0 +1,79 @@
+{
+  "provider_chain": [
+    {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b"
+    }
+  ],
+  "allow_paid": false,
+  "allow_openrouter_fallback": false,
+  "response_format": {
+    "type": "json_object"
+  },
+  "max_completion_tokens": 4096,
+  "attempts": [
+    {
+      "sequence": 1,
+      "article_id": "chan_chan",
+      "request_status": "request_failed",
+      "provider": "groq",
+      "requested_model": "openai/gpt-oss-120b",
+      "article_chars": 5234,
+      "request_chars": 5270,
+      "repair_errors": [],
+      "response_format": {
+        "type": "json_object"
+      },
+      "max_completion_tokens": 4096,
+      "finish_reason": null,
+      "usage": null,
+      "raw_reply_file": null,
+      "parse_status": "not_run",
+      "parsed_items": null,
+      "accepted_items": null,
+      "rejected_items": null,
+      "rejection_reasons": [],
+      "error_type": "RuntimeError",
+      "error": "Model request failed. groq openai/gpt-oss-120b: BadRequestError The fixed_rules baseline was not substituted.",
+      "retry_after_seconds": null,
+      "provider_attempts": [
+        {
+          "route_reason": "groq_primary",
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "cache_hit": false,
+          "ok": false,
+          "cost_usd": "unknown",
+          "error": "BadRequestError"
+        }
+      ],
+      "provider_exception_class": "BadRequestError",
+      "http_status": null,
+      "http_error_body": null,
+      "api_error_type": null,
+      "api_error_code": null,
+      "request_parameters_file": "diagnostics/attempt1_request_comparison.json",
+      "error_details_saved": "provider body and HTTP status were not captured by this attempt"
+    }
+  ],
+  "articles": [
+    {
+      "id": "chan_chan",
+      "source_url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+      "input_chars": 5234,
+      "truncated": false,
+      "status": "error",
+      "extraction_status": "request_failed",
+      "error": "核查没有完成（RuntimeError）。RuntimeError: Model request failed. groq openai/gpt-oss-120b: BadRequestError The fixed_rules baseline was not substituted.",
+      "extraction_diagnostics": [
+        {
+          "attempt": 1,
+          "stage": "request",
+          "error": "RuntimeError"
+        }
+      ],
+      "candidates": []
+    }
+  ],
+  "stopped_on": "chan_chan"
+}

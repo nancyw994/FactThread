@@ -1,0 +1,1124 @@
+{
+  "definition": "Passage coverage means the pipeline returned a fetched paragraph for the claim. This does not mean that the paragraph supports the claim or is independent.",
+  "before_metrics": {
+    "claims": 12,
+    "search_ok_claims": 12,
+    "search_unavailable_claims": 0,
+    "queries": 15,
+    "query_successes": 14,
+    "query_errors": 1,
+    "candidate_pages": 60,
+    "selected_pages": 36,
+    "fetched_pages": 36,
+    "claims_with_passages": 4,
+    "passage_count": 5,
+    "claims_with_external_page_passage": 2
+  },
+  "after_metrics": {
+    "claims": 12,
+    "search_ok_claims": 9,
+    "search_unavailable_claims": 3,
+    "queries": 18,
+    "query_successes": 9,
+    "query_errors": 9,
+    "candidate_pages": 45,
+    "selected_pages": 27,
+    "fetched_pages": 27,
+    "claims_with_passages": 7,
+    "passage_count": 13,
+    "claims_with_external_page_passage": 6
+  },
+  "claims": [
+    {
+      "id": "chan_chan_c1",
+      "article_source_url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+      "claim": "Archaeologists found the remains of at least 38 people in a mausoleum at Chan Chan.",
+      "before": {
+        "id": "chan_chan_c1",
+        "claim": "Archaeologists found the remains of at least 38 people in a mausoleum at Chan Chan.",
+        "queries": [
+          "38",
+          "Archaeologists found the remains of at least 38 people in a mausoleum"
+        ],
+        "query_statuses": [
+          "ok",
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://grokipedia.com/page/septa_route_38",
+            "title": "SEPTA Route 38",
+            "query": "38"
+          },
+          {
+            "url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+            "title": "Unsealed for the First Time in 600 Years, This Tomb in Peru ...",
+            "query": "Archaeologists found the remains of at least 38 people in a mausoleum"
+          },
+          {
+            "url": "https://www.nytimes.com/2026/09/10/world/americas/peru-tombs-chimu-archaeology.html",
+            "title": "Ancient Tombs, Untouched by Looters, Are Found Under Peru’s ...",
+            "query": "Archaeologists found the remains of at least 38 people in a mausoleum"
+          },
+          {
+            "url": "https://www.tovima.com/science/untouched-600-year-old-tomb-perus-discovery-of-the-decade/",
+            "title": "Untouched 600-Year-Old Tomb: Peru’s ‘Discovery of the Decade’",
+            "query": "Archaeologists found the remains of at least 38 people in a mausoleum"
+          },
+          {
+            "url": "https://gizmodo.com/archaeologists-just-opened-a-pre-incan-tomb-sealed-for-600-years-heres-what-they-found-2000812664",
+            "title": "Archaeologists Just Opened a Pre-Incan Tomb Sealed ... - Gizmodo",
+            "query": "Archaeologists found the remains of at least 38 people in a mausoleum"
+          }
+        ],
+        "matched_passages": []
+      },
+      "after": {
+        "id": "chan_chan_c1",
+        "claim": "Archaeologists found the remains of at least 38 people in a mausoleum at Chan Chan.",
+        "queries": [
+          "Archaeologists found remains least 38 people mausoleum Chan Chan"
+        ],
+        "query_statuses": [
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://curiosmos.com/chan-chan-burial-platform-38-chimu-burials/",
+            "title": "Chan Chan Burial Platform Reveals 38 Chimú Burials - Curiosmos",
+            "query": "Archaeologists found remains least 38 people mausoleum Chan Chan"
+          },
+          {
+            "url": "https://www.ancient-origins.net/news-history-archaeology/chimu-burial-chan-chan-00103169",
+            "title": "Chan Chan Burial Reveals 38 High-Status Chimú Individuals",
+            "query": "Archaeologists found remains least 38 people mausoleum Chan Chan"
+          },
+          {
+            "url": "https://www.heritagedaily.com/2026/09/excavations-reveal-elite-chan-chan-funerary-platform/159207",
+            "title": "Excavations reveal elite Chan Chan funerary platform",
+            "query": "Archaeologists found remains least 38 people mausoleum Chan Chan"
+          },
+          {
+            "url": "https://www.foxnews.com/travel/ancient-burial-site-packed-treasures-38-bodies-discovered-after-centuries",
+            "title": "Chan Chan, Peru, burial complex holds 38 bodies, possible ...",
+            "query": "Archaeologists found remains least 38 people mausoleum Chan Chan"
+          },
+          {
+            "url": "https://www.popularmechanics.com/science/archaeology/a73931445/chan-chan-tomb-skull/",
+            "title": "Archaeologists Found a Blood-Red Skull in a Tomb Sealed for ...",
+            "query": "Archaeologists found remains least 38 people mausoleum Chan Chan"
+          }
+        ],
+        "matched_passages": [
+          {
+            "url": "https://www.heritagedaily.com/2026/09/excavations-reveal-elite-chan-chan-funerary-platform/159207",
+            "is_input_page": false,
+            "source_id": "src_20c95ec06b36",
+            "start": 1954,
+            "end": 2238,
+            "text": "Archaeologists at Peru’s ancient city of Chan Chan have discovered a remarkably intact funerary platform containing the remains of 38 people and an array of high-status grave goods, offering a rare glimpse into the burial practices of the powerful Chimú elite more than 600 years ago."
+          }
+        ]
+      }
+    },
+    {
+      "id": "chan_chan_c2",
+      "article_source_url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+      "claim": "The tomb’s central chamber was about 4 feet wide and 16 feet deep.",
+      "before": {
+        "id": "chan_chan_c2",
+        "claim": "The tomb’s central chamber was about 4 feet wide and 16 feet deep.",
+        "queries": [
+          "4 16"
+        ],
+        "query_statuses": [
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://grokipedia.com/page/1/2_+_1/4_+_1/8_+_1/16_+_⋯",
+            "title": "1/2 + 1/4 + 1/8 + 1/16 + ⋯",
+            "query": "4 16"
+          },
+          {
+            "url": "https://biblehub.com/hebrews/4-16.htm",
+            "title": "Hebrews 4:16 Let us then approach the throne of grace with ...",
+            "query": "4 16"
+          },
+          {
+            "url": "https://www.biblegateway.com/verse/en/Hebrews+4:16",
+            "title": "Hebrews 4:16 - Bible Gateway",
+            "query": "4 16"
+          },
+          {
+            "url": "https://www.biblegateway.com/passage/?search=Hebrews+4:16&version=NIV",
+            "title": "Hebrews 4:16 NIV - Let us then approach God’s throne of ...",
+            "query": "4 16"
+          },
+          {
+            "url": "https://www.hackmath.net/en/calculator/fraction?input=4/16",
+            "title": "Fraction Calculator - calculation: 4/16 - HackMath",
+            "query": "4 16"
+          }
+        ],
+        "matched_passages": []
+      },
+      "after": {
+        "id": "chan_chan_c2",
+        "claim": "The tomb’s central chamber was about 4 feet wide and 16 feet deep.",
+        "queries": [
+          "tomb’s central chamber about 4 feet wide 16 feet deep"
+        ],
+        "query_statuses": [
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://en.wikipedia.org/wiki/Chamber_tomb",
+            "title": "Chamber tomb - Wikipedia",
+            "query": "tomb’s central chamber about 4 feet wide 16 feet deep"
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/Shaft_and_chamber_tomb",
+            "title": "Shaft and chamber tomb - Wikipedia",
+            "query": "tomb’s central chamber about 4 feet wide 16 feet deep"
+          },
+          {
+            "url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+            "title": "Unsealed for the First Time in 600 Years, This Tomb in Peru ...",
+            "query": "tomb’s central chamber about 4 feet wide 16 feet deep"
+          },
+          {
+            "url": "https://www.prehistoricsociety.org/sites/prehistoricsociety.org/files/resources/ps-intros-neo-4-chambered-tombs.pdf",
+            "title": "PS Intros Neo 4-Chambered tombs_amended - The Prehistoric Society",
+            "query": "tomb’s central chamber about 4 feet wide 16 feet deep"
+          },
+          {
+            "url": "https://www.wikiwand.com/en/Chamber_tomb",
+            "title": "Chamber tomb - Wikiwand",
+            "query": "tomb’s central chamber about 4 feet wide 16 feet deep"
+          }
+        ],
+        "matched_passages": []
+      }
+    },
+    {
+      "id": "chan_chan_c3",
+      "article_source_url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+      "claim": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total area.",
+      "before": {
+        "id": "chan_chan_c3",
+        "claim": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total area.",
+        "queries": [
+          "7",
+          "Archaeologists have excavated no more than 7 percent of Chan Chan’s total"
+        ],
+        "query_statuses": [
+          "ok",
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://grokipedia.com/page/7_michalis_hatzigiannis_album",
+            "title": "7 (Michalis Hatzigiannis album)",
+            "query": "7"
+          },
+          {
+            "url": "https://www.newsbreak.com/gizmodo-399763864/4890204887779-archaeologists-just-opened-a-pre-incan-tomb-sealed-for-600-years-here-s-what-they-found",
+            "title": "Archaeologists Just Opened a Pre-Incan Tomb Sealed for 600 ...",
+            "query": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total"
+          },
+          {
+            "url": "https://gizmodo.com/archaeologists-just-opened-a-pre-incan-tomb-sealed-for-600-years-heres-what-they-found-2000812664",
+            "title": "Archaeologists Just Opened a Pre-Incan Tomb Sealed ... - Gizmodo",
+            "query": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total"
+          },
+          {
+            "url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+            "title": "Unsealed for the First Time in 600 Years, This Tomb in Peru ...",
+            "query": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total"
+          },
+          {
+            "url": "https://www.tovima.com/science/untouched-600-year-old-tomb-perus-discovery-of-the-decade/",
+            "title": "Untouched 600-Year-Old Tomb: Peru’s ‘Discovery of the Decade’",
+            "query": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total"
+          }
+        ],
+        "matched_passages": [
+          {
+            "url": "https://www.newsbreak.com/gizmodo-399763864/4890204887779-archaeologists-just-opened-a-pre-incan-tomb-sealed-for-600-years-here-s-what-they-found",
+            "is_input_page": false,
+            "source_id": "src_23c53071211c",
+            "start": 4066,
+            "end": 4450,
+            "text": "But that’s something the team will have to explore in coming investigations, he added. In fact, archaeologists have only excavated roughly 7% of the total area of Chan Chan—so, not that much. Other endeavors include analyzing the design of the mausoleum and running genetic tests on the skeletal remains. As Meneses commented to El País, “Evidently the citadel has much more to tell.”"
+          }
+        ]
+      },
+      "after": {
+        "id": "chan_chan_c3",
+        "claim": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total area.",
+        "queries": [
+          "Archaeologists have excavated no more than 7 percent Chan Chan’s total area",
+          "Archaeologists have excavated no more than 7 percent of Chan Chan’s total area"
+        ],
+        "query_statuses": [
+          "search_unavailable",
+          "search_unavailable"
+        ],
+        "search_status": "search_unavailable",
+        "candidate_pages": [],
+        "matched_passages": []
+      }
+    },
+    {
+      "id": "heatwave_c1",
+      "article_source_url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+      "claim": "The researchers’ CS-LIM used 64 years of real-world sea-surface temperature and height data.",
+      "before": {
+        "id": "heatwave_c1",
+        "claim": "The researchers’ CS-LIM used 64 years of real-world sea-surface temperature and height data.",
+        "queries": [
+          "researchers CS-LIM used 64 years real-world sea-surface temperature height data"
+        ],
+        "query_statuses": [
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://zenodo.org/records/16922229",
+            "title": "Pacific sea surface temperature anomalies generated by three ...",
+            "query": "researchers CS-LIM used 64 years real-world sea-surface temperature height data"
+          },
+          {
+            "url": "https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2020GL091886",
+            "title": "Seasonal Predictability of Global and North American Coastal ...Re‐Evaluating Historical Sea Surface Temperature Data Sets ...Sea Surface Height - NASA EarthdataN THE CYCLOSTATIONARY LINEAR I MODELS A MATHEMATICAL INSIGHT ...Sea Surface Temperature - NASA Earthdata",
+            "query": "researchers CS-LIM used 64 years real-world sea-surface temperature height data"
+          },
+          {
+            "url": "https://www.earthdata.nasa.gov/topics/ocean/sea-surface-height",
+            "title": "Sea Surface Height - NASA Earthdata",
+            "query": "researchers CS-LIM used 64 years real-world sea-surface temperature height data"
+          },
+          {
+            "url": "https://www.earthdata.nasa.gov/topics/ocean/sea-surface-temperature",
+            "title": "Sea Surface Temperature - NASA Earthdata",
+            "query": "researchers CS-LIM used 64 years real-world sea-surface temperature height data"
+          },
+          {
+            "url": "https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2025GL116615",
+            "title": "Re‐Evaluating Historical Sea Surface Temperature Data Sets ...",
+            "query": "researchers CS-LIM used 64 years real-world sea-surface temperature height data"
+          }
+        ],
+        "matched_passages": []
+      },
+      "after": {
+        "id": "heatwave_c1",
+        "claim": "The researchers’ CS-LIM used 64 years of real-world sea-surface temperature and height data.",
+        "queries": [
+          "researchers’ CS-LIM used 64 years real-world sea-surface temperature height data",
+          "The researchers’ CS-LIM used 64 years of real-world sea-surface temperature and height data"
+        ],
+        "query_statuses": [
+          "search_unavailable",
+          "search_unavailable"
+        ],
+        "search_status": "search_unavailable",
+        "candidate_pages": [],
+        "matched_passages": []
+      }
+    },
+    {
+      "id": "heatwave_c2",
+      "article_source_url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+      "claim": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence.",
+      "before": {
+        "id": "heatwave_c2",
+        "claim": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence.",
+        "queries": [
+          "ENSO"
+        ],
+        "query_statuses": [
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://en.wikipedia.org/wiki/El_Niño–Southern_Oscillation",
+            "title": "El Niño–Southern Oscillation - Wikipedia",
+            "query": "ENSO"
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/Ensō",
+            "title": "Ensō - Wikipedia",
+            "query": "ENSO"
+          },
+          {
+            "url": "https://grokipedia.com/page/Enso",
+            "title": "Enso",
+            "query": "ENSO"
+          },
+          {
+            "url": "https://ensorings.com/",
+            "title": "Premium Silicone Jewelry for Men & Women | Enso",
+            "query": "ENSO"
+          },
+          {
+            "url": "https://www.weather.gov/mhx/ensowhat",
+            "title": "What is ENSO? - National Weather Service",
+            "query": "ENSO"
+          }
+        ],
+        "matched_passages": []
+      },
+      "after": {
+        "id": "heatwave_c2",
+        "claim": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence.",
+        "queries": [
+          "Winter-starting Northeast Pacific marine heatwaves last longer because ENSO impacts ocean reemergence",
+          "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence"
+        ],
+        "query_statuses": [
+          "search_unavailable",
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+            "title": "Severity and persistence of Northeast Pacific marine ...",
+            "query": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence"
+          },
+          {
+            "url": "https://www.nature.com/articles/s43247-026-03442-x",
+            "title": "Persistent Northeast Pacific marine heatwaves are sensitive ...",
+            "query": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence"
+          },
+          {
+            "url": "https://oceanvines.org/news/2026-07-31-marine-heatwave-forecast-seabed2030",
+            "title": "NOAA flags the seasonal fingerprints behind Northeast Pacific ...",
+            "query": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence"
+          },
+          {
+            "url": "https://communities.springernature.com/posts/northeast-pacific-marine-heatwaves-why-do-we-care-and-what-did-we-find",
+            "title": "Northeast Pacific marine heatwaves, why do we care and what ...",
+            "query": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence"
+          },
+          {
+            "url": "https://www.cesm.ucar.edu/sites/default/files/2026-02/2026-cesm-cvcwg-txu.pdf",
+            "title": "Sensitivity of Northeast Pacific Marine Heatwaves to",
+            "query": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence"
+          }
+        ],
+        "matched_passages": [
+          {
+            "url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+            "is_input_page": true,
+            "source_id": "src_5c6955100671",
+            "start": 5193,
+            "end": 5887,
+            "text": "The researchers found that different regions of the Northeast Pacific respond to the different ENSO\n “flavors.” For example, an El Niño in the Central Pacific can help trigger a marine heatwave in the Gulf of\n Alaska, while a La Niña in the Eastern Pacific can contribute to one in the Central North Pacific.\n Apart from ENSO influence, local processes such as “ocean memory” reemergence also play a role in generating\n warm ocean conditions.\n Marine heatwaves that start in the winter last longer due to the combination of ENSO impact and the\n reemergence process, which gives the heatwave staying power. Ones that start in the summer can be much more\n intense, but they generally end quickly."
+          },
+          {
+            "url": "https://www.nature.com/articles/s43247-026-03442-x?error=cookies_not_supported&code=fa35583b-4b07-4ce2-9741-cb0df4870520",
+            "is_input_page": false,
+            "source_id": "src_1f7113aa3f42",
+            "start": 27768,
+            "end": 28509,
+            "text": "In this section, given the CS-LIM’s ability to reproduce observed seasonality of Northeast Pacific MHWs in different regions, as well as their location-dependent lead-lag relationships with both ENSO variability and North Pacific memory, we will use it to diagnose how seasonality in ocean dynamics, both in and between the tropical and North Pacific basins, impacts the intensification and development of persistent Northeast Pacific MHW events. We focus on long-lasting winter-onset events exceeding 1 σ for at least 5 months, since such MHW events have occurred more frequently in winter than in other seasons (Fig.  4a ), and the ENSO teleconnections as well as the reemergence-like behaviors may be stronger in winter (Figs.  5 and 6 )."
+          },
+          {
+            "url": "https://oceanvines.org/news/2026-07-31-marine-heatwave-forecast-seabed2030",
+            "is_input_page": false,
+            "source_id": "src_26dba67fb8fd",
+            "start": 1677,
+            "end": 2190,
+            "text": "The core takeaway from the PSL summary is that two driver sets can combine — large-scale tropical dynamics such as ENSO, and local processes such as subsurface heat storage and reemergence (often described as an “ocean memory”). In the Northeast Pacific, the researchers report that marine heatwaves that start in winter tend to last longer because ENSO impacts can reinforce reemergence, giving warm anomalies staying power. Summer-starting heatwaves, by contrast, can become more intense but usually end faster."
+          }
+        ]
+      }
+    },
+    {
+      "id": "heatwave_c3",
+      "article_source_url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+      "claim": "Summer-starting marine heatwaves can be more intense but generally end quickly.",
+      "before": {
+        "id": "heatwave_c3",
+        "claim": "Summer-starting marine heatwaves can be more intense but generally end quickly.",
+        "queries": [
+          "heatwaves can more intense but generally end quickly"
+        ],
+        "query_statuses": [
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://en.wikipedia.org/wiki/Heat_wave",
+            "title": "Heat wave - Wikipedia",
+            "query": "heatwaves can more intense but generally end quickly"
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/Marine_heatwave",
+            "title": "Marine heatwave - Wikipedia",
+            "query": "heatwaves can more intense but generally end quickly"
+          },
+          {
+            "url": "https://www.sciencedirect.com/science/article/pii/S2949790625002551",
+            "title": "A global assessment of intensified heatwaves and air quality",
+            "query": "heatwaves can more intense but generally end quickly"
+          },
+          {
+            "url": "https://climatecosmos.com/climate-science/the-science-of-heatwaves-why-theyre-more-frequent-and-intense-than-ever-2",
+            "title": "The Science of Heatwaves: Why They're More Frequent and ...",
+            "query": "heatwaves can more intense but generally end quickly"
+          },
+          {
+            "url": "https://www.nature.com/articles/s41558-026-02762-2",
+            "title": "Earlier and faster heatwave onset on land under a warming ...",
+            "query": "heatwaves can more intense but generally end quickly"
+          }
+        ],
+        "matched_passages": []
+      },
+      "after": {
+        "id": "heatwave_c3",
+        "claim": "Summer-starting marine heatwaves can be more intense but generally end quickly.",
+        "queries": [
+          "Summer-starting marine heatwaves can more intense but generally end quickly"
+        ],
+        "query_statuses": [
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+            "title": "Severity and persistence of Northeast Pacific marine ...",
+            "query": "Summer-starting marine heatwaves can more intense but generally end quickly"
+          },
+          {
+            "url": "https://www.nature.com/articles/s43247-024-01806-9",
+            "title": "A global overview of marine heatwaves in a changing climateMarine Heatwaves : NOAA Physical Sciences LaboratoryOcean dynamics shape marine heatwaves and their ... - NatureIn hot water: exploring marine heatwaves - NOAA ResearchPersistent Northeast Pacific marine heatwaves are sensitive ...Marine Heatwaves | National Oceanography Centre",
+            "query": "Summer-starting marine heatwaves can more intense but generally end quickly"
+          },
+          {
+            "url": "https://psl.noaa.gov/marine-heatwaves/",
+            "title": "Marine Heatwaves : NOAA Physical Sciences Laboratory",
+            "query": "Summer-starting marine heatwaves can more intense but generally end quickly"
+          },
+          {
+            "url": "https://www.nature.com/articles/s41467-026-69509-7",
+            "title": "Ocean dynamics shape marine heatwaves and their ... - Nature",
+            "query": "Summer-starting marine heatwaves can more intense but generally end quickly"
+          },
+          {
+            "url": "https://research.noaa.gov/in-hot-water-exploring-marine-heatwaves/",
+            "title": "In hot water: exploring marine heatwaves - NOAA Research",
+            "query": "Summer-starting marine heatwaves can more intense but generally end quickly"
+          }
+        ],
+        "matched_passages": [
+          {
+            "url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+            "is_input_page": true,
+            "source_id": "src_5c6955100671",
+            "start": 5193,
+            "end": 5887,
+            "text": "The researchers found that different regions of the Northeast Pacific respond to the different ENSO\n “flavors.” For example, an El Niño in the Central Pacific can help trigger a marine heatwave in the Gulf of\n Alaska, while a La Niña in the Eastern Pacific can contribute to one in the Central North Pacific.\n Apart from ENSO influence, local processes such as “ocean memory” reemergence also play a role in generating\n warm ocean conditions.\n Marine heatwaves that start in the winter last longer due to the combination of ENSO impact and the\n reemergence process, which gives the heatwave staying power. Ones that start in the summer can be much more\n intense, but they generally end quickly."
+          }
+        ]
+      }
+    },
+    {
+      "id": "lucy_c1",
+      "article_source_url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+      "claim": "Lucy passed about 650 miles from Donaldjohanson on April 20, 2025.",
+      "before": {
+        "id": "lucy_c1",
+        "claim": "Lucy passed about 650 miles from Donaldjohanson on April 20, 2025.",
+        "queries": [
+          "650 20, 2025"
+        ],
+        "query_statuses": [
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://powersports.honda.com/motorcycle/sport/cbr650r/2025/cbr650r-e-clutch",
+            "title": "2025 CBR650R E-Clutch – 650cc Sportbike | Honda Powersports2025 Kawasaki Ninja 650 Guide - Total Motorcycle2025 Kawasaki Ninja® 650 ABS - Motorcycle.com2025 Honda XR650L Review - Total Motorcycle2026 Kawasaki Ninja® 650 | Motorcycle | Legendary Lineage2025 Z650 Specifications - Kawasaki Motors Corp., U.S.A.Shohei Ohtani #650 Prices | 2025 Topps Now | Baseball Cards",
+            "query": "650 20, 2025"
+          },
+          {
+            "url": "https://www.totalmotorcycle.com/motorcycles/2025/2025-kawasaki-ninja-650",
+            "title": "2025 Kawasaki Ninja 650 Guide - Total Motorcycle",
+            "query": "650 20, 2025"
+          },
+          {
+            "url": "https://www.motorcycle.com/specs/kawasaki/sport/2025/ninja-650/abs/detail.html",
+            "title": "2025 Kawasaki Ninja® 650 ABS - Motorcycle.com",
+            "query": "650 20, 2025"
+          },
+          {
+            "url": "https://www.totalmotorcycle.com/motorcycles/2025/2025-honda-xr650l",
+            "title": "2025 Honda XR650L Review - Total Motorcycle2026 Kawasaki Ninja® 650 | Motorcycle | Legendary Lineage2025 Z650 Specifications - Kawasaki Motors Corp., U.S.A.Shohei Ohtani #650 Prices | 2025 Topps Now | Baseball Cards",
+            "query": "650 20, 2025"
+          },
+          {
+            "url": "https://www.kawasaki.com/en-us/motorcycle/ninja/sport/ninja-650/2026-ninja-650",
+            "title": "2026 Kawasaki Ninja® 650 | Motorcycle | Legendary Lineage",
+            "query": "650 20, 2025"
+          }
+        ],
+        "matched_passages": []
+      },
+      "after": {
+        "id": "lucy_c1",
+        "claim": "Lucy passed about 650 miles from Donaldjohanson on April 20, 2025.",
+        "queries": [
+          "Lucy passed about 650 miles Donaldjohanson April 20 2025",
+          "Lucy passed about 650 miles from Donaldjohanson on April 20, 2025"
+        ],
+        "query_statuses": [
+          "search_unavailable",
+          "search_unavailable"
+        ],
+        "search_status": "search_unavailable",
+        "candidate_pages": [],
+        "matched_passages": []
+      }
+    },
+    {
+      "id": "lucy_c2",
+      "article_source_url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+      "claim": "Donaldjohanson rotates end-over-end once every 10.5 Earth days and wobbles around its long axis every 26.5 days.",
+      "before": {
+        "id": "lucy_c2",
+        "claim": "Donaldjohanson rotates end-over-end once every 10.5 Earth days and wobbles around its long axis every 26.5 days.",
+        "queries": [
+          "10.5 26.5"
+        ],
+        "query_statuses": [
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://www.desmos.com/scientific",
+            "title": "Desmos | Scientific Calculator",
+            "query": "10.5 26.5"
+          },
+          {
+            "url": "https://www.cdc.gov/bmi/adult-calculator/index.html",
+            "title": "Adult BMI Calculator | BMI | CDC",
+            "query": "10.5 26.5"
+          },
+          {
+            "url": "https://vintagewheelsus.com/index.php?main_page=product_info&products_id=324",
+            "title": "Goodyear Eagle Billboard 26.5/10.5/15 Cobra Rear tire ...",
+            "query": "10.5 26.5"
+          },
+          {
+            "url": "https://www.calculator.net/fraction-calculator.html",
+            "title": "Fraction Calculator",
+            "query": "10.5 26.5"
+          },
+          {
+            "url": "https://www.symbolab.com/solver/scientific-calculator",
+            "title": "Scientific Calculator - Symbolab",
+            "query": "10.5 26.5"
+          }
+        ],
+        "matched_passages": []
+      },
+      "after": {
+        "id": "lucy_c2",
+        "claim": "Donaldjohanson rotates end-over-end once every 10.5 Earth days and wobbles around its long axis every 26.5 days.",
+        "queries": [
+          "Donaldjohanson rotates end-over-end once every 10.5 Earth days wobbles around long axis every 26.5 days"
+        ],
+        "query_statuses": [
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://en.wikipedia.org/wiki/52246_Donaldjohanson",
+            "title": "52246 Donaldjohanson - Wikipedia",
+            "query": "Donaldjohanson rotates end-over-end once every 10.5 Earth days wobbles around long axis every 26.5 days"
+          },
+          {
+            "url": "https://phys.org/news/2026-06-asteroid-donaldjohanson-rotates-lucy-flyby.html",
+            "title": "Asteroid Donaldjohanson wobbles as it rotates, Lucy flyby reveals",
+            "query": "Donaldjohanson rotates end-over-end once every 10.5 Earth days wobbles around long axis every 26.5 days"
+          },
+          {
+            "url": "https://svs.gsfc.nasa.gov/5628",
+            "title": "NASA SVS | Lucy Observations of Asteroid Donaldjohanson",
+            "query": "Donaldjohanson rotates end-over-end once every 10.5 Earth days wobbles around long axis every 26.5 days"
+          },
+          {
+            "url": "https://earthsky.org/space/asteroid-wobbles-in-space-donaldjohanson-lucy/",
+            "title": "Peanut-shaped asteroid wobbles in 2 directions - EarthSky",
+            "query": "Donaldjohanson rotates end-over-end once every 10.5 Earth days wobbles around long axis every 26.5 days"
+          },
+          {
+            "url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+            "title": "NASA’s Lucy Reveals Wobbling, Peanut-Shaped Asteroid",
+            "query": "Donaldjohanson rotates end-over-end once every 10.5 Earth days wobbles around long axis every 26.5 days"
+          }
+        ],
+        "matched_passages": [
+          {
+            "url": "https://en.wikipedia.org/wiki/52246_Donaldjohanson",
+            "is_input_page": false,
+            "source_id": "src_e970044d43a5",
+            "start": 9462,
+            "end": 10151,
+            "text": "Instead of rotating around a single axis , Donaldjohanson wobbles chaotically. It slowly rotates end-over-end once every 253 hours (10.5 days) , and wobbles back and forth around its long axis once every 637 hours (26.5 days) . The slow, tumbling rotation is believed to have been caused by the YORP effect , which is a gradual torque exerted by sunlight. Donaldjohanson is a member of the Erigone family , a collisional family of asteroids with physical and orbital properties similar to 163 Erigone . Donaldjohanson and the Erigone family are believed to have formed within the last 270 million years, in the aftermath of a catastrophic collision between two once-larger asteroids. [ 2 ]"
+          },
+          {
+            "url": "https://phys.org/news/2026-06-asteroid-donaldjohanson-rotates-lucy-flyby.html",
+            "is_input_page": false,
+            "source_id": "src_4fe4500d9e9c",
+            "start": 1518,
+            "end": 1904,
+            "text": "Southwest Research Institute (SwRI) scientists studying the inner main-belt asteroid Donaldjohanson have found that its rotation wobbles. Rather than rolling through space in a steady pattern, Donaldjohanson turns on two axes, rotating end over end once every 10.5 Earth days while wobbling around its horizontal axis every 26.5 days. The findings are published in the journal Science ."
+          },
+          {
+            "url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+            "is_input_page": true,
+            "source_id": "src_1e00a0bcd6cc",
+            "start": 8838,
+            "end": 9297,
+            "text": "With Earth-based telescopes, observers saw fluctuations in the light Donaldjohanson reflects, regular patterns of peaks and valleys, typical of an elongated object rotating once every 10.5 Earth days. But Lucy’s data revealed another pattern: Donaldjohanson appears to be rotating like a wobbly top. Paper authors reported that the asteroid rotates end-over-end once every 10.5 Earth days, and wobbles back and forth around its long axis once every 26.5 days."
+          }
+        ]
+      }
+    },
+    {
+      "id": "lucy_c3",
+      "article_source_url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+      "claim": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in the distant past.",
+      "before": {
+        "id": "lucy_c3",
+        "claim": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in the distant past.",
+        "queries": [
+          "Donaldjohanson indicate liquid water present briefly distant past",
+          "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in"
+        ],
+        "query_statuses": [
+          "search_unavailable",
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+            "title": "NASA’s Lucy Uncovers Ancient Water Clues: Exciting!",
+            "query": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in"
+          },
+          {
+            "url": "https://svs.gsfc.nasa.gov/5628",
+            "title": "NASA SVS | Lucy Observations of Asteroid Donaldjohanson",
+            "query": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in"
+          },
+          {
+            "url": "https://scitechdaily.com/nasas-lucy-uncovers-ancient-water-clues-on-a-weirdly-wobbling-asteroid/",
+            "title": "NASA’s Lucy Uncovers Ancient Water Clues on a Weirdly ...",
+            "query": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in"
+          },
+          {
+            "url": "https://scienow.com/lucy-flyby-reveals-wobbling-asteroid-donaldjohanson-holds-evidence-of-ancient-water",
+            "title": "Lucy Flyby Reveals Wobbling Asteroid Donaldjohanson Holds ...",
+            "query": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in"
+          },
+          {
+            "url": "https://www.ibtimes.sg/nasa-finds-ancient-water-clues-locked-inside-cosmic-time-capsule-88550",
+            "title": "NASA Finds Ancient Water Clues Locked Inside a Cosmic Time ...",
+            "query": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in"
+          }
+        ],
+        "matched_passages": [
+          {
+            "url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+            "is_input_page": false,
+            "source_id": "src_1fcc55b30fd8",
+            "start": 3106,
+            "end": 3408,
+            "text": "NASA’s Lucy Uncovers Ancient Water Clues by identifying iron-rich clays on asteroid Donaldjohanson during an April 2025 flyby. These specific minerals confirm liquid water briefly existed on the object’s parent body, revealing a complex evolutionary history for this primitive inner main belt fragment."
+          },
+          {
+            "url": "https://svs.gsfc.nasa.gov/5628",
+            "is_input_page": false,
+            "source_id": "src_6e89b89d84e0",
+            "start": 6309,
+            "end": 6738,
+            "text": "Lucy-DJ-QUE97990-Spectra.png (3840x3000) [3.8 MB]\n During its April 20, 2025 encounter with the main belt asteroid Donaldjohanson, NASA’s Lucy spacecraft discovered evidence for iron-rich clays on the surface of the asteroid using its infrared spectrometer. These clays, which are similar to those found in carbon-rich meteorites such as QUE 97990, indicate that water was briefly present in the asteroid during the distant past."
+          }
+        ]
+      },
+      "after": {
+        "id": "lucy_c3",
+        "claim": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in the distant past.",
+        "queries": [
+          "Iron-rich clays Donaldjohanson indicate liquid water present briefly distant past"
+        ],
+        "query_statuses": [
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://svs.gsfc.nasa.gov/5628",
+            "title": "NASA SVS | Lucy Observations of Asteroid Donaldjohanson",
+            "query": "Iron-rich clays Donaldjohanson indicate liquid water present briefly distant past"
+          },
+          {
+            "url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+            "title": "NASA’s Lucy Uncovers Ancient Water Clues: Exciting!",
+            "query": "Iron-rich clays Donaldjohanson indicate liquid water present briefly distant past"
+          },
+          {
+            "url": "https://scitechdaily.com/nasas-lucy-uncovers-ancient-water-clues-on-a-weirdly-wobbling-asteroid/",
+            "title": "NASA’s Lucy Uncovers Ancient Water Clues on a Weirdly ...",
+            "query": "Iron-rich clays Donaldjohanson indicate liquid water present briefly distant past"
+          },
+          {
+            "url": "https://scienow.com/lucy-flyby-reveals-wobbling-asteroid-donaldjohanson-holds-evidence-of-ancient-water",
+            "title": "Lucy Flyby Reveals Wobbling Asteroid Donaldjohanson Holds ...",
+            "query": "Iron-rich clays Donaldjohanson indicate liquid water present briefly distant past"
+          },
+          {
+            "url": "https://www.iflscience.com/nasas-lucy-mission-finds-evidence-of-ancient-water-on-asteroid-donaldjohanson-83848",
+            "title": "NASA's Lucy Mission Finds Evidence Of Ancient Water On ...",
+            "query": "Iron-rich clays Donaldjohanson indicate liquid water present briefly distant past"
+          }
+        ],
+        "matched_passages": [
+          {
+            "url": "https://svs.gsfc.nasa.gov/5628",
+            "is_input_page": false,
+            "source_id": "src_6e89b89d84e0",
+            "start": 6309,
+            "end": 6738,
+            "text": "Lucy-DJ-QUE97990-Spectra.png (3840x3000) [3.8 MB]\n During its April 20, 2025 encounter with the main belt asteroid Donaldjohanson, NASA’s Lucy spacecraft discovered evidence for iron-rich clays on the surface of the asteroid using its infrared spectrometer. These clays, which are similar to those found in carbon-rich meteorites such as QUE 97990, indicate that water was briefly present in the asteroid during the distant past."
+          },
+          {
+            "url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+            "is_input_page": false,
+            "source_id": "src_1fcc55b30fd8",
+            "start": 3106,
+            "end": 3408,
+            "text": "NASA’s Lucy Uncovers Ancient Water Clues by identifying iron-rich clays on asteroid Donaldjohanson during an April 2025 flyby. These specific minerals confirm liquid water briefly existed on the object’s parent body, revealing a complex evolutionary history for this primitive inner main belt fragment."
+          }
+        ]
+      }
+    },
+    {
+      "id": "dengue_c1",
+      "article_source_url": "https://www.cdc.gov/han/php/notices/han00523.html",
+      "claim": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024.",
+      "before": {
+        "id": "dengue_c1",
+        "claim": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024.",
+        "queries": [
+          "4.6 2,400 2023, 13 8,200 2024"
+        ],
+        "query_statuses": [
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+            "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing ...",
+            "query": "4.6 2,400 2023, 13 8,200 2024"
+          },
+          {
+            "url": "https://www.mathsisfun.com/numbers/calculator.html",
+            "title": "Calculator - Math is Fun",
+            "query": "4.6 2,400 2023, 13 8,200 2024"
+          },
+          {
+            "url": "https://www.calculator.net/math-calculator.html",
+            "title": "Math Calculators",
+            "query": "4.6 2,400 2023, 13 8,200 2024"
+          },
+          {
+            "url": "https://www.desmos.com/scientific",
+            "title": "Desmos | Scientific Calculator",
+            "query": "4.6 2,400 2023, 13 8,200 2024"
+          },
+          {
+            "url": "https://www.calculatorsoup.com/calculators/math/math.php",
+            "title": "Math Calculator",
+            "query": "4.6 2,400 2023, 13 8,200 2024"
+          }
+        ],
+        "matched_passages": [
+          {
+            "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+            "is_input_page": true,
+            "source_id": "src_7e2197ed7531",
+            "start": 3914,
+            "end": 4658,
+            "text": "Globally, dengue cases have increased substantially in the last 5 years , with the most pronounced increases occurring in the Americas. In the Americas region , 4.6 million cases and 2,400 deaths were reported in 2023, followed by 13 million cases and 8,200 deaths in 2024. As of March 6, more than 760,000 dengue cases have been reported in 2025, which is a 15% increase compared to the previous 5-year average. Epidemics in the Americas region are expected to increase both travel-associated cases and the possibility of local transmission in the continental United States in areas with competent mosquito vectors. Spring and summer travel in the United States overlaps with the months of increased seasonal dengue activity in many countries."
+          }
+        ]
+      },
+      "after": {
+        "id": "dengue_c1",
+        "claim": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024.",
+        "queries": [
+          "Americas reported 4.6 million dengue cases 2,400 deaths 2023 followed 13 million cases 8,200 deaths 2024",
+          "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024"
+        ],
+        "query_statuses": [
+          "search_unavailable",
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+            "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing ...",
+            "query": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024"
+          },
+          {
+            "url": "https://www.dengue.com/dengue-cases-soared-record-highs-americas-region-during-2024",
+            "title": "Americas region 2024 dengue record unprecedented outbreak ...",
+            "query": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024"
+          },
+          {
+            "url": "https://www.who.int/emergencies/disease-outbreak-news/item/2024-DON518",
+            "title": "Dengue - Global situation - World Health Organization (WHO)",
+            "query": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024"
+          },
+          {
+            "url": "https://www.usnews.com/news/national-news/articles/2024-06-26/what-to-know-cdc-warns-of-increased-risk-of-dengue-infections-in-u-s",
+            "title": "What to Know: CDC Warns of ‘Increased Risk’ of Dengue ...How climate change made 2024 the deadliest year of dengueGlobal upsurge in dengue in 2024 - The LancetEPI-WIN digest 12 - Dengue: current epidemiological situation ...",
+            "query": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024"
+          },
+          {
+            "url": "https://www.bmj.com/content/387/bmj.q2391",
+            "title": "How climate change made 2024 the deadliest year of dengue",
+            "query": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024"
+          }
+        ],
+        "matched_passages": [
+          {
+            "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+            "is_input_page": true,
+            "source_id": "src_7e2197ed7531",
+            "start": 3914,
+            "end": 4658,
+            "text": "Globally, dengue cases have increased substantially in the last 5 years , with the most pronounced increases occurring in the Americas. In the Americas region , 4.6 million cases and 2,400 deaths were reported in 2023, followed by 13 million cases and 8,200 deaths in 2024. As of March 6, more than 760,000 dengue cases have been reported in 2025, which is a 15% increase compared to the previous 5-year average. Epidemics in the Americas region are expected to increase both travel-associated cases and the possibility of local transmission in the continental United States in areas with competent mosquito vectors. Spring and summer travel in the United States overlaps with the months of increased seasonal dengue activity in many countries."
+          },
+          {
+            "url": "https://www.dengue.com/dengue-cases-soared-record-highs-americas-region-during-2024",
+            "is_input_page": false,
+            "source_id": "src_00dd71be857c",
+            "start": 1315,
+            "end": 1634,
+            "text": "Dengue cases in the Americas skyrocketed to over 11 million by August of 2024, more than doubling the 4.6 million cases reported during the whole of 2023. 1,2 This unprecedented surge prompted Pan American Health Organization (PAHO) Director Jarbas Barbosa to declare that \"an emergency situation\" had been reached. 2,3"
+          }
+        ]
+      }
+    },
+    {
+      "id": "dengue_c2",
+      "article_source_url": "https://www.cdc.gov/han/php/notices/han00523.html",
+      "claim": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average.",
+      "before": {
+        "id": "dengue_c2",
+        "claim": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average.",
+        "queries": [
+          "6, 2025, 760,000 15"
+        ],
+        "query_statuses": [
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://www.in2013dollars.com/us/inflation/2025?amount=760000&endYear=2026",
+            "title": "$760,000 in 2025 → 2026 | Inflation Calculator",
+            "query": "6, 2025, 760,000 15"
+          },
+          {
+            "url": "https://www.calculateme.com/compound-interest/760000/15/6",
+            "title": "$760,000 at 15% Interest for 6 Years - CalculateMe.com",
+            "query": "6, 2025, 760,000 15"
+          },
+          {
+            "url": "https://www.amortization.org/inflation/amount.php?year=2025&amount=760000",
+            "title": "What is $760,000 in 2025 worth in 2026? - amortization.org",
+            "query": "6, 2025, 760,000 15"
+          },
+          {
+            "url": "https://www.saving.org/inflation/inflation.php?amount=760000&year=2025",
+            "title": "What is $760,000 in 2025 Worth Today? Inflation Calculator ...",
+            "query": "6, 2025, 760,000 15"
+          },
+          {
+            "url": "https://www.myamortizationchart.com/mortgage-calculator/760000/6.15/",
+            "title": "760,000 at 6.15% Mortgage Payment Calculator",
+            "query": "6, 2025, 760,000 15"
+          }
+        ],
+        "matched_passages": []
+      },
+      "after": {
+        "id": "dengue_c2",
+        "claim": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average.",
+        "queries": [
+          "March 6 2025 more than 760,000 dengue cases had reported Americas 15 percent above previous five-year average",
+          "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average"
+        ],
+        "query_statuses": [
+          "search_unavailable",
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+            "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing ...",
+            "query": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average"
+          },
+          {
+            "url": "https://www.nyc.gov/assets/doh/downloads/pdf/han/advisory/2025/han-advisory-8-dengue-virus.pdf",
+            "title": "DATE: March 21, 2025 - NYC.gov",
+            "query": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average"
+          },
+          {
+            "url": "https://www.paho.org/sites/default/files/2026/02/2026-18-feb-phe-epi-update-dengue-enfinal1.pdf",
+            "title": "Summary of the situation in the Americas Region",
+            "query": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average"
+          },
+          {
+            "url": "https://www.paho.org/sites/default/files/2026/02/2026-18-feb-phe-epi-update-dengue-enfinal.pdf",
+            "title": "Epidemiological Update Dengue in the Americas Region",
+            "query": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average"
+          },
+          {
+            "url": "https://www.who.int/publications/i/item/who-wer10140-285-289",
+            "title": "Global dengue update - World Health Organization (WHO)",
+            "query": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average"
+          }
+        ],
+        "matched_passages": []
+      }
+    },
+    {
+      "id": "dengue_c3",
+      "article_source_url": "https://www.cdc.gov/han/php/notices/han00523.html",
+      "claim": "Puerto Rico reported 6,291 dengue cases in 2024; 3,292 required hospitalization and 13 people died.",
+      "before": {
+        "id": "dengue_c3",
+        "claim": "Puerto Rico reported 6,291 dengue cases in 2024; 3,292 required hospitalization and 13 people died.",
+        "queries": [
+          "6,291 2024; 3,292 13"
+        ],
+        "query_statuses": [
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://www.sciencedirect.com/org/science/article/abs/pii/S1520480425002431",
+            "title": "Discovery of Elironrasib (RMC-6291), a Potent and Orally ...",
+            "query": "6,291 2024; 3,292 13"
+          },
+          {
+            "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+            "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing ...",
+            "query": "6,291 2024; 3,292 13"
+          },
+          {
+            "url": "https://www.ssa.gov/oact/ssir/SSI25/IV_C_Payments.html",
+            "title": "C. Federal Payments Under SSI - The United States Social ...",
+            "query": "6,291 2024; 3,292 13"
+          },
+          {
+            "url": "https://www.symbolab.com/solver",
+            "title": "Step-by-Step Calculator - Symbolab",
+            "query": "6,291 2024; 3,292 13"
+          },
+          {
+            "url": "https://www.sos.texas.gov/texreg/pdf/backview/index.shtml",
+            "title": "Back Issues of the Texas Register - PDF version",
+            "query": "6,291 2024; 3,292 13"
+          }
+        ],
+        "matched_passages": [
+          {
+            "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+            "is_input_page": true,
+            "source_id": "src_7e2197ed7531",
+            "start": 5361,
+            "end": 5765,
+            "text": "In Puerto Rico, reported dengue cases have remained above the outbreak threshold since February 2024. A public health emergency was declared in March 2024 and remains in effect. In 2024, 6,291 cases were reported , more than 52% (3,292) required hospitalization and there were 13 deaths. As of March 7, 2025, 936 cases have been reported, representing a 113% increase compared to the same period in 2024."
+          }
+        ]
+      },
+      "after": {
+        "id": "dengue_c3",
+        "claim": "Puerto Rico reported 6,291 dengue cases in 2024; 3,292 required hospitalization and 13 people died.",
+        "queries": [
+          "Puerto Rico reported 6,291 dengue cases 2024 3,292 required hospitalization 13 people died"
+        ],
+        "query_statuses": [
+          "ok"
+        ],
+        "search_status": "ok",
+        "candidate_pages": [
+          {
+            "url": "https://www.cdc.gov/mmwr/volumes/74/wr/mm7405a1.htm",
+            "title": "Dengue Outbreak and Response — Puerto Rico, 2024 | MMWR",
+            "query": "Puerto Rico reported 6,291 dengue cases 2024 3,292 required hospitalization 13 people died"
+          },
+          {
+            "url": "https://www.cdc.gov/mmwr/volumes/74/wr/pdfs/mm7405a1-H.pdf",
+            "title": "MMWR, Dengue Outbreak and Response Puerto Rico, 2024",
+            "query": "Puerto Rico reported 6,291 dengue cases 2024 3,292 required hospitalization 13 people died"
+          },
+          {
+            "url": "https://www.annemergmed.com/article/S0196-0644(25)00205-7/fulltext",
+            "title": "Dengue Outbreak and Response—Puerto Rico, 2024",
+            "query": "Puerto Rico reported 6,291 dengue cases 2024 3,292 required hospitalization 13 people died"
+          },
+          {
+            "url": "https://reliefweb.int/report/puerto-rico-united-states-america/morbidity-and-mortality-weekly-report-dengue-outbreak-and-response-puerto-rico-2024-february-20-2025",
+            "title": "Morbidity and Mortality Weekly Report: Dengue Outbreak and ...",
+            "query": "Puerto Rico reported 6,291 dengue cases 2024 3,292 required hospitalization 13 people died"
+          },
+          {
+            "url": "https://www.sciencedirect.com/science/article/pii/S0196064425002057",
+            "title": "Dengue Outbreak and Response—Puerto Rico, 2024 - ScienceDirect",
+            "query": "Puerto Rico reported 6,291 dengue cases 2024 3,292 required hospitalization 13 people died"
+          }
+        ],
+        "matched_passages": [
+          {
+            "url": "https://www.cdc.gov/mmwr/volumes/74/wr/mm7405a1.htm",
+            "is_input_page": false,
+            "source_id": "src_d67af708ef7f",
+            "start": 1826,
+            "end": 2162,
+            "text": "During 2024, Puerto Rico reported 6,291 dengue cases and surpassed the epidemic threshold, prompting declaration of a local public health emergency. Approximately one half of patients (52.3%) were hospitalized, 264 (4.2%) had severe dengue cases, and 11 (0.2%) persons died. Persons aged 10–19 years accounted for 28.4% of severe cases."
+          }
+        ]
+      }
+    }
+  ]
+}

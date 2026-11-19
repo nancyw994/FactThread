@@ -1,0 +1,228 @@
+{
+  "provider_chain": [
+    {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b"
+    }
+  ],
+  "allow_paid": false,
+  "allow_openrouter_fallback": false,
+  "extraction_response_format": "Groq JSON Object Mode requested; no response was received in the post-fix run because the free Groq endpoint rate-limited requests.",
+  "format_trials": [
+    {
+      "mode": "strict json_schema",
+      "result": "BadRequest",
+      "model_reply_saved": false
+    },
+    {
+      "mode": "json_object",
+      "result": "rate limited on all four articles",
+      "model_reply_saved": false
+    }
+  ],
+  "independent_apollo_control": {
+    "input_chars": 203,
+    "truncated": false,
+    "before_repair": {
+      "raw_chars": 1193,
+      "parsed_items": 4,
+      "accepted_items": 4,
+      "rejected_items": 0,
+      "status": "extracted"
+    },
+    "raw_file": "diagnostics/raw/before/apollo-control-valid.json"
+  },
+  "failed_article_raw_reply": {
+    "id": "chan_chan",
+    "raw_chars": 14711,
+    "has_json_object": false,
+    "has_claims_array": false,
+    "content": "Explanatory numbered claim list, copied article text, and quoted items; the response stops before a JSON object.",
+    "raw_file": "diagnostics/raw/before/chan_chan-unstructured-response.txt",
+    "previous_parser_behavior": "returned claims=[]; ArticleBook retried once and then reported status=extracted",
+    "filter_counts": {
+      "parsed": 0,
+      "accepted": 0,
+      "rejected": 0
+    }
+  },
+  "articles": [
+    {
+      "id": "chan_chan",
+      "source_url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+      "input_chars": 5234,
+      "truncated": false,
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "paid_allowed": false,
+      "openrouter_allowed": false,
+      "before": {
+        "reported_status": "extracted_empty",
+        "parsed_items": 0,
+        "accepted_items": 0,
+        "rejected_items": 0,
+        "note": "Prior batch extraction helper returned empty claims and rejected lists; no candidate output was retained."
+      },
+      "after": {
+        "article_mode_status": "error",
+        "extraction_status": "request_failed",
+        "request_attempts": 1,
+        "parsed_items": null,
+        "accepted_items": null,
+        "rejected_items": null,
+        "runtime_error": "核查没有完成（RuntimeError）。RateLimited: Model request failed. groq openai/gpt-oss-120b: RateLimitError The fixed_rules baseline was not substituted.",
+        "filter_diagnostics": [
+          {
+            "attempt": 1,
+            "stage": "request",
+            "error": "RateLimited"
+          }
+        ]
+      }
+    },
+    {
+      "id": "heatwave",
+      "source_url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+      "input_chars": 6885,
+      "truncated": false,
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "paid_allowed": false,
+      "openrouter_allowed": false,
+      "before": {
+        "reported_status": "extracted_empty",
+        "parsed_items": 0,
+        "accepted_items": 0,
+        "rejected_items": 0,
+        "note": "Prior batch extraction helper returned empty claims and rejected lists; no candidate output was retained."
+      },
+      "after": {
+        "article_mode_status": "error",
+        "extraction_status": "request_failed",
+        "request_attempts": 1,
+        "parsed_items": null,
+        "accepted_items": null,
+        "rejected_items": null,
+        "runtime_error": "核查没有完成（RuntimeError）。RateLimited: Model request failed. groq openai/gpt-oss-120b: RateLimitError The fixed_rules baseline was not substituted.",
+        "filter_diagnostics": [
+          {
+            "attempt": 1,
+            "stage": "request",
+            "error": "RateLimited"
+          }
+        ]
+      }
+    },
+    {
+      "id": "lucy",
+      "source_url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+      "input_chars": 7045,
+      "truncated": false,
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "paid_allowed": false,
+      "openrouter_allowed": false,
+      "before": {
+        "reported_status": "extracted_empty",
+        "parsed_items": 0,
+        "accepted_items": 0,
+        "rejected_items": 0,
+        "note": "Prior batch extraction helper returned empty claims and rejected lists; no candidate output was retained."
+      },
+      "after": {
+        "article_mode_status": "error",
+        "extraction_status": "request_failed",
+        "request_attempts": 1,
+        "parsed_items": null,
+        "accepted_items": null,
+        "rejected_items": null,
+        "runtime_error": "核查没有完成（RuntimeError）。RateLimited: Model request failed. groq openai/gpt-oss-120b: RateLimitError The fixed_rules baseline was not substituted.",
+        "filter_diagnostics": [
+          {
+            "attempt": 1,
+            "stage": "request",
+            "error": "RateLimited"
+          }
+        ]
+      }
+    },
+    {
+      "id": "dengue",
+      "source_url": "https://www.cdc.gov/han/php/notices/han00523.html",
+      "input_chars": 11623,
+      "truncated": false,
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "paid_allowed": false,
+      "openrouter_allowed": false,
+      "before": {
+        "reported_status": "extracted_empty",
+        "parsed_items": 0,
+        "accepted_items": 0,
+        "rejected_items": 0,
+        "note": "Prior batch extraction helper returned empty claims and rejected lists; no candidate output was retained."
+      },
+      "after": {
+        "article_mode_status": "error",
+        "extraction_status": "request_failed",
+        "request_attempts": 1,
+        "parsed_items": null,
+        "accepted_items": null,
+        "rejected_items": null,
+        "runtime_error": "核查没有完成（RuntimeError）。RateLimited: Model request failed. groq openai/gpt-oss-120b: RateLimitError The fixed_rules baseline was not substituted.",
+        "filter_diagnostics": [
+          {
+            "attempt": 1,
+            "stage": "request",
+            "error": "RateLimited"
+          }
+        ]
+      }
+    }
+  ],
+  "batch_metrics": {
+    "before_extraction_recall_on_selected_gold": "0/12",
+    "before_precision": "not measurable: zero output claims",
+    "before_normalization_fidelity": "not measurable: zero output claims",
+    "after_extraction_recall": "not measurable: 4/4 runtime request failures",
+    "after_precision": "not measurable: no output claims",
+    "after_normalization_fidelity": "not measurable: no output claims",
+    "after_runtime_errors": "4/4 article requests rate-limited"
+  },
+  "latest_sequential_validation": {
+    "article_order": [
+      "chan_chan",
+      "heatwave",
+      "lucy",
+      "dengue"
+    ],
+    "format_probe": {
+      "input_chars": 203,
+      "status": "passed",
+      "parsed_items": 4,
+      "accepted_items": 4,
+      "rejected_items": 0,
+      "rejection_reasons": [],
+      "request_sequence": 1
+    },
+    "article_completion": "0/4",
+    "articles_completed": [],
+    "articles_not_attempted_after_stop": [
+      "heatwave",
+      "lucy",
+      "dengue"
+    ],
+    "request_attempts": 2,
+    "request_failures": 1,
+    "rate_limited_requests": 1,
+    "stopped_on": "chan_chan",
+    "quality_for_completed_articles": {
+      "completed_articles": 0,
+      "reference_claim_recall": null,
+      "extra_item_precision": null,
+      "normalization_fidelity": null,
+      "reason": "No article completed; there are no successful outputs to manually score."
+    },
+    "request_events_file": "after/sequenced_extractions.json"
+  }
+}

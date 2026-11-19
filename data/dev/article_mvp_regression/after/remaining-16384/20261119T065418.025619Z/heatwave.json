@@ -1,0 +1,454 @@
+{
+  "article_id": "heatwave",
+  "source_url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+  "provider": "groq",
+  "model": "openai/gpt-oss-120b",
+  "prompt_version": "sha256:e52cb13057888cc38bba9f73e2e6ac7fd229593d848a6b16829203269ade1f77",
+  "output_cap": 16384,
+  "input_sha256": "b9b1f7f09eae245cfd5cd203e4a17395c1bf90996553636b5f0d6fc843312fee",
+  "input_chars": 6885,
+  "truncated_input": false,
+  "submitted_article_chars": 6885,
+  "provider_chain": [
+    {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "base_url": "https://api.groq.com/openai/v1",
+      "route_reason": "groq_primary"
+    }
+  ],
+  "allow_paid": false,
+  "allow_openrouter_fallback": false,
+  "response_format": {
+    "type": "json_object"
+  },
+  "temperature": 0.0,
+  "output_parameter": "max_completion_tokens",
+  "request_count": 1,
+  "request_attempts": [
+    {
+      "sequence": 1,
+      "started_at": "2026-11-19T06:54:18.029995+00:00",
+      "request_parameters": {
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0.0,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Follow the YAML specification below when answering.\n\ninstructions: 'You extract atomic claims from one article so a person can fact-check\n  them later. You do not search, and you do not assign a verdict.\n\n\n  Return only JSON:\n\n  {\"claims\":[{\"id\":\"c1\",\"source_quote\":\"exact substring of the article\",\"normalized_claim\":\"one\n  standalone claim\",\"category\":\"checkable_fact|opinion|prediction|needs_context\",\"missing_context\":[],\"verification_scope\":\"external_fact|document_content|text_analysis\"}]}\n\n\n  Rules:\n\n  - source_quote must be copied character for character from the article. Do not fix\n  spelling, and do not join text from two places.\n\n  - Split a sentence that states two independent facts into two claims. Each quote\n  must still be an exact substring.\n\n  - Keep limiters in normalized_claim: some, all, only, may, as of a date, a named\n  exam, a team, a tier, or a price category.\n\n  - Preserve the source quote''s asserted meaning in normalized_claim: keep its subject,\n  action, polarity, tense, certainty, time, quantities, and scope. Do not weaken a\n  forecast into a present fact, strengthen a possibility into certainty, reverse a\n  negation, or omit a limiting phrase. If a faithful normalization is unclear, use\n  the source wording and explain the missing context.\n\n  - Extract statements about the limits of current knowledge as claims too. Phrases\n  such as \"unknown,\" \"unclear,\" \"not known,\" or \"no data\" assert a state of knowledge;\n  do not omit them or turn them into a claim that an event or object did not exist.\n  Preserve whose knowledge is limited, which aspect is unknown, and any stated time\n  or scope.\n\n  - Do not add ordinal or superlative limits such as “first,” “earliest,” or “only”\n  unless the quote or one clear context explicitly states them. Never turn an unordered\n  event into a first event.\n\n  - In normalized_claim, resolve a pronoun or demonstrative such as \"it\", \"they\",\n  \"these actions\", \"that exam\", \"the same report\", \"the paper\", or \"that date\" from\n  the article context only when there is one clear antecedent. Preserve the source\n  quote exactly. If the antecedent is ambiguous or absent, keep the claim cautious\n  and list the missing referent in missing_context; never guess.\n\n  - Do not replace a claim with a neighboring sentence while resolving context. The\n  normalized claim must preserve the source quote''s subject, predicate, numbers,\n  and direction. If the quote is \"These actions allowed X to flourish\", do not turn\n  it into a claim about how a release was licensed. Keep the causal assertion and\n  list any unclear action, concrete outcome or measure, and causal basis in missing_context.\n\n  - For causal language such as \"caused\", \"allowed\", \"enabled\", \"led to\", or \"resulted\n  in\", check whether the article names the action, outcome, and a concrete indicator.\n  Vague outcomes such as \"flourish\" or \"improve\" need the missing object or measure\n  and evidence for the causal link listed in missing_context. Do not treat temporal\n  order alone as causal proof.\n\n  - When a claim reports that headlines or another speaker described a gain, improvement,\n  score, or other result with a comparison, preserve that attribution and identify\n  the result or measure being described. If the article does not make the referent\n  clear, include it in missing_context instead of guessing.\n\n  - If the article attributes the statement, keep that attribution in source_quote\n  and in normalized_claim. Phrases to keep include \"the report says\", \"the authors\n  add\", \"according to\", \"I think\", and \"headlines called\". Do not turn an attributed\n  statement into a bare fact.\n\n  - Keep a statement''s existing speaker, source, role, and attribution verb when\n  the article supplies them. If the attribution is outside quotation marks or is carried\n  by a clearly connected continuation, make source_quote one exact contiguous substring\n  that includes the statement and enough attribution context; keep the same attribution\n  in normalized_claim. Do not infer a speaker or source when the article leaves it\n  unclear.\n\n  - Do not extend an attribution across \"and\". \"The report says A, and B\" supports\n  \"The report says A\". It does not support \"The report says B\". Leave B as its own\n  claim without that attribution.\n\n  - Preserve semantic relationships between the subject, action, object, and any necessary\n  participants. Keep stated spatial and directional relationships (for example, which\n  place or object is inside, beside, connected to, or leads to another), as well as\n  causal direction. When splitting independent facts, make each claim''s quote and\n  normalization retain the relationship needed to understand that fact; do not keep\n  only a measurement or outcome while dropping the action or connection that gives\n  it meaning.\n\n  - A price claim needs the named product or service being billed. Fill that name\n  only when the price clause in the article states it. If it does not, list the missing\n  product or service in missing_context. Do not borrow a name from the other half\n  of an \"and\" sentence.\n\n  - missing_context names a gap in what that claim asserts. A claim that headlines\n  used a phrase needs the headline, not proof that the phrase''s comparison is true.\n\n  - verification_scope is document_content when the claim is about what one resolved\n  document says, lists, does not say, or does not report. It is text_analysis when\n  the sentence classifies another line as a forecast, preference, or opinion. Otherwise\n  it is external_fact.\n\n  - If a sentence says a line is a forecast or a preference, and then says it is not\n  in the report, return those as two claims.\n\n  - \"on purpose\", \"deliberately\", and \"meant to\" are intention, not opinion. \"I think\",\n  \"best\", and \"worst\" are opinion.\n\n  - Do not guess which document a pronoun or \"the document\" names. Leave it unresolved\n  when more than one document is possible.\n\n  - checkable_fact: a statement about a date, number, name, price, policy, or result\n  that could be checked against a source.\n\n  - opinion: the writer''s evaluation. Do not call it a fact.\n\n  - prediction: a claim about the future. Do not call it a fact.\n\n  - needs_context: use this category only when the claim''s own subject, date, or\n  baseline is missing. Name that gap in missing_context.\n\n  - Do not drop a checkable fact because it is narrow. Do not invent claims that the\n  article does not state.\n\n\n  If repair_errors is not empty, the previous quotes failed those checks. Return a\n  full replacement whose source_quote values occur in the article.\n\n  '\n"
+          },
+          {
+            "role": "user",
+            "content": "{\"article\": \"Severity and persistence of Northeast Pacific marine heatwaves vary by season, new PSL research shows Posted: July 28, 2026 Some of the largest, longest, and most intense marine heatwaves on record have occurred in the Northeast Pacific Ocean, the open ocean area from California to Alaska which most notably experienced “ The Blob ” marine heatwave that started in late 2013 and lasted a little over two years. A marine heatwave occurs when the ocean’s near-surface waters are unusually warm for days to months. These elevated temperatures can have devastating impacts on the marine ecosystem, blue economy , and coastal communities. Because of these negative effects, better understanding of what makes marine heatwaves in this region tick from season to season is key to improving their prediction. Tongtong Xu of the NOAA Physical Sciences Laboratory and the Cooperative Institute for Research In Environmental Sciences ( CIRES ) at CU Boulder has studied Northeast Pacific marine heatwaves for years. Building off of her previous work, Xu wanted to understand how marine heatwaves in this region responded to tropical dynamics versus local ocean processes, particularly from season to season. The question Marine heatwaves result from a number of different drivers. Globally, one major driver is ENSO , the El Niño Southern Oscillation. This large climate pattern of warm (El Niño) and cool (La Niña) ocean temperature in the tropical Pacific follows a seasonal timeline, usually starting in the spring and peaking in the winter. It additionally has “flavors” - sometimes happening in the central Pacific and sometimes farther east along the equator. More locally, the Northeast Pacific also has an “ocean memory” through a process called \\\"reemergence.\\\" In the winter, the ocean mixes deeply and warm surface water gets pushed down deep where it can get trapped during the summer months. As winter returns, the ocean begins to mix again, bringing the trapped warm water back to the surface and reestablishing the warmer conditions. Xu and her colleagues wondered to what extent tropical ENSO dynamics versus local reemergence and internal ocean processes determine the type of marine heatwave in the Northeast Pacific. The result is their study published recently in Communications Earth & Environment . The approach The historical record itself has provided relatively few marine heatwaves. To discover how marine heatwaves behave in different seasons, the team needed more marine heatwaves to study. The authors turned to an emulator based on a Cyclostationary Linear Inverse Model (CS-LIM) to generate hypothetical marine heatwaves. A CS-LIM is a data-driven model that uses real-world observations to simulate global conditions over different time periods. In this case, the researchers’ CS-LIM used 64 years of real-world sea surface temperature and height data. Using their specific CS-LIM, the researchers generated thousands of “synthetic” marine heatwaves, creating a large sample by which they could better analyze how marine heatwaves starting in one season evolve differently than those starting in another, and what potentially influenced them. The CS-LIM generated simulations spanning the Pacific Ocean so that researchers could analyze ENSO while also looking at the Northeast Pacific local patterns that would indicate the presence of processes such as reemergence. Why was this approach different? A CS-LIM specifically factors in seasons, whereas a traditional LIM, known as a Stationary Linear Inverse Model, assumes background conditions are constant throughout the year. The results The researchers found that different regions of the Northeast Pacific respond to the different ENSO “flavors.” For example, an El Niño in the Central Pacific can help trigger a marine heatwave in the Gulf of Alaska, while a La Niña in the Eastern Pacific can contribute to one in the Central North Pacific. Apart from ENSO influence, local processes such as “ocean memory” reemergence also play a role in generating warm ocean conditions. Marine heatwaves that start in the winter last longer due to the combination of ENSO impact and the reemergence process, which gives the heatwave staying power. Ones that start in the summer can be much more intense, but they generally end quickly. The impact The study highlighted the importance of the season and the heat hiding below the surface when predicting marine heatwaves. Is it starting in the summer? If so, there is a good chance it will be hotter but fade quickly. Starting in the winter? Then it won’t be as intense, but it could last awhile, even over years, similar to “The Blob.” The study results advance the knowledge and understanding of marine heatwave seasonal dynamics in the hotbed region of the Northeast Pacific. The methods used in this study could potentially be applied elsewhere to better understand the dynamics in other regions. With improved understanding of the seasonal heatwave drivers in the Northeast Pacific from this and future studies, prediction of marine heatwaves through improved models and tools can give communities and industries more time to prepare for these extreme events, potentially reducing the amount of harm caused. What about now? In a blog post accompanying the study, Xu applied the findings to current ocean conditions: This spring we watched a North Pacific meridional mode-like pattern unfold, with ocean warming extending from California toward the central tropics and reaching marine heatwave conditions. Historically, this is a classic early-warning signal for El Niño development. Our CS-LIM initialized from Spring 2026 conditions also points toward El Niño development in Winter 2026/27, with characteristics resembling a Central Pacific event. If that happens, we might expect some warming in the Gulf of Alaska. However, because Winter 2025/26 did not produce substantial warm anomalies in that region, there is little subsurface heat storage to ‘reemerge’, without which the surface warming may not be too extreme. Alternatively, in a rarer situation that an Eastern Pacific El Niño develops, we might not see open ocean heatwaves in the broader Northeast Pacific at all. Back to PSL News Bold denotes PSL-affiliated author Tongtong Xu, PSL/CIRES | Bio Matthew Newman, PSL | Bio Sang-Ik Shin, PSL/CIRES | Bio Antonietta Capotondi, PSL/CIRES | Bio Daniel Vimont, University of Wisconsin-Madison | Bio Michael Alexander, PSL Emanuele Di Lorenzo, Brown University | Bio PSL has an experimental Marine Heatwave Forecast tool that helps researchers visualize current and future ocean temperatures that are or could develop into a marine heatwave. Behind the paper blog: Northeast Pacific marine heatwaves, why do we care and what did we find? by Tongtong Xu NOAA Research News - In hot water: exploring marine heatwaves PSL Resource: Marine Heatwaves and Forecast Tool\", \"repair_errors\": []}"
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_completion_tokens": 16384
+      },
+      "request_status": "completed",
+      "http_status": 200,
+      "served_model": "openai/gpt-oss-120b",
+      "finish_reason": "stop",
+      "usage": {
+        "queue_time": 0.226441218,
+        "prompt_time": 0.137564061,
+        "completion_time": 9.251599272,
+        "total_time": 9.389163333,
+        "completion_tokens": 4442,
+        "prompt_tokens": 2935,
+        "total_tokens": 7377,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 2707,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": null
+      },
+      "rate_limit_headers": {
+        "x-ratelimit-limit-requests": "1000",
+        "x-ratelimit-limit-tokens": "8000",
+        "x-ratelimit-remaining-requests": "999",
+        "x-ratelimit-remaining-tokens": "4793",
+        "x-ratelimit-reset-requests": "1m26.4s",
+        "x-ratelimit-reset-tokens": "24.052s"
+      },
+      "cost_usd": "unknown",
+      "elapsed_seconds": 10.197720583993942,
+      "raw_reply_chars": 7986,
+      "raw_reply_file": "after/remaining-16384/20261119T065418.025619Z/raw/heatwave-attempt-1.txt",
+      "parse_status": "parsed",
+      "parsed_items": 17,
+      "accepted_items": 17,
+      "rejected_items": 0,
+      "rejection_reasons": []
+    }
+  ],
+  "accepted_claims": [
+    {
+      "source_quote": "Some of the largest, longest, and most intense marine heatwaves on record have occurred in the Northeast Pacific Ocean, the open ocean area from California to Alaska which most notably experienced “ The Blob ” marine heatwave that started in late 2013 and lasted a little over two years.",
+      "source_ranges": [
+        [
+          124,
+          411
+        ]
+      ],
+      "normalized_claim": "Some of the largest, longest, and most intense marine heatwaves on record have occurred in the Northeast Pacific Ocean and the Blob marine heatwave started in late 2013 and lasted a little over two years",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "A marine heatwave occurs when the ocean’s near-surface waters are unusually warm for days to months.",
+      "source_ranges": [
+        [
+          412,
+          512
+        ]
+      ],
+      "normalized_claim": "A marine heatwave occurs when the ocean’s near-surface waters are unusually warm for days to months",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "These elevated temperatures can have devastating impacts on the marine ecosystem, blue economy , and coastal communities.",
+      "source_ranges": [
+        [
+          513,
+          634
+        ]
+      ],
+      "normalized_claim": "These elevated temperatures can have devastating impacts on the marine ecosystem, the blue economy, and coastal communities",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "Tongtong Xu of the NOAA Physical Sciences Laboratory and the Cooperative Institute for Research In Environmental Sciences ( CIRES ) at CU Boulder has studied Northeast Pacific marine heatwaves for years.",
+      "source_ranges": [
+        [
+          802,
+          1005
+        ]
+      ],
+      "normalized_claim": "Tongtong Xu of NOAA Physical Sciences Laboratory and CIRES at CU Boulder has studied Northeast Pacific marine heatwaves for years",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "an El Niño in the Central Pacific can help trigger a marine heatwave in the Gulf of Alaska",
+      "source_ranges": [
+        [
+          3734,
+          3824
+        ]
+      ],
+      "normalized_claim": "An El Niño in the Central Pacific can help trigger a marine heatwave in the Gulf of Alaska",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "a La Niña in the Eastern Pacific can contribute to one in the Central North Pacific",
+      "source_ranges": [
+        [
+          3832,
+          3915
+        ]
+      ],
+      "normalized_claim": "A La Niña in the Eastern Pacific can contribute to a marine heatwave in the Central North Pacific",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "Marine heatwaves that start in the winter last longer due to the combination of ENSO impact and the reemergence process, which gives the heatwave staying power.",
+      "source_ranges": [
+        [
+          4049,
+          4209
+        ]
+      ],
+      "normalized_claim": "Marine heatwaves that start in the winter last longer because of ENSO impact and the reemergence process",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "Ones that start in the summer can be much more intense, but they generally end quickly.",
+      "source_ranges": [
+        [
+          4210,
+          4297
+        ]
+      ],
+      "normalized_claim": "Marine heatwaves that start in the summer can be much more intense but generally end quickly",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "If that happens, we might expect some warming in the Gulf of Alaska.",
+      "source_ranges": [
+        [
+          5764,
+          5832
+        ]
+      ],
+      "normalized_claim": "If a Central Pacific El Niño develops in Winter 2026/27, we might expect some warming in the Gulf of Alaska",
+      "fact_type": "prediction",
+      "category": "prediction",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "prediction is not given a factual check",
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "However, because Winter 2025/26 did not produce substantial warm anomalies in that region, there is little subsurface heat storage to ‘reemerge’, without which the surface warming may not be too extreme.",
+      "source_ranges": [
+        [
+          5833,
+          6036
+        ]
+      ],
+      "normalized_claim": "However, because Winter 2025/26 did not produce substantial warm anomalies in that region, there is little subsurface heat storage to ‘reemerge’, without which the surface warming may not be too extreme.",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "needs_context",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [
+        "规范化声明未保留原文的时态、否定或确定程度"
+      ]
+    },
+    {
+      "source_quote": "that an Eastern Pacific El Niño develops, we might not see open ocean heatwaves in the broader Northeast Pacific at all.",
+      "source_ranges": [
+        [
+          6073,
+          6193
+        ]
+      ],
+      "normalized_claim": "If an Eastern Pacific El Niño develops, we might not see open ocean heatwaves in the broader Northeast Pacific at all",
+      "fact_type": "prediction",
+      "category": "prediction",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "prediction is not given a factual check",
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "The study highlighted the importance of the season and the heat hiding below the surface when predicting marine heatwaves.",
+      "source_ranges": [
+        [
+          4309,
+          4431
+        ]
+      ],
+      "normalized_claim": "The study highlighted the importance of season and subsurface heat when predicting marine heatwaves",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "The methods used in this study could potentially be applied elsewhere to better understand the dynamics in other regions.",
+      "source_ranges": [
+        [
+          4789,
+          4910
+        ]
+      ],
+      "normalized_claim": "The methods used in this study could potentially be applied elsewhere to better understand dynamics in other regions",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "With improved understanding of the seasonal heatwave drivers in the Northeast Pacific from this and future studies, prediction of marine heatwaves through improved models and tools can give communities and industries more time to prepare for these extreme events, potentially reducing the amount of harm caused.",
+      "source_ranges": [
+        [
+          4911,
+          5222
+        ]
+      ],
+      "normalized_claim": "Improved prediction of marine heatwaves through better models can give communities and industries more time to prepare for extreme events and potentially reduce harm",
+      "fact_type": "prediction",
+      "category": "prediction",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "prediction is not given a factual check",
+      "document_ref": null,
+      "missing_context": [
+        "需要说明因果结果的具体对象或衡量指标",
+        "需要提供所述行动导致该结果的因果依据"
+      ]
+    },
+    {
+      "source_quote": "This spring we watched a North Pacific meridional mode-like pattern unfold, with ocean warming extending from California toward the central tropics and reaching marine heatwave conditions.",
+      "source_ranges": [
+        [
+          5331,
+          5519
+        ]
+      ],
+      "normalized_claim": "In spring 2026 a North Pacific meridional mode-like pattern unfolded with ocean warming from California toward the central tropics reaching marine heatwave conditions",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "Historically, this is a classic early-warning signal for El Niño development.",
+      "source_ranges": [
+        [
+          5520,
+          5597
+        ]
+      ],
+      "normalized_claim": "Historically, a North Pacific meridional mode-like pattern is a classic early-warning signal for El Niño development",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "Our CS-LIM initialized from Spring 2026 conditions also points toward El Niño development in Winter 2026/27, with characteristics resembling a Central Pacific event.",
+      "source_ranges": [
+        [
+          5598,
+          5763
+        ]
+      ],
+      "normalized_claim": "The CS‑LIM initialized from Spring 2026 conditions points toward El Niño development in Winter 2026/27 with characteristics resembling a Central Pacific event",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    }
+  ],
+  "rejected_claims": [],
+  "cache_reused": false,
+  "status": "completed",
+  "http_status": 200,
+  "served_model": "openai/gpt-oss-120b",
+  "finish_reason": "stop",
+  "usage": {
+    "queue_time": 0.226441218,
+    "prompt_time": 0.137564061,
+    "completion_time": 9.251599272,
+    "total_time": 9.389163333,
+    "completion_tokens": 4442,
+    "prompt_tokens": 2935,
+    "total_tokens": 7377,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 2707,
+      "rejected_prediction_tokens": null,
+      "text_tokens": null
+    },
+    "prompt_tokens_details": null
+  },
+  "rate_limit_headers": {
+    "x-ratelimit-limit-requests": "1000",
+    "x-ratelimit-limit-tokens": "8000",
+    "x-ratelimit-remaining-requests": "999",
+    "x-ratelimit-remaining-tokens": "4793",
+    "x-ratelimit-reset-requests": "1m26.4s",
+    "x-ratelimit-reset-tokens": "24.052s"
+  },
+  "cost_usd": "unknown",
+  "elapsed_seconds": 10.197720583993942,
+  "raw_reply_chars": 7986,
+  "raw_reply_file": "after/remaining-16384/20261119T065418.025619Z/raw/heatwave-attempt-1.txt",
+  "parsed_items": 17,
+  "accepted_items": 17,
+  "rejected_items": 0,
+  "parse_method": "articles._parse_extract; extract_claims._split exact-source-quote validation",
+  "rejection_reasons": [],
+  "manual_review": {
+    "review_file": "heatwave_manual_review.md",
+    "reference_claim_coverage": {
+      "matched": 2,
+      "total": 3
+    },
+    "source_side_gap_claims": 1,
+    "source_side_gap": "claim 14 lacks quantitative outcome/evidence for potential harm reduction in the source",
+    "extraction_omissions": [
+      "64-year observation period",
+      "thousands of synthetic events",
+      "CS-LIM seasonal treatment vs stationary LIM constant background assumption",
+      "winter events can last years like The Blob while being less intense"
+    ],
+    "normalization_or_quote_context_loss_groups": 3,
+    "normalization_or_quote_context_loss": [
+      "claim 1 omits the California-to-Alaska definition and the region-to-Blob relation",
+      "claim 11 omits the alternatively/rarer-situation qualifier",
+      "claim 14 omits this-and-future-studies and tools context"
+    ],
+    "overmerge_claims": [
+      1
+    ],
+    "exact_duplicate_normalized_claims": 0,
+    "validator_false_positive_claims": [
+      10
+    ]
+  }
+}

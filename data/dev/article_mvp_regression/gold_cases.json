@@ -1,0 +1,76 @@
+{
+  "cases": [
+    {
+      "id": "chan_chan_c1",
+      "claim": "Archaeologists found the remains of at least 38 people in a mausoleum at Chan Chan.",
+      "article_source_url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+      "gold_basis": "human selected from source text"
+    },
+    {
+      "id": "chan_chan_c2",
+      "claim": "The tomb’s central chamber was about 4 feet wide and 16 feet deep.",
+      "article_source_url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+      "gold_basis": "human selected from source text"
+    },
+    {
+      "id": "chan_chan_c3",
+      "claim": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total area.",
+      "article_source_url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+      "gold_basis": "human selected from source text"
+    },
+    {
+      "id": "heatwave_c1",
+      "claim": "The researchers’ CS-LIM used 64 years of real-world sea-surface temperature and height data.",
+      "article_source_url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+      "gold_basis": "human selected from source text"
+    },
+    {
+      "id": "heatwave_c2",
+      "claim": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence.",
+      "article_source_url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+      "gold_basis": "human selected from source text"
+    },
+    {
+      "id": "heatwave_c3",
+      "claim": "Summer-starting marine heatwaves can be more intense but generally end quickly.",
+      "article_source_url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+      "gold_basis": "human selected from source text"
+    },
+    {
+      "id": "lucy_c1",
+      "claim": "Lucy passed about 650 miles from Donaldjohanson on April 20, 2025.",
+      "article_source_url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+      "gold_basis": "human selected from source text"
+    },
+    {
+      "id": "lucy_c2",
+      "claim": "Donaldjohanson rotates end-over-end once every 10.5 Earth days and wobbles around its long axis every 26.5 days.",
+      "article_source_url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+      "gold_basis": "human selected from source text"
+    },
+    {
+      "id": "lucy_c3",
+      "claim": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in the distant past.",
+      "article_source_url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+      "gold_basis": "human selected from source text"
+    },
+    {
+      "id": "dengue_c1",
+      "claim": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024.",
+      "article_source_url": "https://www.cdc.gov/han/php/notices/han00523.html",
+      "gold_basis": "human selected from source text"
+    },
+    {
+      "id": "dengue_c2",
+      "claim": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average.",
+      "article_source_url": "https://www.cdc.gov/han/php/notices/han00523.html",
+      "gold_basis": "human selected from source text"
+    },
+    {
+      "id": "dengue_c3",
+      "claim": "Puerto Rico reported 6,291 dengue cases in 2024; 3,292 required hospitalization and 13 people died.",
+      "article_source_url": "https://www.cdc.gov/han/php/notices/han00523.html",
+      "gold_basis": "human selected from source text"
+    }
+  ]
+}

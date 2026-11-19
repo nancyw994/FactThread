@@ -1,0 +1,63 @@
+{
+  "comparison_status": "revised_output_incomplete_at_8192",
+  "unchanged": {
+    "article_id": "chan_chan",
+    "input_sha256": "785df4792b277555c254ff0a8f56f67db6b88c5d9b85f0274aaa65ea4d81034c",
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "output_cap": 8192
+  },
+  "before": {
+    "result_file": "baselines/chan_chan_groq_gpt-oss-120b_8192.json",
+    "prompt_version": "sha256:9a0cb144aa7e2e592c7940e6b74b151a0dbe5be5daa8042249aa275f0707a4e8",
+    "finish_reason": "stop",
+    "parsed": 29,
+    "accepted": 29,
+    "rejected": 0,
+    "gold_references_matched": 3
+  },
+  "after": {
+    "result_file": "after/prompt-revision/20261118T194855.244118Z/chan_chan.json",
+    "prompt_version": "sha256:e52cb13057888cc38bba9f73e2e6ac7fd229593d848a6b16829203269ade1f77",
+    "finish_reason": "length",
+    "parsed": 23,
+    "accepted": 22,
+    "rejected": 1,
+    "gold_references_matched": 2,
+    "output_cap": 8192
+  },
+  "classification": {
+    "declaration_omission": [
+      {
+        "before": "The statement that individual ages, genders, and death circumstances remain unknown was absent.",
+        "after": "A corresponding unknowns claim appears in the revised output (candidate 20)."
+      },
+      {
+        "after": "The article’s final no-more-than-7-percent excavation statement is absent from this response; finish_reason=length means the extraction response ended at its output cap, so coverage is incomplete."
+      }
+    ],
+    "attribution_loss": [
+      {
+        "before": "Multiple attributions were omitted.",
+        "after": "Attribution is now retained for Meneses, Ortloff, Gayoso, Prieto, and Andina in several claims; the continuation about absence of scientific data still lacks Meneses attribution."
+      }
+    ],
+    "relation_omission": [
+      {
+        "before": "The chamber dimensions were retained but the staircase-to-chamber relation was omitted.",
+        "after": "The same relation is still omitted: candidate 14 keeps chamber dimensions but drops that a staircase leads down into it. The two flanking rooms are now resolved in candidates 17 and 18."
+      }
+    ],
+    "new_validation_errors": [
+      {
+        "candidate_quote": "Chimú kings lived in walled palates...",
+        "reason": "The model misspelled palaces as palates; local exact-quote validation rejected it."
+      }
+    ],
+    "duplicate_check": {
+      "exact_duplicate_normalized_claims": 0,
+      "note": "Two claims overlap on the more-than-three-dozen/at-least-38 population count but retain different time/location or discovery context; treated as overlapping statements, not exact duplicates."
+    }
+  },
+  "manual_review": "Revised rules improve preservation of the reported unknowns and several speaker/source attributions. The 8192-token response is incomplete and has one rejected quote, so it does not outperform the complete baseline on total reference coverage; no budget increase was made."
+}

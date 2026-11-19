@@ -1,0 +1,1725 @@
+{
+  "pipeline_version": "source-selection-2",
+  "cache_version": "page-body-v1",
+  "budgets": {
+    "max_queries": 2,
+    "max_candidates": 5,
+    "max_pages": 3
+  },
+  "paid_fallback": false,
+  "openrouter_fallback": false,
+  "claims": [
+    {
+      "id": "chan_chan_c1",
+      "claim": "Archaeologists found the remains of at least 38 people in a mausoleum at Chan Chan.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "38",
+          "status": "ok",
+          "error": null
+        },
+        {
+          "query": "Archaeologists found the remains of at least 38 people in a mausoleum",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "38",
+          "url": "https://grokipedia.com/page/septa_route_38",
+          "title": "SEPTA Route 38",
+          "snippet": "SEPTA Route 38 is a bus route operated by the Southeastern Pennsylvania Transportation Authority (SEPTA) in Philadelphia, Pennsylvania, providing local transit service from 5th and Market Streets in Center City to the Wissahickon Transit Center in t…"
+        },
+        {
+          "query": "Archaeologists found the remains of at least 38 people in a mausoleum",
+          "url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+          "title": "Unsealed for the First Time in 600 Years, This Tomb in Peru ...",
+          "snippet": "Sep 14, 2026 · Archaeologists found an additional 17 skeletons while excavating the funerary platform, bringing the total number of people buried there to at least 38. Much about the tomb remains..."
+        },
+        {
+          "query": "Archaeologists found the remains of at least 38 people in a mausoleum",
+          "url": "https://www.nytimes.com/2026/09/10/world/americas/peru-tombs-chimu-archaeology.html",
+          "title": "Ancient Tombs, Untouched by Looters, Are Found Under Peru’s ...",
+          "snippet": "Sep 10, 2026 · Under a ruined citadel on Peru’s arid northern coast, archaeologists have discovered an ancient mausoleum untouched by centuries of conquest and plunder by the Inca, Spanish colonizers, and..."
+        },
+        {
+          "query": "Archaeologists found the remains of at least 38 people in a mausoleum",
+          "url": "https://www.tovima.com/science/untouched-600-year-old-tomb-perus-discovery-of-the-decade/",
+          "title": "Untouched 600-Year-Old Tomb: Peru’s ‘Discovery of the Decade’",
+          "snippet": "Sep 17, 2026 · About 600 years ago, members of the pre-Inca Chimú civilization buried more than three dozen people in a mausoleum near what is now Trujillo, Peru. The dead were laid to rest with an extensive collection of grave goods, metal weapons, copper and gold objects, elaborate jewelry, and colorful textiles, evidence pointing to high social status ..."
+        },
+        {
+          "query": "Archaeologists found the remains of at least 38 people in a mausoleum",
+          "url": "https://gizmodo.com/archaeologists-just-opened-a-pre-incan-tomb-sealed-for-600-years-heres-what-they-found-2000812664",
+          "title": "Archaeologists Just Opened a Pre-Incan Tomb Sealed ... - Gizmodo",
+          "snippet": "Sep 16, 2026 · So far, the research team has found the remains of at least 38 people, along with ornate artifacts and weapons. According to a report by The New York Times, a stairway descends eight..."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://grokipedia.com/page/septa_route_38",
+          "title": "SEPTA Route 38",
+          "query": "38"
+        },
+        {
+          "url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+          "title": "Unsealed for the First Time in 600 Years, This Tomb in Peru ...",
+          "query": "Archaeologists found the remains of at least 38 people in a mausoleum"
+        },
+        {
+          "url": "https://www.nytimes.com/2026/09/10/world/americas/peru-tombs-chimu-archaeology.html",
+          "title": "Ancient Tombs, Untouched by Looters, Are Found Under Peru’s ...",
+          "query": "Archaeologists found the remains of at least 38 people in a mausoleum"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://grokipedia.com/page/septa_route_38",
+          "final_url": "https://grokipedia.com/page/septa_route_38",
+          "title": "SEPTA Route 38 — Grokipedia",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "02d0d70e1506538cab5fd85e684d2e6043f0bbaf8da99b37c72d8ac0613d9e7e",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+          "final_url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+          "title": "Unsealed for the First Time in 600 Years, This Tomb in Peru ...",
+          "fetch_status": "fetch_failed",
+          "http_status": 403,
+          "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "page_cache": "fetched",
+          "error": "HTTP 403",
+          "passage": null
+        },
+        {
+          "url": "https://www.nytimes.com/2026/09/10/world/americas/peru-tombs-chimu-archaeology.html",
+          "final_url": "https://www.nytimes.com/2026/09/10/world/americas/peru-tombs-chimu-archaeology.html",
+          "title": "Ancient Tombs, Untouched by Looters, Are Found Under Peru’s ...",
+          "fetch_status": "fetch_failed",
+          "http_status": 403,
+          "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "page_cache": "fetched",
+          "error": "HTTP 403",
+          "passage": null
+        }
+      ],
+      "passages": [],
+      "sources": [],
+      "evidence_found": false,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": false,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "passage_not_found",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [
+        "No fetched passage was available to judge. The claim is not treated as false."
+      ],
+      "pipeline_version": "source-selection-2",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:06.189690+00:00",
+      "sources_selected_at": "2026-11-18T05:39:11.026549+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "chan_chan_c2",
+      "claim": "The tomb’s central chamber was about 4 feet wide and 16 feet deep.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "4 16",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "4 16",
+          "url": "https://grokipedia.com/page/1/2_+_1/4_+_1/8_+_1/16_+_⋯",
+          "title": "1/2 + 1/4 + 1/8 + 1/16 + ⋯",
+          "snippet": "The infinite series \\( \\frac{1}{2} + \\frac{1}{4} + \\frac{1}{8} + \\frac{1}{16} + \\cdots \\), or more formally \\( \\sum_{n=1}^\\infty \\left( \\frac{1}{2} \\right)^n \\), is a geometric series with first term \\( a = \\frac{1}{2} \\) and common ratio \\( r = \\fr…"
+        },
+        {
+          "query": "4 16",
+          "url": "https://biblehub.com/hebrews/4-16.htm",
+          "title": "Hebrews 4:16 Let us then approach the throne of grace with ...",
+          "snippet": "Hebrews 4:16 invites every believer to step continually into God’s presence, assured that the way has been opened by Jesus. We draw near—together—confident that we will receive mercy for past failures and fresh grace for present challenges."
+        },
+        {
+          "query": "4 16",
+          "url": "https://www.biblegateway.com/verse/en/Hebrews+4:16",
+          "title": "Hebrews 4:16 - Bible Gateway",
+          "snippet": "Let us therefore draw near with boldness unto the throne of grace, that we may receive mercy, and may find grace to help us in time of need."
+        },
+        {
+          "query": "4 16",
+          "url": "https://www.biblegateway.com/passage/?search=Hebrews+4:16&version=NIV",
+          "title": "Hebrews 4:16 NIV - Let us then approach God’s throne of ...",
+          "snippet": "Let us then approach God’s throne of grace with confidence, so that we may receive mercy and find grace to help us in our time of need."
+        },
+        {
+          "query": "4 16",
+          "url": "https://www.hackmath.net/en/calculator/fraction?input=4/16",
+          "title": "Fraction Calculator - calculation: 4/16 - HackMath",
+          "snippet": "Oct 31, 2026 · Calculation: 4/16 - fraction Calculator. The result is 1/4 = 0.25 = one quarter."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://grokipedia.com/page/1/2_+_1/4_+_1/8_+_1/16_+_⋯",
+          "title": "1/2 + 1/4 + 1/8 + 1/16 + ⋯",
+          "query": "4 16"
+        },
+        {
+          "url": "https://biblehub.com/hebrews/4-16.htm",
+          "title": "Hebrews 4:16 Let us then approach the throne of grace with ...",
+          "query": "4 16"
+        },
+        {
+          "url": "https://www.biblegateway.com/verse/en/Hebrews+4:16",
+          "title": "Hebrews 4:16 - Bible Gateway",
+          "query": "4 16"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://grokipedia.com/page/1/2_+_1/4_+_1/8_+_1/16_+_⋯",
+          "final_url": "https://grokipedia.com/page/1/2_+_1/4_+_1/8_+_1/16_+_⋯",
+          "title": "1/2 + 1/4 + 1/8 + 1/16 + ⋯",
+          "fetch_status": "fetch_failed",
+          "http_status": 404,
+          "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "page_cache": "fetched",
+          "error": "HTTP 404",
+          "passage": null
+        },
+        {
+          "url": "https://biblehub.com/hebrews/4-16.htm",
+          "final_url": "https://biblehub.com/hebrews/4-16.htm",
+          "title": "Hebrews 4:16 Let us then approach the throne of grace with confidence, so that we may receive mercy and find grace to help us in our time of need.",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "0116282ca1b92cbd9bc3ad3e2d1fadd51c20405f6c23fed41b29e21251b27435",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://www.biblegateway.com/verse/en/Hebrews+4:16",
+          "final_url": "https://www.biblegateway.com/verse/en/Hebrews+4:16",
+          "title": "Hebrews 4:16 - Bible Gateway",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "96cd8d7af51329d98b88872d7370b306e343e5517b41cceb5ced488d7777d6f8",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        }
+      ],
+      "passages": [],
+      "sources": [],
+      "evidence_found": false,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": false,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "passage_not_found",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [
+        "No fetched passage was available to judge. The claim is not treated as false."
+      ],
+      "pipeline_version": "source-selection-2",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:11.026759+00:00",
+      "sources_selected_at": "2026-11-18T05:39:13.597900+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "chan_chan_c3",
+      "claim": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total area.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "7",
+          "status": "ok",
+          "error": null
+        },
+        {
+          "query": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "7",
+          "url": "https://grokipedia.com/page/7_michalis_hatzigiannis_album",
+          "title": "7 (Michalis Hatzigiannis album)",
+          "snippet": "7 is a studio album by Greek-Cypriot singer-songwriter Michalis Hatzigiannis, released in 2008 by Universal Music Greece. It comprises 11 original tracks written by Hatzigiannis, blending genres such as pop rock, acoustic ballads, reggae, laïko, an…"
+        },
+        {
+          "query": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total",
+          "url": "https://www.newsbreak.com/gizmodo-399763864/4890204887779-archaeologists-just-opened-a-pre-incan-tomb-sealed-for-600-years-here-s-what-they-found",
+          "title": "Archaeologists Just Opened a Pre-Incan Tomb Sealed for 600 ...",
+          "snippet": "In fact, archaeologists have only excavated roughly 7% of the total area of Chan Chan—so, not that much. Other endeavors include analyzing the design of the mausoleum and running genetic tests on the skeletal remains."
+        },
+        {
+          "query": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total",
+          "url": "https://gizmodo.com/archaeologists-just-opened-a-pre-incan-tomb-sealed-for-600-years-heres-what-they-found-2000812664",
+          "title": "Archaeologists Just Opened a Pre-Incan Tomb Sealed ... - Gizmodo",
+          "snippet": "Sep 16, 2026 · In fact, archaeologists have only excavated roughly 7% of the total area of Chan Chan—so, not that much. Other endeavors include analyzing the design of the mausoleum and running..."
+        },
+        {
+          "query": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total",
+          "url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+          "title": "Unsealed for the First Time in 600 Years, This Tomb in Peru ...",
+          "snippet": "Sep 14, 2026 · To date, archaeologists have excavated “no more than 7 percent of Chan Chan’s total area,” Meneses tells El País. “Evidently, the citadel has much more to tell.” The..."
+        },
+        {
+          "query": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total",
+          "url": "https://www.tovima.com/science/untouched-600-year-old-tomb-perus-discovery-of-the-decade/",
+          "title": "Untouched 600-Year-Old Tomb: Peru’s ‘Discovery of the Decade’",
+          "snippet": "Sep 17, 2026 · The find also highlights how much of the ancient capital remains unexcavated. Meneses noted that archaeologists have so far uncovered no more than 7 percent of Chan Chan’s total area, meaning the site likely still has a great deal more to reveal. Source: Smithsonian magazine"
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://grokipedia.com/page/7_michalis_hatzigiannis_album",
+          "title": "7 (Michalis Hatzigiannis album)",
+          "query": "7"
+        },
+        {
+          "url": "https://www.newsbreak.com/gizmodo-399763864/4890204887779-archaeologists-just-opened-a-pre-incan-tomb-sealed-for-600-years-here-s-what-they-found",
+          "title": "Archaeologists Just Opened a Pre-Incan Tomb Sealed for 600 ...",
+          "query": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total"
+        },
+        {
+          "url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+          "title": "Unsealed for the First Time in 600 Years, This Tomb in Peru ...",
+          "query": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://grokipedia.com/page/7_michalis_hatzigiannis_album",
+          "final_url": "https://grokipedia.com/page/7_michalis_hatzigiannis_album",
+          "title": "7 (Michalis Hatzigiannis album) — Grokipedia",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "4480d27e984420a613caf08f3402cdb8c8b4a7568390d0625ec09fb3b29bafb7",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://www.newsbreak.com/gizmodo-399763864/4890204887779-archaeologists-just-opened-a-pre-incan-tomb-sealed-for-600-years-here-s-what-they-found",
+          "final_url": "https://www.newsbreak.com/gizmodo-399763864/4890204887779-archaeologists-just-opened-a-pre-incan-tomb-sealed-for-600-years-here-s-what-they-found",
+          "title": "Archaeologists Just Opened a Pre-Incan Tomb Sealed for 600 Years. Here’s What They Found - NewsBreak",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "4bef85f7d6bf8c6d30940eca99352b6f5268fb7a6759a3e91f3d72716836cb7c",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": {
+            "source_id": "src_23c53071211c",
+            "url": "https://www.newsbreak.com/gizmodo-399763864/4890204887779-archaeologists-just-opened-a-pre-incan-tomb-sealed-for-600-years-here-s-what-they-found",
+            "start": 4066,
+            "end": 4450,
+            "quote": "But that’s something the team will have to explore in coming investigations, he added. In fact, archaeologists have only excavated roughly 7% of the total area of Chan Chan—so, not that much. Other endeavors include analyzing the design of the mausoleum and running genetic tests on the skeletal remains. As Meneses commented to El País, “Evidently the citadel has much more to tell.”"
+          }
+        },
+        {
+          "url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+          "final_url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+          "title": "Unsealed for the First Time in 600 Years, This Tomb in Peru ...",
+          "fetch_status": "fetch_failed",
+          "http_status": 403,
+          "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "page_cache": "fetched",
+          "error": "HTTP 403",
+          "passage": null
+        }
+      ],
+      "passages": [
+        {
+          "source_id": "src_23c53071211c",
+          "url": "https://www.newsbreak.com/gizmodo-399763864/4890204887779-archaeologists-just-opened-a-pre-incan-tomb-sealed-for-600-years-here-s-what-they-found",
+          "start": 4066,
+          "end": 4450,
+          "quote": "But that’s something the team will have to explore in coming investigations, he added. In fact, archaeologists have only excavated roughly 7% of the total area of Chan Chan—so, not that much. Other endeavors include analyzing the design of the mausoleum and running genetic tests on the skeletal remains. As Meneses commented to El País, “Evidently the citadel has much more to tell.”"
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "src_23c53071211c",
+          "url": "https://www.newsbreak.com/gizmodo-399763864/4890204887779-archaeologists-just-opened-a-pre-incan-tomb-sealed-for-600-years-here-s-what-they-found",
+          "title": "Archaeologists Just Opened a Pre-Incan Tomb Sealed for 600 Years. Here’s What They Found - NewsBreak"
+        }
+      ],
+      "evidence_found": true,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": true,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "ok",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [],
+      "pipeline_version": "source-selection-2",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:13.597974+00:00",
+      "sources_selected_at": "2026-11-18T05:39:17.684441+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "heatwave_c1",
+      "claim": "The researchers’ CS-LIM used 64 years of real-world sea-surface temperature and height data.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "researchers CS-LIM used 64 years real-world sea-surface temperature height data",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "researchers CS-LIM used 64 years real-world sea-surface temperature height data",
+          "url": "https://zenodo.org/records/16922229",
+          "title": "Pacific sea surface temperature anomalies generated by three ...",
+          "snippet": "Aug 21, 2025 · Data supporting paper \"A Hierarchy of Simple Models for Understanding Chile Niño/Niña\" by Concha, Martinez-Villalobos and Dewitte (in preparation)."
+        },
+        {
+          "query": "researchers CS-LIM used 64 years real-world sea-surface temperature height data",
+          "url": "https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2020GL091886",
+          "title": "Seasonal Predictability of Global and North American Coastal ...Re‐Evaluating Historical Sea Surface Temperature Data Sets ...Sea Surface Height - NASA EarthdataN THE CYCLOSTATIONARY LINEAR I MODELS A MATHEMATICAL INSIGHT ...Sea Surface Temperature - NASA Earthdata",
+          "snippet": "Apr 18, 2021 · A Linear Inverse Model (LIM) is constructed to evaluate predictability of seasonal sea surface temperature (SST) and sea surface height (SSH) anomalies over the ice-free global ocean. Jul 3, 2025 · Here, using the amplitude of the diurnal cycle in SST, we provide evidence that wooden-to-canvas bucket transitions were mostly complete by the early 1900s, earlier than commonly assumed "
+        },
+        {
+          "query": "researchers CS-LIM used 64 years real-world sea-surface temperature height data",
+          "url": "https://www.earthdata.nasa.gov/topics/ocean/sea-surface-height",
+          "title": "Sea Surface Height - NASA Earthdata",
+          "snippet": "Nov 6, 2026 · NASA’s sea surface height data products help scientists understand sea level rise, track ocean currents, and predict storms."
+        },
+        {
+          "query": "researchers CS-LIM used 64 years real-world sea-surface temperature height data",
+          "url": "https://www.earthdata.nasa.gov/topics/ocean/sea-surface-temperature",
+          "title": "Sea Surface Temperature - NASA Earthdata",
+          "snippet": "Nov 6, 2026 · NASA’s data archives house current and historical measurements from virtually all of these methods, many in analysis-ready formats and available in the cloud. Data like these assist researchers in understanding long-term cycles in ocean circulation, climate, and weather patterns."
+        },
+        {
+          "query": "researchers CS-LIM used 64 years real-world sea-surface temperature height data",
+          "url": "https://agupubs.onlinelibrary.wiley.com/doi/full/10.1029/2025GL116615",
+          "title": "Re‐Evaluating Historical Sea Surface Temperature Data Sets ...",
+          "snippet": "Jul 3, 2025 · Here, using the amplitude of the diurnal cycle in SST, we provide evidence that wooden-to-canvas bucket transitions were mostly complete by the early 1900s, earlier than commonly assumed by two decades, resulting in strong early 20th century cold biases."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://zenodo.org/records/16922229",
+          "title": "Pacific sea surface temperature anomalies generated by three ...",
+          "query": "researchers CS-LIM used 64 years real-world sea-surface temperature height data"
+        },
+        {
+          "url": "https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2020GL091886",
+          "title": "Seasonal Predictability of Global and North American Coastal ...Re‐Evaluating Historical Sea Surface Temperature Data Sets ...Sea Surface Height - NASA EarthdataN THE CYCLOSTATIONARY LINEAR I MODELS A MATHEMATICAL INSIGHT ...Sea Surface Temperature - NASA Earthdata",
+          "query": "researchers CS-LIM used 64 years real-world sea-surface temperature height data"
+        },
+        {
+          "url": "https://www.earthdata.nasa.gov/topics/ocean/sea-surface-height",
+          "title": "Sea Surface Height - NASA Earthdata",
+          "query": "researchers CS-LIM used 64 years real-world sea-surface temperature height data"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://zenodo.org/records/16922229",
+          "final_url": "https://zenodo.org/records/16922229",
+          "title": "Pacific sea surface temperature anomalies generated by three inverse models (LIM, NLIM and CS-LIM) | Zenodo",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "2bd5b477136d04584faed3b1d6a3ec2fb56465066ec48f94dd915e6575a7c7af",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2020GL091886",
+          "final_url": "https://agupubs.onlinelibrary.wiley.com/doi/10.1029/2020GL091886",
+          "title": "Seasonal Predictability of Global and North American Coastal ...Re‐Evaluating Historical Sea Surface Temperature Data Sets ...Sea Surface Height - NASA EarthdataN THE CYCLOSTATIONARY LINEAR I MODELS A MATHEMATICAL INSIGHT ...Sea Surface Temperature - NASA Earthdata",
+          "fetch_status": "fetch_failed",
+          "http_status": 403,
+          "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "page_cache": "fetched",
+          "error": "HTTP 403",
+          "passage": null
+        },
+        {
+          "url": "https://www.earthdata.nasa.gov/topics/ocean/sea-surface-height",
+          "final_url": "https://www.earthdata.nasa.gov/topics/ocean/sea-surface-height",
+          "title": "Sea Surface Height | NASA Earthdata",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "e503caaace7344e5dd9b7d37345145d3438350e56d496cd1a2c7e87d49fd6bde",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        }
+      ],
+      "passages": [],
+      "sources": [],
+      "evidence_found": false,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": false,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "passage_not_found",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [
+        "No fetched passage was available to judge. The claim is not treated as false."
+      ],
+      "pipeline_version": "source-selection-2",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:17.684575+00:00",
+      "sources_selected_at": "2026-11-18T05:39:20.693966+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "heatwave_c2",
+      "claim": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "ENSO",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "ENSO",
+          "url": "https://en.wikipedia.org/wiki/El_Niño–Southern_Oscillation",
+          "title": "El Niño–Southern Oscillation - Wikipedia",
+          "snippet": "El Niño–Southern Oscillation (ENSO) is a global climate phenomenon that manifests as fluctuations in sea surface temperatures over the tropical Pacific Ocean. The warming phase of the sea surface temperature is known as \" El Niño \" and the cooling phase as \" La Niña \"."
+        },
+        {
+          "query": "ENSO",
+          "url": "https://en.wikipedia.org/wiki/Ensō",
+          "title": "Ensō - Wikipedia",
+          "snippet": "Ensō is a circular form drawn in one or two brushstrokes to express the Zen mind, which is associated with enlightenment, emptiness, freedom, and the state of no-mind. Learn about the history, meaning, and practice of ensō in Zen art and culture, and see examples of ensō paintings and calligraphy."
+        },
+        {
+          "query": "ENSO",
+          "url": "https://grokipedia.com/page/Enso",
+          "title": "Enso",
+          "snippet": "Enso (ENSO) is a cryptocurrency token associated with the Enso network, a platform designed to unify blockchains and simplify onchain development. The current price of ENSO coin is $1.40 USD, with a 24-hour trading volume of approximately $536 milli…"
+        },
+        {
+          "query": "ENSO",
+          "url": "https://ensorings.com/",
+          "title": "Premium Silicone Jewelry for Men & Women | Enso",
+          "snippet": "Explore Enso silicone rings—designed for durability and comfort. Perfect for active lifestyles, each comes with a lifetime warranty."
+        },
+        {
+          "query": "ENSO",
+          "url": "https://www.weather.gov/mhx/ensowhat",
+          "title": "What is ENSO? - National Weather Service",
+          "snippet": "The El Niño-Southern Oscillation (ENSO) is a recurring climate pattern involving changes in the temperature of waters in the central and eastern tropical Pacific Ocean."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://en.wikipedia.org/wiki/El_Niño–Southern_Oscillation",
+          "title": "El Niño–Southern Oscillation - Wikipedia",
+          "query": "ENSO"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Ensō",
+          "title": "Ensō - Wikipedia",
+          "query": "ENSO"
+        },
+        {
+          "url": "https://grokipedia.com/page/Enso",
+          "title": "Enso",
+          "query": "ENSO"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://en.wikipedia.org/wiki/El_Niño–Southern_Oscillation",
+          "final_url": "https://en.wikipedia.org/wiki/El_Niño–Southern_Oscillation",
+          "title": "El Niño–Southern Oscillation - Wikipedia",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "63a9fc3f507cc0accf3c73482b2919edb4651b9386b3d9ce72e6960762ca905f",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Ensō",
+          "final_url": "https://en.wikipedia.org/wiki/Ensō",
+          "title": "Ensō - Wikipedia",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "a9628ff797c9bfb4bece83a958f4fe7cf2c59c9a497e491835bdc7ec06f5beba",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://grokipedia.com/page/Enso",
+          "final_url": "https://grokipedia.com/page/Enso",
+          "title": "Enso — Grokipedia",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "15b1523e03200369982a3929f43924098e01bf051f70457eea47d7ed8b9a2f98",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        }
+      ],
+      "passages": [],
+      "sources": [],
+      "evidence_found": false,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": false,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "passage_not_found",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [
+        "No fetched passage was available to judge. The claim is not treated as false."
+      ],
+      "pipeline_version": "source-selection-2",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:20.694064+00:00",
+      "sources_selected_at": "2026-11-18T05:39:22.428270+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "heatwave_c3",
+      "claim": "Summer-starting marine heatwaves can be more intense but generally end quickly.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "heatwaves can more intense but generally end quickly",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "heatwaves can more intense but generally end quickly",
+          "url": "https://en.wikipedia.org/wiki/Heat_wave",
+          "title": "Heat wave - Wikipedia",
+          "snippet": "A high pressure system in the upper atmosphere traps heat near the ground, forming a heat wave (for North America in this example) Scorched grass in Greenwich Park, London, England, during a heatwave in August 2022 A heat wave or heatwave, sometimes described as extreme heat, is a period of abnormally hot weather [1] that lasts for multiple days. A heat wave is usually measured relative to the ..."
+        },
+        {
+          "query": "heatwaves can more intense but generally end quickly",
+          "url": "https://en.wikipedia.org/wiki/Marine_heatwave",
+          "title": "Marine heatwave - Wikipedia",
+          "snippet": "Marine heatwaves could have cascade effects on public health, ranging from increasing the incidence and severity of coastal heatwaves and of extreme weather, to directly impacting fisheries thus attacking food security, to psychological impacts."
+        },
+        {
+          "query": "heatwaves can more intense but generally end quickly",
+          "url": "https://www.sciencedirect.com/science/article/pii/S2949790625002551",
+          "title": "A global assessment of intensified heatwaves and air quality",
+          "snippet": "Jan 23, 2026 · These trends underscore the urgent need for comprehensive studies on the impact of heatwaves on air quality. Understanding the complex relationship between heatwaves and air quality, particularly the formation of atmospheric pollutants, presents several challenges."
+        },
+        {
+          "query": "heatwaves can more intense but generally end quickly",
+          "url": "https://climatecosmos.com/climate-science/the-science-of-heatwaves-why-theyre-more-frequent-and-intense-than-ever-2",
+          "title": "The Science of Heatwaves: Why They're More Frequent and ...",
+          "snippet": "Dec 13, 2025 · The effects of more frequent and intense heatwaves extend beyond discomfort. Excessive heat can be deadly, particularly for vulnerable populations such as the elderly, children, and those with pre-existing health conditions."
+        },
+        {
+          "query": "heatwaves can more intense but generally end quickly",
+          "url": "https://www.nature.com/articles/s41558-026-02762-2",
+          "title": "Earlier and faster heatwave onset on land under a warming ...",
+          "snippet": "Sep 23, 2026 · Heatwaves are expected to become more frequent and intense with global warming. Here the authors assess changes in their timing, finding that the heatwave season expands and that many..."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Heat_wave",
+          "title": "Heat wave - Wikipedia",
+          "query": "heatwaves can more intense but generally end quickly"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Marine_heatwave",
+          "title": "Marine heatwave - Wikipedia",
+          "query": "heatwaves can more intense but generally end quickly"
+        },
+        {
+          "url": "https://www.sciencedirect.com/science/article/pii/S2949790625002551",
+          "title": "A global assessment of intensified heatwaves and air quality",
+          "query": "heatwaves can more intense but generally end quickly"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Heat_wave",
+          "final_url": "https://en.wikipedia.org/wiki/Heat_wave",
+          "title": "Heat wave - Wikipedia",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "09903b4c85bea4b3c5748219b58bfa80e25a9f47a1e8f011bfcde78824f98f82",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Marine_heatwave",
+          "final_url": "https://en.wikipedia.org/wiki/Marine_heatwave",
+          "title": "Marine heatwave - Wikipedia",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "a6232bd416dd317e433a3a7ee24ae8cbfa321202b20feb4e1c0434f728191b83",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://www.sciencedirect.com/science/article/pii/S2949790625002551",
+          "final_url": "https://www.sciencedirect.com/science/article/pii/S2949790625002551",
+          "title": "A global assessment of intensified heatwaves and air quality",
+          "fetch_status": "fetch_failed",
+          "http_status": 403,
+          "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "page_cache": "fetched",
+          "error": "HTTP 403",
+          "passage": null
+        }
+      ],
+      "passages": [],
+      "sources": [],
+      "evidence_found": false,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": false,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "passage_not_found",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [
+        "No fetched passage was available to judge. The claim is not treated as false."
+      ],
+      "pipeline_version": "source-selection-2",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:22.428337+00:00",
+      "sources_selected_at": "2026-11-18T05:39:24.413517+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "lucy_c1",
+      "claim": "Lucy passed about 650 miles from Donaldjohanson on April 20, 2025.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "650 20, 2025",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "650 20, 2025",
+          "url": "https://powersports.honda.com/motorcycle/sport/cbr650r/2025/cbr650r-e-clutch",
+          "title": "2025 CBR650R E-Clutch – 650cc Sportbike | Honda Powersports2025 Kawasaki Ninja 650 Guide - Total Motorcycle2025 Kawasaki Ninja® 650 ABS - Motorcycle.com2025 Honda XR650L Review - Total Motorcycle2026 Kawasaki Ninja® 650 | Motorcycle | Legendary Lineage2025 Z650 Specifications - Kawasaki Motors Corp., U.S.A.Shohei Ohtani #650 Prices | 2025 Topps Now | Baseball Cards",
+          "snippet": "Experience the 2025 Honda CBR650R sportbike: high-revving inline-four, razor-sharp handling, bold full-fairing design, and E-Clutch for seamless control. Oct 1, 2026 · Kawasaki is no stranger to the pursuit of performance, excitement, and all-out fun, and the 2025 Ninja 650 motorcycle delivers on all counts. It’s a well-balanced motorcycle blending fun and easy handling with optimal engine and cha"
+        },
+        {
+          "query": "650 20, 2025",
+          "url": "https://www.totalmotorcycle.com/motorcycles/2025/2025-kawasaki-ninja-650",
+          "title": "2025 Kawasaki Ninja 650 Guide - Total Motorcycle",
+          "snippet": "Oct 1, 2026 · Kawasaki is no stranger to the pursuit of performance, excitement, and all-out fun, and the 2025 Ninja 650 motorcycle delivers on all counts. It’s a well-balanced motorcycle blending fun and easy handling with optimal engine and chassis performance, and the legendary sleek Kawasaki Ninja styling."
+        },
+        {
+          "query": "650 20, 2025",
+          "url": "https://www.motorcycle.com/specs/kawasaki/sport/2025/ninja-650/abs/detail.html",
+          "title": "2025 Kawasaki Ninja® 650 ABS - Motorcycle.com",
+          "snippet": "2025 Kawasaki Ninja® 650 ABS pictures, prices, information, and specifications."
+        },
+        {
+          "query": "650 20, 2025",
+          "url": "https://www.totalmotorcycle.com/motorcycles/2025/2025-honda-xr650l",
+          "title": "2025 Honda XR650L Review - Total Motorcycle2026 Kawasaki Ninja® 650 | Motorcycle | Legendary Lineage2025 Z650 Specifications - Kawasaki Motors Corp., U.S.A.Shohei Ohtani #650 Prices | 2025 Topps Now | Baseball Cards",
+          "snippet": "Oct 1, 2026 · Introducing the 2025 Honda XR650L… The venerable Honda XR650L made its debut approximately 30 years ago, and the dual-sport icon has been making friends and influencing riders ever since. The 2026 Kawasaki Ninja® 650 motorcycle combines sharp Ninja® styling, next-level technology, and a sporty 649cc engine for a bold riding experience. Scan with camera to view videos, key features an"
+        },
+        {
+          "query": "650 20, 2025",
+          "url": "https://www.kawasaki.com/en-us/motorcycle/ninja/sport/ninja-650/2026-ninja-650",
+          "title": "2026 Kawasaki Ninja® 650 | Motorcycle | Legendary Lineage",
+          "snippet": "The 2026 Kawasaki Ninja® 650 motorcycle combines sharp Ninja® styling, next-level technology, and a sporty 649cc engine for a bold riding experience."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://powersports.honda.com/motorcycle/sport/cbr650r/2025/cbr650r-e-clutch",
+          "title": "2025 CBR650R E-Clutch – 650cc Sportbike | Honda Powersports2025 Kawasaki Ninja 650 Guide - Total Motorcycle2025 Kawasaki Ninja® 650 ABS - Motorcycle.com2025 Honda XR650L Review - Total Motorcycle2026 Kawasaki Ninja® 650 | Motorcycle | Legendary Lineage2025 Z650 Specifications - Kawasaki Motors Corp., U.S.A.Shohei Ohtani #650 Prices | 2025 Topps Now | Baseball Cards",
+          "query": "650 20, 2025"
+        },
+        {
+          "url": "https://www.totalmotorcycle.com/motorcycles/2025/2025-kawasaki-ninja-650",
+          "title": "2025 Kawasaki Ninja 650 Guide - Total Motorcycle",
+          "query": "650 20, 2025"
+        },
+        {
+          "url": "https://www.motorcycle.com/specs/kawasaki/sport/2025/ninja-650/abs/detail.html",
+          "title": "2025 Kawasaki Ninja® 650 ABS - Motorcycle.com",
+          "query": "650 20, 2025"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://powersports.honda.com/motorcycle/sport/cbr650r/2025/cbr650r-e-clutch",
+          "final_url": "https://powersports.honda.com/motorcycle/sport/cbr650r/2025/cbr650r-e-clutch",
+          "title": "2025 CBR650R E-Clutch – 650cc Sportbike | Honda Powersports2025 Kawasaki Ninja 650 Guide - Total Motorcycle2025 Kawasaki Ninja® 650 ABS - Motorcycle.com2025 Honda XR650L Review - Total Motorcycle2026 Kawasaki Ninja® 650 | Motorcycle | Legendary Lineage2025 Z650 Specifications - Kawasaki Motors Corp., U.S.A.Shohei Ohtani #650 Prices | 2025 Topps Now | Baseball Cards",
+          "fetch_status": "fetch_failed",
+          "http_status": 403,
+          "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "page_cache": "fetched",
+          "error": "HTTP 403",
+          "passage": null
+        },
+        {
+          "url": "https://www.totalmotorcycle.com/motorcycles/2025/2025-kawasaki-ninja-650",
+          "final_url": "https://www.totalmotorcycle.com/motorcycles/2025/2025-kawasaki-ninja-650",
+          "title": "2025 Kawasaki Ninja 650 Guide | Total Motorcycle",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "eb269978bbcd21e6868c652f37f2a29d3dbb15bc9ceeb802f258c5eebd589c5c",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://www.motorcycle.com/specs/kawasaki/sport/2025/ninja-650/abs/detail.html",
+          "final_url": "https://www.motorcycle.com/specs/kawasaki/sport/2025/ninja-650/abs/detail.html",
+          "title": "2025 Kawasaki Ninja® 650 ABS | Motorcycle.com",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "54bceb0db3c8bb7bc9dd3f92d38f15ebcd82afe978a4f17167ccf71c04557fb1",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        }
+      ],
+      "passages": [],
+      "sources": [],
+      "evidence_found": false,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": false,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "passage_not_found",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [
+        "No fetched passage was available to judge. The claim is not treated as false."
+      ],
+      "pipeline_version": "source-selection-2",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:24.413639+00:00",
+      "sources_selected_at": "2026-11-18T05:39:26.673158+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "lucy_c2",
+      "claim": "Donaldjohanson rotates end-over-end once every 10.5 Earth days and wobbles around its long axis every 26.5 days.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "10.5 26.5",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "10.5 26.5",
+          "url": "https://www.desmos.com/scientific",
+          "title": "Desmos | Scientific Calculator",
+          "snippet": "A beautiful, free online scientific calculator with advanced features for evaluating percentages, fractions, exponential functions, logarithms, trigonometry, statistics, and more."
+        },
+        {
+          "query": "10.5 26.5",
+          "url": "https://www.cdc.gov/bmi/adult-calculator/index.html",
+          "title": "Adult BMI Calculator | BMI | CDC",
+          "snippet": "Jun 26, 2024 · Body mass index (BMI) is a calculated measure of weight relative to height. For adults, BMI is categorized into underweight, healthy weight, overweight, and obesity. Obesity is further subdivided into three classes. This BMI calculator is for adults 20 and older."
+        },
+        {
+          "query": "10.5 26.5",
+          "url": "https://vintagewheelsus.com/index.php?main_page=product_info&products_id=324",
+          "title": "Goodyear Eagle Billboard 26.5/10.5/15 Cobra Rear tire ...",
+          "snippet": "Goodyear Eagle Billboard - for show and vintage racing - not DOT approved. suitable for rim widths of 9 - 11 inches. - they can also be difficult to balance , a good tire installer should be chosen !! We drop ship direct from Goodyear to ensure you receive the latest batch - not older stock as offered elsewhere."
+        },
+        {
+          "query": "10.5 26.5",
+          "url": "https://www.calculator.net/fraction-calculator.html",
+          "title": "Fraction Calculator",
+          "snippet": "To complete an addition (or subtraction) problem, multiply the numerators and denominators of each fraction in the problem by whatever value will make the denominators 12, then add the numerators. Fraction subtraction is essentially the same as fraction addition. A common denominator is required for the operation to occur."
+        },
+        {
+          "query": "10.5 26.5",
+          "url": "https://www.symbolab.com/solver/scientific-calculator",
+          "title": "Scientific Calculator - Symbolab",
+          "snippet": "Use the scientific calculator as a tool to quickly and accurately simplify expressions. One of the primary advantages of a scientific calculator is its ability to simplify mathematical expressions swiftly and with high precision."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://www.desmos.com/scientific",
+          "title": "Desmos | Scientific Calculator",
+          "query": "10.5 26.5"
+        },
+        {
+          "url": "https://www.cdc.gov/bmi/adult-calculator/index.html",
+          "title": "Adult BMI Calculator | BMI | CDC",
+          "query": "10.5 26.5"
+        },
+        {
+          "url": "https://vintagewheelsus.com/index.php?main_page=product_info&products_id=324",
+          "title": "Goodyear Eagle Billboard 26.5/10.5/15 Cobra Rear tire ...",
+          "query": "10.5 26.5"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://www.desmos.com/scientific",
+          "final_url": "https://www.desmos.com/scientific",
+          "title": "Desmos | Scientific Calculator",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "47d2a515ef2f05b87d688656286a61e4f743da4b878684c7654969db17711c40",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://www.cdc.gov/bmi/adult-calculator/index.html",
+          "final_url": "https://www.cdc.gov/bmi/adult-calculator/index.html",
+          "title": "Adult BMI Calculator | BMI | CDC",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "34f96bc3d63cf57d3dfa9ef01245135dd70b5800682c93ee4063c3dba112993e",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://vintagewheelsus.com/index.php?main_page=product_info&products_id=324",
+          "final_url": "https://vintagewheelsus.com/index.php?main_page=product_info&products_id=324",
+          "title": "Goodyear Eagle Billboard 26.5/10.5/15 Cobra Rear tire : Vintage Wheels, Mustang, Hot Rod and Muscle Car",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "38a4b9c77580eedab6a806d3e9985864dd16ae7b42ac5432d125d890b8061013",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        }
+      ],
+      "passages": [],
+      "sources": [],
+      "evidence_found": false,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": false,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "passage_not_found",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [
+        "No fetched passage was available to judge. The claim is not treated as false."
+      ],
+      "pipeline_version": "source-selection-2",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:26.673254+00:00",
+      "sources_selected_at": "2026-11-18T05:39:29.223606+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "lucy_c3",
+      "claim": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in the distant past.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "Donaldjohanson indicate liquid water present briefly distant past",
+          "status": "search_unavailable",
+          "error": "The configured DuckDuckGo search failed (DNSError: DNSError('error sending request for url (https://wt.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=Donaldjohanson%20indicate%20liquid%20water%20present%20briefly%20distant%20past) > error resolving DNS > DNS error: no records found for Query { name: Name(\"wt.wikipedia.org.acasmart.jh.edu.\"), query_type: A, query_class: IN }')). A paid search service was not enabled."
+        },
+        {
+          "query": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in",
+          "url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+          "title": "NASA’s Lucy Uncovers Ancient Water Clues: Exciting!",
+          "snippet": "Jun 30, 2026 · NASA’s Lucy Uncovers Ancient Water Clues by identifying iron-rich clays on asteroid Donaldjohanson during an April 2025 flyby. These specific minerals confirm liquid water briefly existed on the object’s parent body, revealing a complex evolutionary history for this primitive inner main belt fragment."
+        },
+        {
+          "query": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in",
+          "url": "https://svs.gsfc.nasa.gov/5628",
+          "title": "NASA SVS | Lucy Observations of Asteroid Donaldjohanson",
+          "snippet": "Jun 18, 2026 · These clays, which are similar to those found in carbon-rich meteorites such as QUE 97990, indicate that water was briefly present in the asteroid during the distant past."
+        },
+        {
+          "query": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in",
+          "url": "https://scitechdaily.com/nasas-lucy-uncovers-ancient-water-clues-on-a-weirdly-wobbling-asteroid/",
+          "title": "NASA’s Lucy Uncovers Ancient Water Clues on a Weirdly ...",
+          "snippet": "Jun 27, 2026 · As Lucy sped past Donaldjohanson at roughly 30,000 mph, its instruments detected iron-rich clay minerals on the asteroid’s surface. These minerals could only have formed in the presence of liquid water sometime in the distant past."
+        },
+        {
+          "query": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in",
+          "url": "https://scienow.com/lucy-flyby-reveals-wobbling-asteroid-donaldjohanson-holds-evidence-of-ancient-water",
+          "title": "Lucy Flyby Reveals Wobbling Asteroid Donaldjohanson Holds ...",
+          "snippet": "Jun 27, 2026 · These clays are similar to those found in carbonaceous chondrite meteorites, such as QUE 97990, and indicate that liquid water was briefly present on the asteroid's parent body in the distant past."
+        },
+        {
+          "query": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in",
+          "url": "https://www.ibtimes.sg/nasa-finds-ancient-water-clues-locked-inside-cosmic-time-capsule-88550",
+          "title": "NASA Finds Ancient Water Clues Locked Inside a Cosmic Time ...",
+          "snippet": "Jun 25, 2026 · Observations from NASA's Lucy spacecraft, which flew just 650 miles (1,000 kilometers) from the asteroid on April 20, 2025, revealed that the object contains iron-rich clay minerals, evidence..."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+          "title": "NASA’s Lucy Uncovers Ancient Water Clues: Exciting!",
+          "query": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in"
+        },
+        {
+          "url": "https://svs.gsfc.nasa.gov/5628",
+          "title": "NASA SVS | Lucy Observations of Asteroid Donaldjohanson",
+          "query": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in"
+        },
+        {
+          "url": "https://scitechdaily.com/nasas-lucy-uncovers-ancient-water-clues-on-a-weirdly-wobbling-asteroid/",
+          "title": "NASA’s Lucy Uncovers Ancient Water Clues on a Weirdly ...",
+          "query": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+          "final_url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+          "title": "NASA’s Lucy Uncovers Ancient Water Clues: Exciting! - NASA Space News",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "b3907965ec47b9f5315eef976709572d6b3a96d4c7801429db7b4434762afa35",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": {
+            "source_id": "src_1fcc55b30fd8",
+            "url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+            "start": 3106,
+            "end": 3408,
+            "quote": "NASA’s Lucy Uncovers Ancient Water Clues by identifying iron-rich clays on asteroid Donaldjohanson during an April 2025 flyby. These specific minerals confirm liquid water briefly existed on the object’s parent body, revealing a complex evolutionary history for this primitive inner main belt fragment."
+          }
+        },
+        {
+          "url": "https://svs.gsfc.nasa.gov/5628",
+          "final_url": "https://svs.gsfc.nasa.gov/5628",
+          "title": "NASA SVS | Lucy Observations of Asteroid Donaldjohanson",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "b2347f71b8866013eb617d73cd813a90a6d3add76ee76c56d985068517df65fe",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": {
+            "source_id": "src_6e89b89d84e0",
+            "url": "https://svs.gsfc.nasa.gov/5628",
+            "start": 6309,
+            "end": 6738,
+            "quote": "Lucy-DJ-QUE97990-Spectra.png (3840x3000) [3.8 MB]\n During its April 20, 2025 encounter with the main belt asteroid Donaldjohanson, NASA’s Lucy spacecraft discovered evidence for iron-rich clays on the surface of the asteroid using its infrared spectrometer. These clays, which are similar to those found in carbon-rich meteorites such as QUE 97990, indicate that water was briefly present in the asteroid during the distant past."
+          }
+        },
+        {
+          "url": "https://scitechdaily.com/nasas-lucy-uncovers-ancient-water-clues-on-a-weirdly-wobbling-asteroid/",
+          "final_url": "https://scitechdaily.com/nasas-lucy-uncovers-ancient-water-clues-on-a-weirdly-wobbling-asteroid/",
+          "title": "NASA’s Lucy Uncovers Ancient Water Clues on a Weirdly ...",
+          "fetch_status": "fetch_failed",
+          "http_status": 403,
+          "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "page_cache": "fetched",
+          "error": "HTTP 403",
+          "passage": null
+        }
+      ],
+      "passages": [
+        {
+          "source_id": "src_1fcc55b30fd8",
+          "url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+          "start": 3106,
+          "end": 3408,
+          "quote": "NASA’s Lucy Uncovers Ancient Water Clues by identifying iron-rich clays on asteroid Donaldjohanson during an April 2025 flyby. These specific minerals confirm liquid water briefly existed on the object’s parent body, revealing a complex evolutionary history for this primitive inner main belt fragment."
+        },
+        {
+          "source_id": "src_6e89b89d84e0",
+          "url": "https://svs.gsfc.nasa.gov/5628",
+          "start": 6309,
+          "end": 6738,
+          "quote": "Lucy-DJ-QUE97990-Spectra.png (3840x3000) [3.8 MB]\n During its April 20, 2025 encounter with the main belt asteroid Donaldjohanson, NASA’s Lucy spacecraft discovered evidence for iron-rich clays on the surface of the asteroid using its infrared spectrometer. These clays, which are similar to those found in carbon-rich meteorites such as QUE 97990, indicate that water was briefly present in the asteroid during the distant past."
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "src_1fcc55b30fd8",
+          "url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+          "title": "NASA’s Lucy Uncovers Ancient Water Clues: Exciting! - NASA Space News"
+        },
+        {
+          "source_id": "src_6e89b89d84e0",
+          "url": "https://svs.gsfc.nasa.gov/5628",
+          "title": "NASA SVS | Lucy Observations of Asteroid Donaldjohanson"
+        }
+      ],
+      "evidence_found": true,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": true,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "ok",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [],
+      "pipeline_version": "source-selection-2",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:29.223678+00:00",
+      "sources_selected_at": "2026-11-18T05:39:33.144048+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "dengue_c1",
+      "claim": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "4.6 2,400 2023, 13 8,200 2024",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "4.6 2,400 2023, 13 8,200 2024",
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing ...",
+          "snippet": "Mar 18, 2025 · Globally, dengue cases have increased substantially in the last 5 years, with the most pronounced increases occurring in the Americas. In the Americas region, 4.6 million cases and 2,400 deaths were reported in 2023, followed by 13 million cases and 8,200 deaths in 2024."
+        },
+        {
+          "query": "4.6 2,400 2023, 13 8,200 2024",
+          "url": "https://www.mathsisfun.com/numbers/calculator.html",
+          "title": "Calculator - Math is Fun",
+          "snippet": "Just type and your answer comes up live. Also see Function Grapher, Equation Grapher, and Full Precision Calculator. Make sure you have chosen radians or degrees with sin, cos, tan and so on. The constant π (3.14159265...) Note: for more digits of accuracy but less functions try the Full Precision Calculator."
+        },
+        {
+          "query": "4.6 2,400 2023, 13 8,200 2024",
+          "url": "https://www.calculator.net/math-calculator.html",
+          "title": "Math Calculators",
+          "snippet": "This is a free online math calculator together with a variety of other free math calculators that compute standard deviation, percentage, fractions, and more."
+        },
+        {
+          "query": "4.6 2,400 2023, 13 8,200 2024",
+          "url": "https://www.desmos.com/scientific",
+          "title": "Desmos | Scientific Calculator",
+          "snippet": "A beautiful, free online scientific calculator with advanced features for evaluating percentages, fractions, exponential functions, logarithms, trigonometry, statistics, and more."
+        },
+        {
+          "query": "4.6 2,400 2023, 13 8,200 2024",
+          "url": "https://www.calculatorsoup.com/calculators/math/math.php",
+          "title": "Math Calculator",
+          "snippet": "Aug 1, 2025 · Free online math calculator to add, subtract, multiply and divide positive and negative numbers. Online decimal calculator to find sum, difference and products of numbers."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing ...",
+          "query": "4.6 2,400 2023, 13 8,200 2024"
+        },
+        {
+          "url": "https://www.mathsisfun.com/numbers/calculator.html",
+          "title": "Calculator - Math is Fun",
+          "query": "4.6 2,400 2023, 13 8,200 2024"
+        },
+        {
+          "url": "https://www.calculator.net/math-calculator.html",
+          "title": "Math Calculators",
+          "query": "4.6 2,400 2023, 13 8,200 2024"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "final_url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing Recommendations in the United States | HAN | CDC",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "2f92167e08820246efe6ecbf689e5c24914bd26e3d698eead147564768282e60",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": {
+            "source_id": "src_7e2197ed7531",
+            "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+            "start": 3914,
+            "end": 4658,
+            "quote": "Globally, dengue cases have increased substantially in the last 5 years , with the most pronounced increases occurring in the Americas. In the Americas region , 4.6 million cases and 2,400 deaths were reported in 2023, followed by 13 million cases and 8,200 deaths in 2024. As of March 6, more than 760,000 dengue cases have been reported in 2025, which is a 15% increase compared to the previous 5-year average. Epidemics in the Americas region are expected to increase both travel-associated cases and the possibility of local transmission in the continental United States in areas with competent mosquito vectors. Spring and summer travel in the United States overlaps with the months of increased seasonal dengue activity in many countries."
+          }
+        },
+        {
+          "url": "https://www.mathsisfun.com/numbers/calculator.html",
+          "final_url": "https://www.mathsisfun.com/numbers/calculator.html",
+          "title": "Calculator",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "84125b0a8d005853c24227fb86f157af77a0d373c5770a5ee82b0de79e01ab11",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://www.calculator.net/math-calculator.html",
+          "final_url": "https://www.calculator.net/math-calculator.html",
+          "title": "Math Calculators",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "eaed0578fe4ff1e1b3daa9cac86132bcb03d3d74be3b179be308a9ab74f89624",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        }
+      ],
+      "passages": [
+        {
+          "source_id": "src_7e2197ed7531",
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "start": 3914,
+          "end": 4658,
+          "quote": "Globally, dengue cases have increased substantially in the last 5 years , with the most pronounced increases occurring in the Americas. In the Americas region , 4.6 million cases and 2,400 deaths were reported in 2023, followed by 13 million cases and 8,200 deaths in 2024. As of March 6, more than 760,000 dengue cases have been reported in 2025, which is a 15% increase compared to the previous 5-year average. Epidemics in the Americas region are expected to increase both travel-associated cases and the possibility of local transmission in the continental United States in areas with competent mosquito vectors. Spring and summer travel in the United States overlaps with the months of increased seasonal dengue activity in many countries."
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "src_7e2197ed7531",
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing Recommendations in the United States | HAN | CDC"
+        }
+      ],
+      "evidence_found": true,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": true,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "ok",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [],
+      "pipeline_version": "source-selection-2",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:33.144155+00:00",
+      "sources_selected_at": "2026-11-18T05:39:35.291319+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "dengue_c2",
+      "claim": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "6, 2025, 760,000 15",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "6, 2025, 760,000 15",
+          "url": "https://www.in2013dollars.com/us/inflation/2025?amount=760000&endYear=2026",
+          "title": "$760,000 in 2025 → 2026 | Inflation Calculator",
+          "snippet": "The 3.40% inflation rate means $760,000 in 2025 is equivalent to $790,190.53 today. This inflation calculator uses the official US consumer price index published by the Department of Labor."
+        },
+        {
+          "query": "6, 2025, 760,000 15",
+          "url": "https://www.calculateme.com/compound-interest/760000/15/6",
+          "title": "$760,000 at 15% Interest for 6 Years - CalculateMe.com",
+          "snippet": "This calculator determines the future value of $760k invested for 6 years at a constant yield of 15.00% compounded annually. Did Albert Einstein really say \"Compound interest is the most powerful force in the universe?\" According to Snopes, the answer is probably not."
+        },
+        {
+          "query": "6, 2025, 760,000 15",
+          "url": "https://www.amortization.org/inflation/amount.php?year=2025&amount=760000",
+          "title": "What is $760,000 in 2025 worth in 2026? - amortization.org",
+          "snippet": "Every year, the US dollar is usually worth less due to inflation. We calculate what $760,000 in 2025 is worth now. What's the value of 760k in 2025 due to inflation?"
+        },
+        {
+          "query": "6, 2025, 760,000 15",
+          "url": "https://www.saving.org/inflation/inflation.php?amount=760000&year=2025",
+          "title": "What is $760,000 in 2025 Worth Today? Inflation Calculator ...",
+          "snippet": "What is $760,000 in 2025 Worth Today? Value of $760,000 in 2025 adjusted for inflation."
+        },
+        {
+          "query": "6, 2025, 760,000 15",
+          "url": "https://www.myamortizationchart.com/mortgage-calculator/760000/6.15/",
+          "title": "760,000 at 6.15% Mortgage Payment Calculator",
+          "snippet": "What's the monthly payment on a $760,000 house with a mortgage at 6.15% Interest? Calculate a mortgage payment."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://www.in2013dollars.com/us/inflation/2025?amount=760000&endYear=2026",
+          "title": "$760,000 in 2025 → 2026 | Inflation Calculator",
+          "query": "6, 2025, 760,000 15"
+        },
+        {
+          "url": "https://www.calculateme.com/compound-interest/760000/15/6",
+          "title": "$760,000 at 15% Interest for 6 Years - CalculateMe.com",
+          "query": "6, 2025, 760,000 15"
+        },
+        {
+          "url": "https://www.amortization.org/inflation/amount.php?year=2025&amount=760000",
+          "title": "What is $760,000 in 2025 worth in 2026? - amortization.org",
+          "query": "6, 2025, 760,000 15"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://www.in2013dollars.com/us/inflation/2025?amount=760000&endYear=2026",
+          "final_url": "https://www.in2013dollars.com/us/inflation/2025?amount=760000&endYear=2026",
+          "title": "$760,000 in 2025 → $796,160.95 today | Inflation Calculator",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "84c304c6c400851505246d2f1464ab7860c64428a4e53fddf2b268734f84a7b4",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://www.calculateme.com/compound-interest/760000/15/6",
+          "final_url": "https://www.calculateme.com/compound-interest/760000/15/6",
+          "title": "$760,000 at 15% Interest for 6 Years - CalculateMe.com",
+          "fetch_status": "fetch_failed",
+          "http_status": 403,
+          "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "page_cache": "fetched",
+          "error": "HTTP 403",
+          "passage": null
+        },
+        {
+          "url": "https://www.amortization.org/inflation/amount.php?year=2025&amount=760000",
+          "final_url": "https://www.amortization.org/inflation/amount.php?year=2025&amount=760000",
+          "title": "What is $760,000 in 2025 worth in 2026?",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "23c7348a215cc3c3c032ca83a058d91f7506d77d158fb18cd83b88697082f999",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        }
+      ],
+      "passages": [],
+      "sources": [],
+      "evidence_found": false,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": false,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "passage_not_found",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [
+        "No fetched passage was available to judge. The claim is not treated as false."
+      ],
+      "pipeline_version": "source-selection-2",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:35.291390+00:00",
+      "sources_selected_at": "2026-11-18T05:39:37.791005+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "dengue_c3",
+      "claim": "Puerto Rico reported 6,291 dengue cases in 2024; 3,292 required hospitalization and 13 people died.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "6,291 2024; 3,292 13",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "6,291 2024; 3,292 13",
+          "url": "https://www.sciencedirect.com/org/science/article/abs/pii/S1520480425002431",
+          "title": "Discovery of Elironrasib (RMC-6291), a Potent and Orally ...",
+          "snippet": "Mar 27, 2025 · The discovery of elironrasib (RMC-6291) represents a significant breakthrough in targeting the previously deemed undruggable GTP-bound, active KRAS G12C."
+        },
+        {
+          "query": "6,291 2024; 3,292 13",
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing ...",
+          "snippet": "Mar 18, 2025 · In 2024, 6,291 cases were reported, more than 52% (3,292) required hospitalization and there were 13 deaths. As of March 7, 2025, 936 cases have been reported, representing a 113% increase compared to the same period in 2024."
+        },
+        {
+          "query": "6,291 2024; 3,292 13",
+          "url": "https://www.ssa.gov/oact/ssir/SSI25/IV_C_Payments.html",
+          "title": "C. Federal Payments Under SSI - The United States Social ...",
+          "snippet": "Fiscal years 1977 and later cover the 12-month period ending September 30. For example, fiscal year 2024 payments include payments made from October 1, 2023 through September 30, 2024."
+        },
+        {
+          "query": "6,291 2024; 3,292 13",
+          "url": "https://www.symbolab.com/solver",
+          "title": "Step-by-Step Calculator - Symbolab",
+          "snippet": "Free Pre-Algebra, Algebra, Trigonometry, Calculus, Geometry, Statistics and Chemistry calculators step-by-step"
+        },
+        {
+          "query": "6,291 2024; 3,292 13",
+          "url": "https://www.sos.texas.gov/texreg/pdf/backview/index.shtml",
+          "title": "Back Issues of the Texas Register - PDF version",
+          "snippet": "Jun 26, 2026 · All issues of the Texas Register beginning with Volume 1, Number 1 (January 6, 1976) are available online through The Portal to Texas History."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://www.sciencedirect.com/org/science/article/abs/pii/S1520480425002431",
+          "title": "Discovery of Elironrasib (RMC-6291), a Potent and Orally ...",
+          "query": "6,291 2024; 3,292 13"
+        },
+        {
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing ...",
+          "query": "6,291 2024; 3,292 13"
+        },
+        {
+          "url": "https://www.ssa.gov/oact/ssir/SSI25/IV_C_Payments.html",
+          "title": "C. Federal Payments Under SSI - The United States Social ...",
+          "query": "6,291 2024; 3,292 13"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://www.sciencedirect.com/org/science/article/abs/pii/S1520480425002431",
+          "final_url": "https://www.sciencedirect.com/org/science/article/abs/pii/S1520480425002431",
+          "title": "Discovery of Elironrasib (RMC-6291), a Potent and Orally ...",
+          "fetch_status": "fetch_failed",
+          "http_status": 403,
+          "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "page_cache": "fetched",
+          "error": "HTTP 403",
+          "passage": null
+        },
+        {
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "final_url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing Recommendations in the United States | HAN | CDC",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "2f92167e08820246efe6ecbf689e5c24914bd26e3d698eead147564768282e60",
+          "page_cache": "hit",
+          "error": null,
+          "passage": {
+            "source_id": "src_7e2197ed7531",
+            "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+            "start": 5361,
+            "end": 5765,
+            "quote": "In Puerto Rico, reported dengue cases have remained above the outbreak threshold since February 2024. A public health emergency was declared in March 2024 and remains in effect. In 2024, 6,291 cases were reported , more than 52% (3,292) required hospitalization and there were 13 deaths. As of March 7, 2025, 936 cases have been reported, representing a 113% increase compared to the same period in 2024."
+          }
+        },
+        {
+          "url": "https://www.ssa.gov/oact/ssir/SSI25/IV_C_Payments.html",
+          "final_url": "https://www.ssa.gov/oact/ssir/SSI25/IV_C_Payments.html",
+          "title": "C. Federal Payments Under SSI - The United States Social ...",
+          "fetch_status": "fetch_failed",
+          "http_status": 403,
+          "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "page_cache": "fetched",
+          "error": "HTTP 403",
+          "passage": null
+        }
+      ],
+      "passages": [
+        {
+          "source_id": "src_7e2197ed7531",
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "start": 5361,
+          "end": 5765,
+          "quote": "In Puerto Rico, reported dengue cases have remained above the outbreak threshold since February 2024. A public health emergency was declared in March 2024 and remains in effect. In 2024, 6,291 cases were reported , more than 52% (3,292) required hospitalization and there were 13 deaths. As of March 7, 2025, 936 cases have been reported, representing a 113% increase compared to the same period in 2024."
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "src_7e2197ed7531",
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing Recommendations in the United States | HAN | CDC"
+        }
+      ],
+      "evidence_found": true,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": true,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "ok",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [],
+      "pipeline_version": "source-selection-2",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:37.791099+00:00",
+      "sources_selected_at": "2026-11-18T05:39:39.237815+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    }
+  ],
+  "evaluation": {
+    "search_completed": 12,
+    "evidence_acquired": 4,
+    "judge_completed": 0,
+    "judge_accuracy": null,
+    "end_to_end_matches": 0,
+    "end_to_end_rate": "0/12",
+    "key_evidence_obtained": 0,
+    "claims": [
+      {
+        "id": "chan_chan_c1",
+        "search_status": "ok",
+        "fetch_status": "passage_not_found",
+        "evidence_found": false,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "chan_chan_c2",
+        "search_status": "ok",
+        "fetch_status": "passage_not_found",
+        "evidence_found": false,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "chan_chan_c3",
+        "search_status": "ok",
+        "fetch_status": "ok",
+        "evidence_found": true,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "heatwave_c1",
+        "search_status": "ok",
+        "fetch_status": "passage_not_found",
+        "evidence_found": false,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "heatwave_c2",
+        "search_status": "ok",
+        "fetch_status": "passage_not_found",
+        "evidence_found": false,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "heatwave_c3",
+        "search_status": "ok",
+        "fetch_status": "passage_not_found",
+        "evidence_found": false,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "lucy_c1",
+        "search_status": "ok",
+        "fetch_status": "passage_not_found",
+        "evidence_found": false,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "lucy_c2",
+        "search_status": "ok",
+        "fetch_status": "passage_not_found",
+        "evidence_found": false,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "lucy_c3",
+        "search_status": "ok",
+        "fetch_status": "ok",
+        "evidence_found": true,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "dengue_c1",
+        "search_status": "ok",
+        "fetch_status": "ok",
+        "evidence_found": true,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "dengue_c2",
+        "search_status": "ok",
+        "fetch_status": "passage_not_found",
+        "evidence_found": false,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "dengue_c3",
+        "search_status": "ok",
+        "fetch_status": "ok",
+        "evidence_found": true,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      }
+    ]
+  }
+}

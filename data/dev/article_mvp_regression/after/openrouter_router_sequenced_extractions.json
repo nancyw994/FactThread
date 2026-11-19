@@ -1,0 +1,98 @@
+{
+  "provider_chain": [
+    {
+      "provider": "openrouter",
+      "model": "openrouter/free"
+    }
+  ],
+  "allow_paid": false,
+  "allow_openrouter_fallback": true,
+  "selected_provider": "openrouter",
+  "selected_model": "openrouter/free",
+  "response_format": {
+    "type": "json_object"
+  },
+  "max_completion_tokens": 4096,
+  "format_probe": {
+    "input_chars": 203,
+    "status": "failed",
+    "error_type": "ExtractionParseError",
+    "error": "model response contains no complete JSON object with a claims list",
+    "request_sequence": 1
+  },
+  "attempts": [
+    {
+      "sequence": 1,
+      "article_id": "format_probe_apollo",
+      "request_status": "completed",
+      "provider": "openrouter",
+      "requested_model": "openrouter/free",
+      "article_chars": 203,
+      "request_chars": 239,
+      "repair_errors": [],
+      "response_format": {
+        "type": "json_object"
+      },
+      "max_completion_tokens": 4096,
+      "request_parameters": {
+        "model": "openrouter/free",
+        "temperature": 0.0,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Follow the YAML specification below when answering.\n\ninstructions: 'You extract atomic claims from one article so a person can fact-check\n  them later. You do not search, and you do not assign a verdict.\n\n\n  Return only JSON:\n\n  {\"claims\":[{\"id\":\"c1\",\"source_quote\":\"exact substring of the article\",\"normalized_claim\":\"one\n  standalone claim\",\"category\":\"checkable_fact|opinion|prediction|needs_context\",\"missing_context\":[],\"verification_scope\":\"external_fact|document_content|text_analysis\"}]}\n\n\n  Rules:\n\n  - source_quote must be copied character for character from the article. Do not fix\n  spelling, and do not join text from two places.\n\n  - Split a sentence that states two independent facts into two claims. Each quote\n  must still be an exact substring.\n\n  - Keep limiters in normalized_claim: some, all, only, may, as of a date, a named\n  exam, a team, a tier, or a price category.\n\n  - Preserve the source quote''s asserted meaning in normalized_claim: keep its subject,\n  action, polarity, tense, certainty, time, quantities, and scope. Do not weaken a\n  forecast into a present fact, strengthen a possibility into certainty, reverse a\n  negation, or omit a limiting phrase. If a faithful normalization is unclear, use\n  the source wording and explain the missing context.\n\n  - Do not add ordinal or superlative limits such as “first,” “earliest,” or “only”\n  unless the quote or one clear context explicitly states them. Never turn an unordered\n  event into a first event.\n\n  - In normalized_claim, resolve a pronoun or demonstrative such as \"it\", \"they\",\n  \"these actions\", \"that exam\", \"the same report\", \"the paper\", or \"that date\" from\n  the article context only when there is one clear antecedent. Preserve the source\n  quote exactly. If the antecedent is ambiguous or absent, keep the claim cautious\n  and list the missing referent in missing_context; never guess.\n\n  - Do not replace a claim with a neighboring sentence while resolving context. The\n  normalized claim must preserve the source quote''s subject, predicate, numbers,\n  and direction. If the quote is \"These actions allowed X to flourish\", do not turn\n  it into a claim about how a release was licensed. Keep the causal assertion and\n  list any unclear action, concrete outcome or measure, and causal basis in missing_context.\n\n  - For causal language such as \"caused\", \"allowed\", \"enabled\", \"led to\", or \"resulted\n  in\", check whether the article names the action, outcome, and a concrete indicator.\n  Vague outcomes such as \"flourish\" or \"improve\" need the missing object or measure\n  and evidence for the causal link listed in missing_context. Do not treat temporal\n  order alone as causal proof.\n\n  - When a claim reports that headlines or another speaker described a gain, improvement,\n  score, or other result with a comparison, preserve that attribution and identify\n  the result or measure being described. If the article does not make the referent\n  clear, include it in missing_context instead of guessing.\n\n  - If the article attributes the statement, keep that attribution in source_quote\n  and in normalized_claim. Phrases to keep include \"the report says\", \"the authors\n  add\", \"according to\", \"I think\", and \"headlines called\". Do not turn an attributed\n  statement into a bare fact.\n\n  - Do not extend an attribution across \"and\". \"The report says A, and B\" supports\n  \"The report says A\". It does not support \"The report says B\". Leave B as its own\n  claim without that attribution.\n\n  - A price claim needs the named product or service being billed. Fill that name\n  only when the price clause in the article states it. If it does not, list the missing\n  product or service in missing_context. Do not borrow a name from the other half\n  of an \"and\" sentence.\n\n  - missing_context names a gap in what that claim asserts. A claim that headlines\n  used a phrase needs the headline, not proof that the phrase''s comparison is true.\n\n  - verification_scope is document_content when the claim is about what one resolved\n  document says, lists, does not say, or does not report. It is text_analysis when\n  the sentence classifies another line as a forecast, preference, or opinion. Otherwise\n  it is external_fact.\n\n  - If a sentence says a line is a forecast or a preference, and then says it is not\n  in the report, return those as two claims.\n\n  - \"on purpose\", \"deliberately\", and \"meant to\" are intention, not opinion. \"I think\",\n  \"best\", and \"worst\" are opinion.\n\n  - Do not guess which document a pronoun or \"the document\" names. Leave it unresolved\n  when more than one document is possible.\n\n  - checkable_fact: a statement about a date, number, name, price, policy, or result\n  that could be checked against a source.\n\n  - opinion: the writer''s evaluation. Do not call it a fact.\n\n  - prediction: a claim about the future. Do not call it a fact.\n\n  - needs_context: use this category only when the claim''s own subject, date, or\n  baseline is missing. Name that gap in missing_context.\n\n  - Do not drop a checkable fact because it is narrow. Do not invent claims that the\n  article does not state.\n\n\n  If repair_errors is not empty, the previous quotes failed those checks. Return a\n  full replacement whose source_quote values occur in the article.\n\n  '\n"
+          },
+          {
+            "role": "user",
+            "content": "{\"article\": \"Apollo 11 landed the first humans on the Moon on July 20, 1969. The first Moon landing happened in 1972. Apollo 11 was humanity's greatest achievement. NASA will establish a permanent lunar base by 2030.\", \"repair_errors\": []}"
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_completion_tokens": 4096
+      },
+      "finish_reason": "length",
+      "usage": {
+        "cost": 0,
+        "is_byok": false,
+        "cost_details": {
+          "upstream_inference_cost": 0,
+          "upstream_inference_prompt_cost": 0,
+          "upstream_inference_completions_cost": 0
+        },
+        "completion_tokens": 4096,
+        "prompt_tokens": 1328,
+        "total_tokens": 5424,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": 0,
+          "reasoning_tokens": 4096,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null,
+          "image_tokens": 0
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cache_write_tokens": 0,
+          "cached_tokens": 0,
+          "image_tokens": null,
+          "text_tokens": null,
+          "video_tokens": 0
+        }
+      },
+      "raw_reply_file": "after/openrouter-router/raw/reply-01.txt",
+      "parse_status": "parse_failed",
+      "parsed_items": null,
+      "accepted_items": null,
+      "rejected_items": null,
+      "rejection_reasons": [],
+      "served_model": "nvidia/nemotron-3.5-lightning:free",
+      "raw_reply_chars": 17084,
+      "elapsed_seconds": 42.79227708396502,
+      "parse_error": "ExtractionParseError: model response contains no complete JSON object with a claims list"
+    }
+  ],
+  "articles": [],
+  "stopped_on": "format_probe_apollo"
+}

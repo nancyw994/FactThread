@@ -1,0 +1,107 @@
+{
+  "provider_chain": [
+    {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b"
+    }
+  ],
+  "allow_paid": false,
+  "allow_openrouter_fallback": false,
+  "runs": [
+    {
+      "id": "chan_chan",
+      "input_chars": 5234,
+      "truncated": false,
+      "status": "error",
+      "error": "核查没有完成（RuntimeError）。RateLimited: Model request failed. groq openai/gpt-oss-120b: RateLimitError The fixed_rules baseline was not substituted.",
+      "extraction_status": "request_failed",
+      "extraction_diagnostics": [
+        {
+          "attempt": 1,
+          "stage": "request",
+          "error": "RateLimited"
+        }
+      ],
+      "candidate_count": 0,
+      "candidates": [],
+      "call_count": 0,
+      "calls": []
+    },
+    {
+      "id": "heatwave",
+      "input_chars": 6885,
+      "truncated": false,
+      "status": "error",
+      "error": "核查没有完成（RuntimeError）。RateLimited: Model request failed. groq openai/gpt-oss-120b: RateLimitError The fixed_rules baseline was not substituted.",
+      "extraction_status": "request_failed",
+      "extraction_diagnostics": [
+        {
+          "attempt": 1,
+          "stage": "request",
+          "error": "RateLimited"
+        }
+      ],
+      "candidate_count": 0,
+      "candidates": [],
+      "call_count": 0,
+      "calls": []
+    },
+    {
+      "id": "lucy",
+      "input_chars": 7045,
+      "truncated": false,
+      "status": "error",
+      "error": "核查没有完成（RuntimeError）。RateLimited: Model request failed. groq openai/gpt-oss-120b: RateLimitError The fixed_rules baseline was not substituted.",
+      "extraction_status": "request_failed",
+      "extraction_diagnostics": [
+        {
+          "attempt": 1,
+          "stage": "request",
+          "error": "RateLimited"
+        }
+      ],
+      "candidate_count": 0,
+      "candidates": [],
+      "call_count": 0,
+      "calls": []
+    },
+    {
+      "id": "dengue",
+      "input_chars": 11623,
+      "truncated": false,
+      "status": "error",
+      "error": "核查没有完成（RuntimeError）。RateLimited: Model request failed. groq openai/gpt-oss-120b: RateLimitError The fixed_rules baseline was not substituted.",
+      "extraction_status": "request_failed",
+      "extraction_diagnostics": [
+        {
+          "attempt": 1,
+          "stage": "request",
+          "error": "RateLimited"
+        }
+      ],
+      "candidate_count": 0,
+      "candidates": [],
+      "call_count": 0,
+      "calls": []
+    },
+    {
+      "id": "apollo_control",
+      "input_chars": 203,
+      "truncated": false,
+      "status": "error",
+      "error": "核查没有完成（RuntimeError）。RateLimited: Model request failed. groq openai/gpt-oss-120b: RateLimitError The fixed_rules baseline was not substituted.",
+      "extraction_status": "request_failed",
+      "extraction_diagnostics": [
+        {
+          "attempt": 1,
+          "stage": "request",
+          "error": "RateLimited"
+        }
+      ],
+      "candidate_count": 0,
+      "candidates": [],
+      "call_count": 0,
+      "calls": []
+    }
+  ]
+}

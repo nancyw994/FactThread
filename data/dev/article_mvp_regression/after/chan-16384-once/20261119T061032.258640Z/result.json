@@ -1,0 +1,575 @@
+{
+  "run_id": "20261119T061032.258640Z",
+  "article_id": "chan_chan",
+  "source_url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+  "input_chars": 5234,
+  "input_bytes": 5311,
+  "input_sha256": "785df4792b277555c254ff0a8f56f67db6b88c5d9b85f0274aaa65ea4d81034c",
+  "truncated": false,
+  "submitted_article_chars": 5234,
+  "provider": "groq",
+  "provider_chain": [
+    {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "base_url": "https://api.groq.com/openai/v1",
+      "route_reason": "groq_primary"
+    }
+  ],
+  "model": "openai/gpt-oss-120b",
+  "prompt_version": "sha256:e52cb13057888cc38bba9f73e2e6ac7fd229593d848a6b16829203269ade1f77",
+  "response_format": {
+    "type": "json_object"
+  },
+  "temperature": 0.0,
+  "output_parameter": "max_completion_tokens",
+  "output_cap": 16384,
+  "account_billing_status": "not independently verified in Groq console",
+  "allow_paid": false,
+  "allow_openrouter_fallback": false,
+  "request_count_limit": 1,
+  "request_count": 1,
+  "request_parameters": {
+    "model": "openai/gpt-oss-120b",
+    "temperature": 0.0,
+    "messages": [
+      {
+        "role": "system",
+        "content": "Follow the YAML specification below when answering.\n\ninstructions: 'You extract atomic claims from one article so a person can fact-check\n  them later. You do not search, and you do not assign a verdict.\n\n\n  Return only JSON:\n\n  {\"claims\":[{\"id\":\"c1\",\"source_quote\":\"exact substring of the article\",\"normalized_claim\":\"one\n  standalone claim\",\"category\":\"checkable_fact|opinion|prediction|needs_context\",\"missing_context\":[],\"verification_scope\":\"external_fact|document_content|text_analysis\"}]}\n\n\n  Rules:\n\n  - source_quote must be copied character for character from the article. Do not fix\n  spelling, and do not join text from two places.\n\n  - Split a sentence that states two independent facts into two claims. Each quote\n  must still be an exact substring.\n\n  - Keep limiters in normalized_claim: some, all, only, may, as of a date, a named\n  exam, a team, a tier, or a price category.\n\n  - Preserve the source quote''s asserted meaning in normalized_claim: keep its subject,\n  action, polarity, tense, certainty, time, quantities, and scope. Do not weaken a\n  forecast into a present fact, strengthen a possibility into certainty, reverse a\n  negation, or omit a limiting phrase. If a faithful normalization is unclear, use\n  the source wording and explain the missing context.\n\n  - Extract statements about the limits of current knowledge as claims too. Phrases\n  such as \"unknown,\" \"unclear,\" \"not known,\" or \"no data\" assert a state of knowledge;\n  do not omit them or turn them into a claim that an event or object did not exist.\n  Preserve whose knowledge is limited, which aspect is unknown, and any stated time\n  or scope.\n\n  - Do not add ordinal or superlative limits such as “first,” “earliest,” or “only”\n  unless the quote or one clear context explicitly states them. Never turn an unordered\n  event into a first event.\n\n  - In normalized_claim, resolve a pronoun or demonstrative such as \"it\", \"they\",\n  \"these actions\", \"that exam\", \"the same report\", \"the paper\", or \"that date\" from\n  the article context only when there is one clear antecedent. Preserve the source\n  quote exactly. If the antecedent is ambiguous or absent, keep the claim cautious\n  and list the missing referent in missing_context; never guess.\n\n  - Do not replace a claim with a neighboring sentence while resolving context. The\n  normalized claim must preserve the source quote''s subject, predicate, numbers,\n  and direction. If the quote is \"These actions allowed X to flourish\", do not turn\n  it into a claim about how a release was licensed. Keep the causal assertion and\n  list any unclear action, concrete outcome or measure, and causal basis in missing_context.\n\n  - For causal language such as \"caused\", \"allowed\", \"enabled\", \"led to\", or \"resulted\n  in\", check whether the article names the action, outcome, and a concrete indicator.\n  Vague outcomes such as \"flourish\" or \"improve\" need the missing object or measure\n  and evidence for the causal link listed in missing_context. Do not treat temporal\n  order alone as causal proof.\n\n  - When a claim reports that headlines or another speaker described a gain, improvement,\n  score, or other result with a comparison, preserve that attribution and identify\n  the result or measure being described. If the article does not make the referent\n  clear, include it in missing_context instead of guessing.\n\n  - If the article attributes the statement, keep that attribution in source_quote\n  and in normalized_claim. Phrases to keep include \"the report says\", \"the authors\n  add\", \"according to\", \"I think\", and \"headlines called\". Do not turn an attributed\n  statement into a bare fact.\n\n  - Keep a statement''s existing speaker, source, role, and attribution verb when\n  the article supplies them. If the attribution is outside quotation marks or is carried\n  by a clearly connected continuation, make source_quote one exact contiguous substring\n  that includes the statement and enough attribution context; keep the same attribution\n  in normalized_claim. Do not infer a speaker or source when the article leaves it\n  unclear.\n\n  - Do not extend an attribution across \"and\". \"The report says A, and B\" supports\n  \"The report says A\". It does not support \"The report says B\". Leave B as its own\n  claim without that attribution.\n\n  - Preserve semantic relationships between the subject, action, object, and any necessary\n  participants. Keep stated spatial and directional relationships (for example, which\n  place or object is inside, beside, connected to, or leads to another), as well as\n  causal direction. When splitting independent facts, make each claim''s quote and\n  normalization retain the relationship needed to understand that fact; do not keep\n  only a measurement or outcome while dropping the action or connection that gives\n  it meaning.\n\n  - A price claim needs the named product or service being billed. Fill that name\n  only when the price clause in the article states it. If it does not, list the missing\n  product or service in missing_context. Do not borrow a name from the other half\n  of an \"and\" sentence.\n\n  - missing_context names a gap in what that claim asserts. A claim that headlines\n  used a phrase needs the headline, not proof that the phrase''s comparison is true.\n\n  - verification_scope is document_content when the claim is about what one resolved\n  document says, lists, does not say, or does not report. It is text_analysis when\n  the sentence classifies another line as a forecast, preference, or opinion. Otherwise\n  it is external_fact.\n\n  - If a sentence says a line is a forecast or a preference, and then says it is not\n  in the report, return those as two claims.\n\n  - \"on purpose\", \"deliberately\", and \"meant to\" are intention, not opinion. \"I think\",\n  \"best\", and \"worst\" are opinion.\n\n  - Do not guess which document a pronoun or \"the document\" names. Leave it unresolved\n  when more than one document is possible.\n\n  - checkable_fact: a statement about a date, number, name, price, policy, or result\n  that could be checked against a source.\n\n  - opinion: the writer''s evaluation. Do not call it a fact.\n\n  - prediction: a claim about the future. Do not call it a fact.\n\n  - needs_context: use this category only when the claim''s own subject, date, or\n  baseline is missing. Name that gap in missing_context.\n\n  - Do not drop a checkable fact because it is narrow. Do not invent claims that the\n  article does not state.\n\n\n  If repair_errors is not empty, the previous quotes failed those checks. Return a\n  full replacement whose source_quote values occur in the article.\n\n  '\n"
+      },
+      {
+        "role": "user",
+        "content": "{\"article\": \"Unsealed for the First Time in 600 Years, This Tomb in Peru Was Just Declared the ‘Discovery of the Decade’ Archaeologists excavating Chan Chan, the capital of the pre-Inca Chimú civilization, found an undisturbed mausoleum that held the remains of at least 38 individuals, as well as a trove of rich funerary goods Meilan Solly | Senior Associate Digital Editor, History Some 600 years ago, members of the pre-Inca Chimú civilization buried more than three dozen people in a mausoleum near modern-day Trujillo, Peru. The dead were interred alongside a rich array of grave goods, including metal weapons, copper and gold artifacts, ornate jewelry, and colorful textiles—suggesting that they were high-status individuals, perhaps even royalty. The mausoleum remained largely intact until this year, when excavations uncovered its entrance beneath layers of sand, soil and stone at Chan Chan , a UNESCO World Heritage Site that was once the Chimú capital. The tomb dates to during or just before the Inca conquest of the region in the mid-15th century, making its survival, untouched by colonial and contemporary looters alike, even more impressive. As lead archaeologist Jorge Meneses tells BBC News , the find marks “the first time that Peruvian archaeologists have been able to come across an almost intact [funerary] platform, with unaltered contents, a platform that was designed for an elite individual, whose main chamber has remained sealed for almost 600 years.” Previously, “what was known about elite burials in Chimú society came from looted platforms, private collections and museum holdings,” Meneses tells El País ’ Renzo Gómez Vega. “There was no scientific data on the individuals and their corresponding artifacts and associations.” The Chimú thrived in what is now northern Peru between roughly 900 and 1470. The civilization was the “first true engineering society in the New World,” devising a network of irrigation canals that enabled its people to thrive in a desert valley, hydraulic engineer Charles Ortloff told Smithsonian magazine ’s Bruce Hathaway in 2009. Chimú kings lived in walled palaces , with each ruler building a new royal compound upon their accession. Many of Chan Chan’s surviving palaces feature funerary platforms where rulers were laid to rest with members of their retinue. Fun fact: The Chimú capital The newly discovered mausoleum is located in Chan Chan’s Utzh An complex. A staircase leads down into the tomb’s central chamber, which measures roughly 4 feet wide and 16 feet deep, according to the state-run Andina news agency. Inside this main room, archaeologists identified the remains of a single individual whose skull bore traces of a red pigment, possibly cinnabar , a crystalline form of mercury sulfide. Some of the skeleton’s bones are missing, leading the researchers to posit that the remains were later moved or reburied. This was a common practice among Andean societies at the time, with communities continuing to interact with and even worship the bodies of their loved ones and leaders after death. Two rooms flank the central chamber on either side. One was virtually empty, while the other held roughly 20 sets of human remains, as well as miscellaneous artifacts. Archaeologists found an additional 17 skeletons while excavating the funerary platform, bringing the total number of people buried there to at least 38. Much about the tomb remains unknown, from the individuals’ ages and genders to the circumstances of their deaths. “What is clear to us so far is that these people were part of the elite or were associated with the elite,” Henry Luis Gayoso , an official with the Peruvian Ministry of Culture, tells the New York Times ’ Alan Yuhas. Gabriel Prieto , an anthropologist at the University of Florida who wasn’t involved in the research, tells the Times that the find is “the discovery of the decade in terms of it’s the very first time that, as archaeologists, we are able to see an elite Chimú burial.” Researchers hope that the undisturbed tomb will shed light on Chimú funerary practices and social hierarchies at a time of great upheaval. The discovery also underscores how much of the Chimú capital remains unexplored. To date, archaeologists have excavated “no more than 7 percent of Chan Chan’s total area,” Meneses tells El País . “Evidently, the citadel has much more to tell.” You Might Also Like Mass Grave of Women, Children Found in Pre-Hispanic City in Peru November 12, 2021 Archaeologists in Peru Discover Graves of Men, Women and Children Killed in Battle, Then Buried With Honor April 21, 2025 Archaeologists Discover a 4,000-Year-Old Tomb With a False Door at Egypt's Ancient Saqqara Necropolis September 2, 2026 Archaeologists Excavating a Monastery in Spain Identified the Remains of a 14th-Century Queen—and Multiple Skeletons Buried in the Wrong Graves June 3, 2026 Why Were These Ancient Adults Buried in Jars on the Island of Corsica? April 15, 2021 Meilan Solly is a senior associate digital editor at Smithsonian magazine, where she oversees the online history section and writes about everything from archaeology to the British royal family. Solly’s specialties are Tudor England, Renaissance and modern art, and World War II.\", \"repair_errors\": []}"
+      }
+    ],
+    "response_format": {
+      "type": "json_object"
+    },
+    "max_completion_tokens": 16384
+  },
+  "status": "completed",
+  "http_status": 200,
+  "served_model": "openai/gpt-oss-120b",
+  "finish_reason": "stop",
+  "usage": {
+    "queue_time": 0.077110724,
+    "prompt_time": 0.133159092,
+    "completion_time": 18.051846592,
+    "total_time": 18.185005684,
+    "completion_tokens": 8528,
+    "prompt_tokens": 2712,
+    "total_tokens": 11240,
+    "completion_tokens_details": {
+      "accepted_prediction_tokens": null,
+      "audio_tokens": null,
+      "reasoning_tokens": 5640,
+      "rejected_prediction_tokens": null,
+      "text_tokens": null
+    },
+    "prompt_tokens_details": null
+  },
+  "rate_limit_headers": {
+    "x-ratelimit-limit-requests": "1000",
+    "x-ratelimit-limit-tokens": "8000",
+    "x-ratelimit-remaining-requests": "999",
+    "x-ratelimit-remaining-tokens": "4961",
+    "x-ratelimit-reset-requests": "1m26.4s",
+    "x-ratelimit-reset-tokens": "22.792s"
+  },
+  "cost_usd": "unknown",
+  "elapsed_seconds": 18.847835542052053,
+  "raw_reply_file": "after/chan-16384-once/20261119T061032.258640Z/raw_reply.txt",
+  "raw_reply_chars": 12787,
+  "parsed_items": 27,
+  "accepted_items": 27,
+  "rejected_items": 0,
+  "accepted_claims": [
+    {
+      "source_quote": "Archaeologists excavating Chan Chan, the capital of the pre-Inca Chimú civilization, found an undisturbed mausoleum that held the remains of at least 38 individuals, as well as a trove of rich funerary goods",
+      "source_ranges": [
+        [
+          108,
+          315
+        ]
+      ],
+      "normalized_claim": "Archaeologists excavating Chan Chan found an undisturbed mausoleum that held the remains of at least 38 individuals and a trove of rich funerary goods",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "Some 600 years ago, members of the pre-Inca Chimú civilization buried more than three dozen people in a mausoleum near modern-day Trujillo, Peru.",
+      "source_ranges": [
+        [
+          372,
+          517
+        ]
+      ],
+      "normalized_claim": "Some 600 years ago, members of the pre-Inca Chimú civilization buried more than three dozen people in a mausoleum near modern-day Trujillo, Peru",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "The dead were interred alongside a rich array of grave goods, including metal weapons, copper and gold artifacts, ornate jewelry, and colorful textiles",
+      "source_ranges": [
+        [
+          518,
+          669
+        ]
+      ],
+      "normalized_claim": "The dead were interred alongside a rich array of grave goods, including metal weapons, copper and gold artifacts, ornate jewelry, and colorful textiles",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "—suggesting that they were high-status individuals, perhaps even royalty.",
+      "source_ranges": [
+        [
+          669,
+          742
+        ]
+      ],
+      "normalized_claim": "The grave goods suggest that the individuals were high-status, perhaps even royalty",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "The mausoleum remained largely intact until this year, when excavations uncovered its entrance beneath layers of sand, soil and stone at Chan Chan , a UNESCO World Heritage Site that was once the Chimú capital.",
+      "source_ranges": [
+        [
+          743,
+          953
+        ]
+      ],
+      "normalized_claim": "The mausoleum remained largely intact until this year, when excavations uncovered its entrance beneath layers of sand, soil and stone at Chan Chan, a UNESCO World Heritage Site that was once the Chimú capital",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "The tomb dates to during or just before the Inca conquest of the region in the mid-15th century",
+      "source_ranges": [
+        [
+          954,
+          1049
+        ]
+      ],
+      "normalized_claim": "The tomb dates to during or just before the Inca conquest of the region in the mid-15th century",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "As lead archaeologist Jorge Meneses tells BBC News , the find marks “the first time that Peruvian archaeologists have been able to come across an almost intact [funerary] platform, with unaltered contents, a platform that was designed for an elite individual, whose main chamber has remained sealed for almost 600 years.”",
+      "source_ranges": [
+        [
+          1148,
+          1469
+        ]
+      ],
+      "normalized_claim": "Jorge Meneses told BBC News that the find marks the first time Peruvian archaeologists have been able to come across an almost intact funerary platform with unaltered contents, designed for an elite individual whose main chamber has remained sealed for almost 600 years",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "Previously, “what was known about elite burials in Chimú society came from looted platforms, private collections and museum holdings,” Meneses tells El País ’ Renzo Gómez Vega.",
+      "source_ranges": [
+        [
+          1470,
+          1646
+        ]
+      ],
+      "normalized_claim": "Meneses told El País that what was known about elite burials in Chimú society came from looted platforms, private collections and museum holdings",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "There was no scientific data on the individuals and their corresponding artifacts and associations.",
+      "source_ranges": [
+        [
+          1648,
+          1747
+        ]
+      ],
+      "normalized_claim": "There was no scientific data on the individuals and their corresponding artifacts and associations",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "The Chimú thrived in what is now northern Peru between roughly 900 and 1470.",
+      "source_ranges": [
+        [
+          1749,
+          1825
+        ]
+      ],
+      "normalized_claim": "The Chimú thrived in what is now northern Peru between roughly 900 and 1470",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "The civilization was the “first true engineering society in the New World,” devising a network of irrigation canals that enabled its people to thrive in a desert valley, hydraulic engineer Charles Ortloff told Smithsonian magazine ’s Bruce Hathaway in 2009.",
+      "source_ranges": [
+        [
+          1826,
+          2083
+        ]
+      ],
+      "normalized_claim": "Charles Ortloff said the civilization was the “first true engineering society in the New World,” having devised a network of irrigation canals that enabled its people to thrive in a desert valley",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [
+        "规范化声明未保留原文中的数字或年份",
+        "需要说明因果结果的具体对象或衡量指标",
+        "需要提供所述行动导致该结果的因果依据"
+      ]
+    },
+    {
+      "source_quote": "Chimú kings lived in walled palaces , with each ruler building a new royal compound upon their accession.",
+      "source_ranges": [
+        [
+          2084,
+          2189
+        ]
+      ],
+      "normalized_claim": "Chimú kings lived in walled palaces, with each ruler building a new royal compound upon their accession",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "Many of Chan Chan’s surviving palaces feature funerary platforms where rulers were laid to rest with members of their retinue.",
+      "source_ranges": [
+        [
+          2190,
+          2316
+        ]
+      ],
+      "normalized_claim": "Many of Chan Chan’s surviving palaces feature funerary platforms where rulers were laid to rest with members of their retinue",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "The newly discovered mausoleum is located in Chan Chan’s Utzh An complex.",
+      "source_ranges": [
+        [
+          2345,
+          2418
+        ]
+      ],
+      "normalized_claim": "The newly discovered mausoleum is located in Chan Chan’s Utzh An complex",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "A staircase leads down into the tomb’s central chamber, which measures roughly 4 feet wide and 16 feet deep, according to the state-run Andina news agency.",
+      "source_ranges": [
+        [
+          2419,
+          2574
+        ]
+      ],
+      "normalized_claim": "A staircase leads down into the tomb’s central chamber, which measures roughly 4 feet wide and 16 feet deep",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "Inside this main room, archaeologists identified the remains of a single individual whose skull bore traces of a red pigment, possibly cinnabar , a crystalline form of mercury sulfide.",
+      "source_ranges": [
+        [
+          2575,
+          2759
+        ]
+      ],
+      "normalized_claim": "Inside this main room, archaeologists identified the remains of a single individual whose skull bore traces of a red pigment, possibly cinnabar, a crystalline form of mercury sulfide",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "Some of the skeleton’s bones are missing, leading the researchers to posit that the remains were later moved or reburied.",
+      "source_ranges": [
+        [
+          2760,
+          2881
+        ]
+      ],
+      "normalized_claim": "Some of the skeleton’s bones are missing, leading the researchers to posit that the remains were later moved or reburied",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": [
+        "evidence for later moving or reburial"
+      ]
+    },
+    {
+      "source_quote": "This was a common practice among Andean societies at the time, with communities continuing to interact with and even worship the bodies of their loved ones and leaders after death.",
+      "source_ranges": [
+        [
+          2882,
+          3062
+        ]
+      ],
+      "normalized_claim": "It was a common practice among Andean societies at the time for communities to interact with and worship the bodies of their loved ones and leaders after death",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "One was virtually empty",
+      "source_ranges": [
+        [
+          3115,
+          3138
+        ]
+      ],
+      "normalized_claim": "One of the two rooms flanking the central chamber was virtually empty",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "the other held roughly 20 sets of human remains, as well as miscellaneous artifacts.",
+      "source_ranges": [
+        [
+          3146,
+          3230
+        ]
+      ],
+      "normalized_claim": "The other room held roughly 20 sets of human remains and miscellaneous artifacts",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "Archaeologists found an additional 17 skeletons while excavating the funerary platform, bringing the total number of people buried there to at least 38.",
+      "source_ranges": [
+        [
+          3231,
+          3383
+        ]
+      ],
+      "normalized_claim": "Archaeologists found an additional 17 skeletons while excavating the funerary platform, bringing the total number of people buried there to at least 38",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "Much about the tomb remains unknown, from the individuals’ ages and genders to the circumstances of their deaths.",
+      "source_ranges": [
+        [
+          3384,
+          3497
+        ]
+      ],
+      "normalized_claim": "Much about the tomb remains unknown, including the individuals’ ages, genders, and the circumstances of their deaths",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "needs_context",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": [
+        "individuals’ ages",
+        "individuals’ genders",
+        "circumstances of deaths"
+      ]
+    },
+    {
+      "source_quote": "“What is clear to us so far is that these people were part of the elite or were associated with the elite,” Henry Luis Gayoso , an official with the Peruvian Ministry of Culture, tells the New York Times ’ Alan Yuhas.",
+      "source_ranges": [
+        [
+          3498,
+          3715
+        ]
+      ],
+      "normalized_claim": "Henry Luis Gayoso said that, based on current evidence, these people were part of the elite or were associated with the elite",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "Gabriel Prieto , an anthropologist at the University of Florida who wasn’t involved in the research, tells the Times that the find is “the discovery of the decade in terms of it’s the very first time that, as archaeologists, we are able to see an elite Chimú burial.”",
+      "source_ranges": [
+        [
+          3716,
+          3983
+        ]
+      ],
+      "normalized_claim": "Gabriel Prieto called the find “the discovery of the decade” and said it was the very first time archaeologists have been able to see an elite Chimú burial",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "Researchers hope that the undisturbed tomb will shed light on Chimú funerary practices and social hierarchies at a time of great upheaval.",
+      "source_ranges": [
+        [
+          3984,
+          4122
+        ]
+      ],
+      "normalized_claim": "Researchers hope that the undisturbed tomb will shed light on Chimú funerary practices and social hierarchies at a time of great upheaval",
+      "fact_type": "prediction",
+      "category": "prediction",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "prediction is not given a factual check",
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "To date, archaeologists have excavated “no more than 7 percent of Chan Chan’s total area,” Meneses tells El País .",
+      "source_ranges": [
+        [
+          4204,
+          4318
+        ]
+      ],
+      "normalized_claim": "Meneses told El País that, to date, archaeologists have excavated no more than 7 percent of Chan Chan’s total area",
+      "fact_type": "checkable_fact",
+      "category": "checkable_fact",
+      "verification_scope": "external_fact",
+      "status": "ready",
+      "status_reason": null,
+      "document_ref": null,
+      "missing_context": []
+    },
+    {
+      "source_quote": "“Evidently, the citadel has much more to tell.”",
+      "source_ranges": [
+        [
+          4319,
+          4366
+        ]
+      ],
+      "normalized_claim": "The citadel evidently has much more to tell",
+      "fact_type": "opinion",
+      "category": "opinion",
+      "verification_scope": "external_fact",
+      "status": "skipped",
+      "status_reason": "opinion is not given a factual check",
+      "document_ref": null,
+      "missing_context": []
+    }
+  ],
+  "rejected_claims": [],
+  "parse_method": "articles._parse_extract JSON decoder; extract_claims._split exact-quote/local validation",
+  "rejection_reasons": [],
+  "retry_policy": "no retry; one request maximum",
+  "manual_review": {
+    "review_file": "after/chan-16384-once/20261119T061032.258640Z/manual_review.md",
+    "unknown_information": "preserved",
+    "continuous_quote_attribution": "partial; Meneses attribution absent from claims 9 and 27",
+    "2009": "missing from normalized claim 11; recorded as missing_context",
+    "so_far": "paraphrased as based on current evidence in claim 23",
+    "staircase_to_central_chamber": "present in claim 15 but bundled with dimensions, not separately extracted",
+    "article_ending": "covered",
+    "seven_percent_statement": "covered in claim 26",
+    "extra_normalization_notes": [
+      "claim 1 omits the appositive identifying Chan Chan as the pre-Inca Chimú capital",
+      "claim 5 leaves this year unresolved without a missing_context entry"
+    ]
+  }
+}

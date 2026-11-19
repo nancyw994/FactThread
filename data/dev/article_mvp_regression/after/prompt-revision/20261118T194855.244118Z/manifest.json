@@ -1,0 +1,35 @@
+{
+  "run_id": "20261118T194855.244118Z",
+  "order": [
+    "chan_chan"
+  ],
+  "provider_chain": [
+    {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b",
+      "base_url": "https://api.groq.com/openai/v1",
+      "key_name": "GROQ_API_KEY",
+      "route_reason": "groq_primary"
+    }
+  ],
+  "allow_paid": false,
+  "allow_openrouter_fallback": false,
+  "prompt_version": "sha256:e52cb13057888cc38bba9f73e2e6ac7fd229593d848a6b16829203269ade1f77",
+  "output_cap": 8192,
+  "results": [
+    {
+      "article_id": "chan_chan",
+      "status": "truncated",
+      "cache_reused": false,
+      "record_file": "after/prompt-revision/20261118T194855.244118Z/chan_chan.json",
+      "input_chars": 5234,
+      "input_sha256": "785df4792b277555c254ff0a8f56f67db6b88c5d9b85f0274aaa65ea4d81034c",
+      "finish_reason": "length",
+      "parsed_items": 23,
+      "accepted_items": 22,
+      "rejected_items": 1
+    }
+  ],
+  "status": "completed",
+  "pending": []
+}

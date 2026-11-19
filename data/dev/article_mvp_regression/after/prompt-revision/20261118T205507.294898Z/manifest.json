@@ -1,0 +1,37 @@
+{
+  "run_id": "20261118T205507.294898Z",
+  "order": [
+    "dengue"
+  ],
+  "provider_chain": [
+    {
+      "provider": "gemini",
+      "model": "gemini-3.8-flash",
+      "base_url": "https://generativelanguage.googleapis.com/v1beta/openai/",
+      "key_name": "GEMINI_API_KEY",
+      "route_reason": "gemini_requested"
+    }
+  ],
+  "provider": "gemini",
+  "model": "gemini-3.8-flash",
+  "allow_paid": false,
+  "allow_openrouter_fallback": false,
+  "prompt_version": "sha256:e52cb13057888cc38bba9f73e2e6ac7fd229593d848a6b16829203269ade1f77",
+  "output_cap": 8192,
+  "results": [
+    {
+      "article_id": "dengue",
+      "status": "request_failed",
+      "cache_reused": false,
+      "record_file": "after/prompt-revision/20261118T205507.294898Z/dengue.json",
+      "input_chars": 11623,
+      "input_sha256": "b05633e9a0ee5cd0b8992544dca3adaccad09a450b4a95aa612824b4a84f6ecd",
+      "finish_reason": null,
+      "parsed_items": null,
+      "accepted_items": null,
+      "rejected_items": null
+    }
+  ],
+  "status": "stopped_request_failed",
+  "pending": []
+}

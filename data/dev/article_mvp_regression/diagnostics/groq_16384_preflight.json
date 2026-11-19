@@ -1,0 +1,96 @@
+{
+  "checked_at_utc": "2026-11-19T04:38:01Z",
+  "purpose": "Preflight diagnostics only; no extraction model call was made.",
+  "network_check": {
+    "endpoint": "https://api.groq.com/openai/v1/models",
+    "method": "GET",
+    "result": "failed",
+    "exception": "urllib.error.URLError",
+    "reason_type": "ssl.SSLCertVerificationError",
+    "category": "TLS certificate verification",
+    "reason": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: unable to get local issuer certificate (_ssl.c:992)",
+    "proxy_environment_configured": false,
+    "credential_status": "ok; value not recorded",
+    "api_key_value_recorded": false
+  },
+  "repair": {
+    "cause": "python.org Python 3.11 framework OpenSSL CA file and CA directory were absent; certifi was not installed in the project venv. OpenAI 3.51.0 uses httpx2, whose macOS default consulted the system trust store and failed the original Groq TLS handshake.",
+    "python_org_install_certificates_command": {
+      "path": "/Applications/Python 3.11/Install Certificates.command",
+      "exists": true,
+      "reviewed": true,
+      "executed": false,
+      "reason_not_executed": "It installs into and rewrites the base framework CA path. The project venv now has its own certifi bundle, selected through httpx2's supported SSL_CERT_FILE environment path."
+    },
+    "certifi_version": "2026.10.23",
+    "certifi_bundle": "/Users/nancywu/FactThread/.venv/lib/python3.11/site-packages/certifi/cacert.pem",
+    "bundle_exists": true,
+    "bundle_bytes": 235863,
+    "venv_activation_sets_SSL_CERT_FILE_if_unset": true,
+    "tls_verification_disabled": false
+  },
+  "post_repair_validation": {
+    "client": "openai.OpenAI 3.51.0 over httpx2",
+    "operation": "GET Groq /models",
+    "http_status": 200,
+    "model_available": true,
+    "ssl_verify_mode": 2,
+    "hostname_verification": true,
+    "loaded_ca_count": 118,
+    "extraction_request": false,
+    "api_key_value_recorded": false
+  },
+  "local_request_configuration": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "base_url": "https://api.groq.com/openai/v1",
+    "route_reason": "groq_primary",
+    "provider_chain_length": 1,
+    "allow_openrouter_fallback": false,
+    "allow_paid": false,
+    "verified_by_local_provider_configuration": true,
+    "configuration_sources": [
+      "web/articles.py:53-69",
+      "scripts/llm_client.py:92-109",
+      "data/dev/article_mvp_regression/diagnostics/run_revision_extracts.py:26-43"
+    ],
+    "full_article_input": true,
+    "prompt_version": "sha256:e52cb13057888cc38bba9f73e2e6ac7fd229593d848a6b16829203269ade1f77",
+    "output_cap_requested": 16384
+  },
+  "observed_process_environment": {
+    "FACTTHREAD_ARTICLE_MODEL_override_present": false,
+    "effective_article_model_from_code_default": "openai/gpt-oss-120b",
+    "FACTTHREAD_ARTICLE_MAX_COMPLETION_TOKENS_override_present": false,
+    "current_process_output_cap_from_code_default": 4096,
+    "llm_client_module_default_openrouter_fallback": true,
+    "llm_client_module_default_allow_paid": false,
+    "note": "The article extraction entry point and diagnostic runner explicitly set both provider fallback and paid access to false before the request. This local application setting does not establish the Groq account billing state."
+  },
+  "account_state": {
+    "live_quota_status": "unknown",
+    "billing_status": "unknown_console_not_verified",
+    "historical_rate_limit_snapshot": {
+      "limit_tokens": 8000,
+      "remaining_tokens_after_prior_request": 5021,
+      "note": "Historical response header only; not a live quota or billing confirmation."
+    },
+    "models_list_success_required_before_future_run": false
+  },
+  "model_capability": {
+    "published_max_output_tokens": 65536,
+    "requested_output_cap_within_published_model_max": true,
+    "source": "https://console.groq.com/docs/model/openai/gpt-oss-120b"
+  },
+  "future_run_policy": {
+    "preconditions": [
+      "Groq network connectivity restored",
+      "account free-billing status confirmed in Groq console"
+    ],
+    "maximum_extraction_requests": 1,
+    "on_429": "record actual HTTP/error body and rate-limit headers including retry-after; stop without retry",
+    "no_provider_fallback": true,
+    "no_paid_fallback": true
+  },
+  "extraction_request_sent": false
+}

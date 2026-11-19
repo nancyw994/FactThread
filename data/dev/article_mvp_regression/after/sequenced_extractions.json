@@ -1,0 +1,195 @@
+{
+  "provider_chain": [
+    {
+      "provider": "groq",
+      "model": "openai/gpt-oss-120b"
+    }
+  ],
+  "allow_paid": false,
+  "allow_openrouter_fallback": false,
+  "response_format": {
+    "type": "json_object"
+  },
+  "max_completion_tokens": 4096,
+  "format_probe": {
+    "input_chars": 203,
+    "status": "passed",
+    "parsed_items": 4,
+    "accepted_items": 4,
+    "rejected_items": 0,
+    "rejection_reasons": [],
+    "request_sequence": 1
+  },
+  "attempts": [
+    {
+      "sequence": 1,
+      "article_id": "format_probe_apollo",
+      "request_status": "completed",
+      "provider": "groq",
+      "requested_model": "openai/gpt-oss-120b",
+      "article_chars": 203,
+      "request_chars": 239,
+      "repair_errors": [],
+      "response_format": {
+        "type": "json_object"
+      },
+      "max_completion_tokens": 4096,
+      "request_parameters": {
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0.0,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Follow the YAML specification below when answering.\n\ninstructions: 'You extract atomic claims from one article so a person can fact-check\n  them later. You do not search, and you do not assign a verdict.\n\n\n  Return only JSON:\n\n  {\"claims\":[{\"id\":\"c1\",\"source_quote\":\"exact substring of the article\",\"normalized_claim\":\"one\n  standalone claim\",\"category\":\"checkable_fact|opinion|prediction|needs_context\",\"missing_context\":[],\"verification_scope\":\"external_fact|document_content|text_analysis\"}]}\n\n\n  Rules:\n\n  - source_quote must be copied character for character from the article. Do not fix\n  spelling, and do not join text from two places.\n\n  - Split a sentence that states two independent facts into two claims. Each quote\n  must still be an exact substring.\n\n  - Keep limiters in normalized_claim: some, all, only, may, as of a date, a named\n  exam, a team, a tier, or a price category.\n\n  - Preserve the source quote''s asserted meaning in normalized_claim: keep its subject,\n  action, polarity, tense, certainty, time, quantities, and scope. Do not weaken a\n  forecast into a present fact, strengthen a possibility into certainty, reverse a\n  negation, or omit a limiting phrase. If a faithful normalization is unclear, use\n  the source wording and explain the missing context.\n\n  - Do not add ordinal or superlative limits such as “first,” “earliest,” or “only”\n  unless the quote or one clear context explicitly states them. Never turn an unordered\n  event into a first event.\n\n  - In normalized_claim, resolve a pronoun or demonstrative such as \"it\", \"they\",\n  \"these actions\", \"that exam\", \"the same report\", \"the paper\", or \"that date\" from\n  the article context only when there is one clear antecedent. Preserve the source\n  quote exactly. If the antecedent is ambiguous or absent, keep the claim cautious\n  and list the missing referent in missing_context; never guess.\n\n  - Do not replace a claim with a neighboring sentence while resolving context. The\n  normalized claim must preserve the source quote''s subject, predicate, numbers,\n  and direction. If the quote is \"These actions allowed X to flourish\", do not turn\n  it into a claim about how a release was licensed. Keep the causal assertion and\n  list any unclear action, concrete outcome or measure, and causal basis in missing_context.\n\n  - For causal language such as \"caused\", \"allowed\", \"enabled\", \"led to\", or \"resulted\n  in\", check whether the article names the action, outcome, and a concrete indicator.\n  Vague outcomes such as \"flourish\" or \"improve\" need the missing object or measure\n  and evidence for the causal link listed in missing_context. Do not treat temporal\n  order alone as causal proof.\n\n  - When a claim reports that headlines or another speaker described a gain, improvement,\n  score, or other result with a comparison, preserve that attribution and identify\n  the result or measure being described. If the article does not make the referent\n  clear, include it in missing_context instead of guessing.\n\n  - If the article attributes the statement, keep that attribution in source_quote\n  and in normalized_claim. Phrases to keep include \"the report says\", \"the authors\n  add\", \"according to\", \"I think\", and \"headlines called\". Do not turn an attributed\n  statement into a bare fact.\n\n  - Do not extend an attribution across \"and\". \"The report says A, and B\" supports\n  \"The report says A\". It does not support \"The report says B\". Leave B as its own\n  claim without that attribution.\n\n  - A price claim needs the named product or service being billed. Fill that name\n  only when the price clause in the article states it. If it does not, list the missing\n  product or service in missing_context. Do not borrow a name from the other half\n  of an \"and\" sentence.\n\n  - missing_context names a gap in what that claim asserts. A claim that headlines\n  used a phrase needs the headline, not proof that the phrase''s comparison is true.\n\n  - verification_scope is document_content when the claim is about what one resolved\n  document says, lists, does not say, or does not report. It is text_analysis when\n  the sentence classifies another line as a forecast, preference, or opinion. Otherwise\n  it is external_fact.\n\n  - If a sentence says a line is a forecast or a preference, and then says it is not\n  in the report, return those as two claims.\n\n  - \"on purpose\", \"deliberately\", and \"meant to\" are intention, not opinion. \"I think\",\n  \"best\", and \"worst\" are opinion.\n\n  - Do not guess which document a pronoun or \"the document\" names. Leave it unresolved\n  when more than one document is possible.\n\n  - checkable_fact: a statement about a date, number, name, price, policy, or result\n  that could be checked against a source.\n\n  - opinion: the writer''s evaluation. Do not call it a fact.\n\n  - prediction: a claim about the future. Do not call it a fact.\n\n  - needs_context: use this category only when the claim''s own subject, date, or\n  baseline is missing. Name that gap in missing_context.\n\n  - Do not drop a checkable fact because it is narrow. Do not invent claims that the\n  article does not state.\n\n\n  If repair_errors is not empty, the previous quotes failed those checks. Return a\n  full replacement whose source_quote values occur in the article.\n\n  '\n"
+          },
+          {
+            "role": "user",
+            "content": "{\"article\": \"Apollo 11 landed the first humans on the Moon on July 20, 1969. The first Moon landing happened in 1972. Apollo 11 was humanity's greatest achievement. NASA will establish a permanent lunar base by 2030.\", \"repair_errors\": []}"
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_completion_tokens": 4096
+      },
+      "finish_reason": "stop",
+      "usage": {
+        "queue_time": 0.087428176,
+        "prompt_time": 0.007941444,
+        "completion_time": 1.5549384960000001,
+        "total_time": 1.56287994,
+        "completion_tokens": 740,
+        "prompt_tokens": 1376,
+        "total_tokens": 2116,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": null,
+          "audio_tokens": null,
+          "reasoning_tokens": 521,
+          "rejected_prediction_tokens": null,
+          "text_tokens": null
+        },
+        "prompt_tokens_details": {
+          "audio_tokens": null,
+          "cache_write_tokens": null,
+          "cached_tokens": 1280,
+          "image_tokens": null,
+          "text_tokens": null
+        }
+      },
+      "raw_reply_file": "after/raw/reply-01.txt",
+      "parse_status": "parsed",
+      "parsed_items": 4,
+      "accepted_items": 4,
+      "rejected_items": 0,
+      "rejection_reasons": [],
+      "served_model": "openai/gpt-oss-120b",
+      "raw_reply_chars": 953,
+      "elapsed_seconds": 2.2699766668956727
+    },
+    {
+      "sequence": 2,
+      "article_id": "chan_chan",
+      "request_status": "rate_limited",
+      "provider": "groq",
+      "requested_model": "openai/gpt-oss-120b",
+      "article_chars": 5234,
+      "request_chars": 5270,
+      "repair_errors": [],
+      "response_format": {
+        "type": "json_object"
+      },
+      "max_completion_tokens": 4096,
+      "request_parameters": {
+        "model": "openai/gpt-oss-120b",
+        "temperature": 0.0,
+        "messages": [
+          {
+            "role": "system",
+            "content": "Follow the YAML specification below when answering.\n\ninstructions: 'You extract atomic claims from one article so a person can fact-check\n  them later. You do not search, and you do not assign a verdict.\n\n\n  Return only JSON:\n\n  {\"claims\":[{\"id\":\"c1\",\"source_quote\":\"exact substring of the article\",\"normalized_claim\":\"one\n  standalone claim\",\"category\":\"checkable_fact|opinion|prediction|needs_context\",\"missing_context\":[],\"verification_scope\":\"external_fact|document_content|text_analysis\"}]}\n\n\n  Rules:\n\n  - source_quote must be copied character for character from the article. Do not fix\n  spelling, and do not join text from two places.\n\n  - Split a sentence that states two independent facts into two claims. Each quote\n  must still be an exact substring.\n\n  - Keep limiters in normalized_claim: some, all, only, may, as of a date, a named\n  exam, a team, a tier, or a price category.\n\n  - Preserve the source quote''s asserted meaning in normalized_claim: keep its subject,\n  action, polarity, tense, certainty, time, quantities, and scope. Do not weaken a\n  forecast into a present fact, strengthen a possibility into certainty, reverse a\n  negation, or omit a limiting phrase. If a faithful normalization is unclear, use\n  the source wording and explain the missing context.\n\n  - Do not add ordinal or superlative limits such as “first,” “earliest,” or “only”\n  unless the quote or one clear context explicitly states them. Never turn an unordered\n  event into a first event.\n\n  - In normalized_claim, resolve a pronoun or demonstrative such as \"it\", \"they\",\n  \"these actions\", \"that exam\", \"the same report\", \"the paper\", or \"that date\" from\n  the article context only when there is one clear antecedent. Preserve the source\n  quote exactly. If the antecedent is ambiguous or absent, keep the claim cautious\n  and list the missing referent in missing_context; never guess.\n\n  - Do not replace a claim with a neighboring sentence while resolving context. The\n  normalized claim must preserve the source quote''s subject, predicate, numbers,\n  and direction. If the quote is \"These actions allowed X to flourish\", do not turn\n  it into a claim about how a release was licensed. Keep the causal assertion and\n  list any unclear action, concrete outcome or measure, and causal basis in missing_context.\n\n  - For causal language such as \"caused\", \"allowed\", \"enabled\", \"led to\", or \"resulted\n  in\", check whether the article names the action, outcome, and a concrete indicator.\n  Vague outcomes such as \"flourish\" or \"improve\" need the missing object or measure\n  and evidence for the causal link listed in missing_context. Do not treat temporal\n  order alone as causal proof.\n\n  - When a claim reports that headlines or another speaker described a gain, improvement,\n  score, or other result with a comparison, preserve that attribution and identify\n  the result or measure being described. If the article does not make the referent\n  clear, include it in missing_context instead of guessing.\n\n  - If the article attributes the statement, keep that attribution in source_quote\n  and in normalized_claim. Phrases to keep include \"the report says\", \"the authors\n  add\", \"according to\", \"I think\", and \"headlines called\". Do not turn an attributed\n  statement into a bare fact.\n\n  - Do not extend an attribution across \"and\". \"The report says A, and B\" supports\n  \"The report says A\". It does not support \"The report says B\". Leave B as its own\n  claim without that attribution.\n\n  - A price claim needs the named product or service being billed. Fill that name\n  only when the price clause in the article states it. If it does not, list the missing\n  product or service in missing_context. Do not borrow a name from the other half\n  of an \"and\" sentence.\n\n  - missing_context names a gap in what that claim asserts. A claim that headlines\n  used a phrase needs the headline, not proof that the phrase''s comparison is true.\n\n  - verification_scope is document_content when the claim is about what one resolved\n  document says, lists, does not say, or does not report. It is text_analysis when\n  the sentence classifies another line as a forecast, preference, or opinion. Otherwise\n  it is external_fact.\n\n  - If a sentence says a line is a forecast or a preference, and then says it is not\n  in the report, return those as two claims.\n\n  - \"on purpose\", \"deliberately\", and \"meant to\" are intention, not opinion. \"I think\",\n  \"best\", and \"worst\" are opinion.\n\n  - Do not guess which document a pronoun or \"the document\" names. Leave it unresolved\n  when more than one document is possible.\n\n  - checkable_fact: a statement about a date, number, name, price, policy, or result\n  that could be checked against a source.\n\n  - opinion: the writer''s evaluation. Do not call it a fact.\n\n  - prediction: a claim about the future. Do not call it a fact.\n\n  - needs_context: use this category only when the claim''s own subject, date, or\n  baseline is missing. Name that gap in missing_context.\n\n  - Do not drop a checkable fact because it is narrow. Do not invent claims that the\n  article does not state.\n\n\n  If repair_errors is not empty, the previous quotes failed those checks. Return a\n  full replacement whose source_quote values occur in the article.\n\n  '\n"
+          },
+          {
+            "role": "user",
+            "content": "{\"article\": \"Unsealed for the First Time in 600 Years, This Tomb in Peru Was Just Declared the ‘Discovery of the Decade’ Archaeologists excavating Chan Chan, the capital of the pre-Inca Chimú civilization, found an undisturbed mausoleum that held the remains of at least 38 individuals, as well as a trove of rich funerary goods Meilan Solly | Senior Associate Digital Editor, History Some 600 years ago, members of the pre-Inca Chimú civilization buried more than three dozen people in a mausoleum near modern-day Trujillo, Peru. The dead were interred alongside a rich array of grave goods, including metal weapons, copper and gold artifacts, ornate jewelry, and colorful textiles—suggesting that they were high-status individuals, perhaps even royalty. The mausoleum remained largely intact until this year, when excavations uncovered its entrance beneath layers of sand, soil and stone at Chan Chan , a UNESCO World Heritage Site that was once the Chimú capital. The tomb dates to during or just before the Inca conquest of the region in the mid-15th century, making its survival, untouched by colonial and contemporary looters alike, even more impressive. As lead archaeologist Jorge Meneses tells BBC News , the find marks “the first time that Peruvian archaeologists have been able to come across an almost intact [funerary] platform, with unaltered contents, a platform that was designed for an elite individual, whose main chamber has remained sealed for almost 600 years.” Previously, “what was known about elite burials in Chimú society came from looted platforms, private collections and museum holdings,” Meneses tells El País ’ Renzo Gómez Vega. “There was no scientific data on the individuals and their corresponding artifacts and associations.” The Chimú thrived in what is now northern Peru between roughly 900 and 1470. The civilization was the “first true engineering society in the New World,” devising a network of irrigation canals that enabled its people to thrive in a desert valley, hydraulic engineer Charles Ortloff told Smithsonian magazine ’s Bruce Hathaway in 2009. Chimú kings lived in walled palaces , with each ruler building a new royal compound upon their accession. Many of Chan Chan’s surviving palaces feature funerary platforms where rulers were laid to rest with members of their retinue. Fun fact: The Chimú capital The newly discovered mausoleum is located in Chan Chan’s Utzh An complex. A staircase leads down into the tomb’s central chamber, which measures roughly 4 feet wide and 16 feet deep, according to the state-run Andina news agency. Inside this main room, archaeologists identified the remains of a single individual whose skull bore traces of a red pigment, possibly cinnabar , a crystalline form of mercury sulfide. Some of the skeleton’s bones are missing, leading the researchers to posit that the remains were later moved or reburied. This was a common practice among Andean societies at the time, with communities continuing to interact with and even worship the bodies of their loved ones and leaders after death. Two rooms flank the central chamber on either side. One was virtually empty, while the other held roughly 20 sets of human remains, as well as miscellaneous artifacts. Archaeologists found an additional 17 skeletons while excavating the funerary platform, bringing the total number of people buried there to at least 38. Much about the tomb remains unknown, from the individuals’ ages and genders to the circumstances of their deaths. “What is clear to us so far is that these people were part of the elite or were associated with the elite,” Henry Luis Gayoso , an official with the Peruvian Ministry of Culture, tells the New York Times ’ Alan Yuhas. Gabriel Prieto , an anthropologist at the University of Florida who wasn’t involved in the research, tells the Times that the find is “the discovery of the decade in terms of it’s the very first time that, as archaeologists, we are able to see an elite Chimú burial.” Researchers hope that the undisturbed tomb will shed light on Chimú funerary practices and social hierarchies at a time of great upheaval. The discovery also underscores how much of the Chimú capital remains unexplored. To date, archaeologists have excavated “no more than 7 percent of Chan Chan’s total area,” Meneses tells El País . “Evidently, the citadel has much more to tell.” You Might Also Like Mass Grave of Women, Children Found in Pre-Hispanic City in Peru November 12, 2021 Archaeologists in Peru Discover Graves of Men, Women and Children Killed in Battle, Then Buried With Honor April 21, 2025 Archaeologists Discover a 4,000-Year-Old Tomb With a False Door at Egypt's Ancient Saqqara Necropolis September 2, 2026 Archaeologists Excavating a Monastery in Spain Identified the Remains of a 14th-Century Queen—and Multiple Skeletons Buried in the Wrong Graves June 3, 2026 Why Were These Ancient Adults Buried in Jars on the Island of Corsica? April 15, 2021 Meilan Solly is a senior associate digital editor at Smithsonian magazine, where she oversees the online history section and writes about everything from archaeology to the British royal family. Solly’s specialties are Tudor England, Renaissance and modern art, and World War II.\", \"repair_errors\": []}"
+          }
+        ],
+        "response_format": {
+          "type": "json_object"
+        },
+        "max_completion_tokens": 4096
+      },
+      "finish_reason": null,
+      "usage": null,
+      "raw_reply_file": null,
+      "parse_status": "not_run",
+      "parsed_items": null,
+      "accepted_items": null,
+      "rejected_items": null,
+      "rejection_reasons": [],
+      "error_type": "RateLimited",
+      "error": "Model request failed. groq openai/gpt-oss-120b: RateLimitError The fixed_rules baseline was not substituted.",
+      "provider_error_type": "RateLimitError",
+      "provider_status_code": 429,
+      "provider_error_detail": "Error code: 429 - Rate limit reached for model `openai/gpt-oss-120b` in organization `[REDACTED_ORG]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197892, Requested 2902. Please try again in 5m43.008s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing",
+      "retry_after_seconds": 344.0,
+      "provider_attempts": [
+        {
+          "route_reason": "groq_primary",
+          "provider": "groq",
+          "model": "openai/gpt-oss-120b",
+          "cache_hit": false,
+          "ok": false,
+          "cost_usd": "unknown",
+          "error": "RateLimitError",
+          "http_status": 429,
+          "exception_type": "RateLimitError",
+          "error_type": "tokens",
+          "error_code": "rate_limit_exceeded",
+          "error_body": {
+            "message": "Rate limit reached for model `openai/gpt-oss-120b` in organization `[REDACTED_ORG]` service tier `on_demand` on tokens per day (TPD): Limit 200000, Used 197892, Requested 2902. Please try again in 5m43.008s. Need more tokens? Upgrade to Dev Tier today at https://console.groq.com/settings/billing",
+            "type": "tokens",
+            "code": "rate_limit_exceeded"
+          },
+          "error_body_available": true,
+          "request_parameters": {
+            "model": "openai/gpt-oss-120b",
+            "temperature": 0.0,
+            "messages": [
+              {
+                "role": "system",
+                "content": "Follow the YAML specification below when answering.\n\ninstructions: 'You extract atomic claims from one article so a person can fact-check\n  them later. You do not search, and you do not assign a verdict.\n\n\n  Return only JSON:\n\n  {\"claims\":[{\"id\":\"c1\",\"source_quote\":\"exact substring of the article\",\"normalized_claim\":\"one\n  standalone claim\",\"category\":\"checkable_fact|opinion|prediction|needs_context\",\"missing_context\":[],\"verification_scope\":\"external_fact|document_content|text_analysis\"}]}\n\n\n  Rules:\n\n  - source_quote must be copied character for character from the article. Do not fix\n  spelling, and do not join text from two places.\n\n  - Split a sentence that states two independent facts into two claims. Each quote\n  must still be an exact substring.\n\n  - Keep limiters in normalized_claim: some, all, only, may, as of a date, a named\n  exam, a team, a tier, or a price category.\n\n  - Preserve the source quote''s asserted meaning in normalized_claim: keep its subject,\n  action, polarity, tense, certainty, time, quantities, and scope. Do not weaken a\n  forecast into a present fact, strengthen a possibility into certainty, reverse a\n  negation, or omit a limiting phrase. If a faithful normalization is unclear, use\n  the source wording and explain the missing context.\n\n  - Do not add ordinal or superlative limits such as “first,” “earliest,” or “only”\n  unless the quote or one clear context explicitly states them. Never turn an unordered\n  event into a first event.\n\n  - In normalized_claim, resolve a pronoun or demonstrative such as \"it\", \"they\",\n  \"these actions\", \"that exam\", \"the same report\", \"the paper\", or \"that date\" from\n  the article context only when there is one clear antecedent. Preserve the source\n  quote exactly. If the antecedent is ambiguous or absent, keep the claim cautious\n  and list the missing referent in missing_context; never guess.\n\n  - Do not replace a claim with a neighboring sentence while resolving context. The\n  normalized claim must preserve the source quote''s subject, predicate, numbers,\n  and direction. If the quote is \"These actions allowed X to flourish\", do not turn\n  it into a claim about how a release was licensed. Keep the causal assertion and\n  list any unclear action, concrete outcome or measure, and causal basis in missing_context.\n\n  - For causal language such as \"caused\", \"allowed\", \"enabled\", \"led to\", or \"resulted\n  in\", check whether the article names the action, outcome, and a concrete indicator.\n  Vague outcomes such as \"flourish\" or \"improve\" need the missing object or measure\n  and evidence for the causal link listed in missing_context. Do not treat temporal\n  order alone as causal proof.\n\n  - When a claim reports that headlines or another speaker described a gain, improvement,\n  score, or other result with a comparison, preserve that attribution and identify\n  the result or measure being described. If the article does not make the referent\n  clear, include it in missing_context instead of guessing.\n\n  - If the article attributes the statement, keep that attribution in source_quote\n  and in normalized_claim. Phrases to keep include \"the report says\", \"the authors\n  add\", \"according to\", \"I think\", and \"headlines called\". Do not turn an attributed\n  statement into a bare fact.\n\n  - Do not extend an attribution across \"and\". \"The report says A, and B\" supports\n  \"The report says A\". It does not support \"The report says B\". Leave B as its own\n  claim without that attribution.\n\n  - A price claim needs the named product or service being billed. Fill that name\n  only when the price clause in the article states it. If it does not, list the missing\n  product or service in missing_context. Do not borrow a name from the other half\n  of an \"and\" sentence.\n\n  - missing_context names a gap in what that claim asserts. A claim that headlines\n  used a phrase needs the headline, not proof that the phrase''s comparison is true.\n\n  - verification_scope is document_content when the claim is about what one resolved\n  document says, lists, does not say, or does not report. It is text_analysis when\n  the sentence classifies another line as a forecast, preference, or opinion. Otherwise\n  it is external_fact.\n\n  - If a sentence says a line is a forecast or a preference, and then says it is not\n  in the report, return those as two claims.\n\n  - \"on purpose\", \"deliberately\", and \"meant to\" are intention, not opinion. \"I think\",\n  \"best\", and \"worst\" are opinion.\n\n  - Do not guess which document a pronoun or \"the document\" names. Leave it unresolved\n  when more than one document is possible.\n\n  - checkable_fact: a statement about a date, number, name, price, policy, or result\n  that could be checked against a source.\n\n  - opinion: the writer''s evaluation. Do not call it a fact.\n\n  - prediction: a claim about the future. Do not call it a fact.\n\n  - needs_context: use this category only when the claim''s own subject, date, or\n  baseline is missing. Name that gap in missing_context.\n\n  - Do not drop a checkable fact because it is narrow. Do not invent claims that the\n  article does not state.\n\n\n  If repair_errors is not empty, the previous quotes failed those checks. Return a\n  full replacement whose source_quote values occur in the article.\n\n  '\n"
+              },
+              {
+                "role": "user",
+                "content": "{\"article\": \"Unsealed for the First Time in 600 Years, This Tomb in Peru Was Just Declared the ‘Discovery of the Decade’ Archaeologists excavating Chan Chan, the capital of the pre-Inca Chimú civilization, found an undisturbed mausoleum that held the remains of at least 38 individuals, as well as a trove of rich funerary goods Meilan Solly | Senior Associate Digital Editor, History Some 600 years ago, members of the pre-Inca Chimú civilization buried more than three dozen people in a mausoleum near modern-day Trujillo, Peru. The dead were interred alongside a rich array of grave goods, including metal weapons, copper and gold artifacts, ornate jewelry, and colorful textiles—suggesting that they were high-status individuals, perhaps even royalty. The mausoleum remained largely intact until this year, when excavations uncovered its entrance beneath layers of sand, soil and stone at Chan Chan , a UNESCO World Heritage Site that was once the Chimú capital. The tomb dates to during or just before the Inca conquest of the region in the mid-15th century, making its survival, untouched by colonial and contemporary looters alike, even more impressive. As lead archaeologist Jorge Meneses tells BBC News , the find marks “the first time that Peruvian archaeologists have been able to come across an almost intact [funerary] platform, with unaltered contents, a platform that was designed for an elite individual, whose main chamber has remained sealed for almost 600 years.” Previously, “what was known about elite burials in Chimú society came from looted platforms, private collections and museum holdings,” Meneses tells El País ’ Renzo Gómez Vega. “There was no scientific data on the individuals and their corresponding artifacts and associations.” The Chimú thrived in what is now northern Peru between roughly 900 and 1470. The civilization was the “first true engineering society in the New World,” devising a network of irrigation canals that enabled its people to thrive in a desert valley, hydraulic engineer Charles Ortloff told Smithsonian magazine ’s Bruce Hathaway in 2009. Chimú kings lived in walled palaces , with each ruler building a new royal compound upon their accession. Many of Chan Chan’s surviving palaces feature funerary platforms where rulers were laid to rest with members of their retinue. Fun fact: The Chimú capital The newly discovered mausoleum is located in Chan Chan’s Utzh An complex. A staircase leads down into the tomb’s central chamber, which measures roughly 4 feet wide and 16 feet deep, according to the state-run Andina news agency. Inside this main room, archaeologists identified the remains of a single individual whose skull bore traces of a red pigment, possibly cinnabar , a crystalline form of mercury sulfide. Some of the skeleton’s bones are missing, leading the researchers to posit that the remains were later moved or reburied. This was a common practice among Andean societies at the time, with communities continuing to interact with and even worship the bodies of their loved ones and leaders after death. Two rooms flank the central chamber on either side. One was virtually empty, while the other held roughly 20 sets of human remains, as well as miscellaneous artifacts. Archaeologists found an additional 17 skeletons while excavating the funerary platform, bringing the total number of people buried there to at least 38. Much about the tomb remains unknown, from the individuals’ ages and genders to the circumstances of their deaths. “What is clear to us so far is that these people were part of the elite or were associated with the elite,” Henry Luis Gayoso , an official with the Peruvian Ministry of Culture, tells the New York Times ’ Alan Yuhas. Gabriel Prieto , an anthropologist at the University of Florida who wasn’t involved in the research, tells the Times that the find is “the discovery of the decade in terms of it’s the very first time that, as archaeologists, we are able to see an elite Chimú burial.” Researchers hope that the undisturbed tomb will shed light on Chimú funerary practices and social hierarchies at a time of great upheaval. The discovery also underscores how much of the Chimú capital remains unexplored. To date, archaeologists have excavated “no more than 7 percent of Chan Chan’s total area,” Meneses tells El País . “Evidently, the citadel has much more to tell.” You Might Also Like Mass Grave of Women, Children Found in Pre-Hispanic City in Peru November 12, 2021 Archaeologists in Peru Discover Graves of Men, Women and Children Killed in Battle, Then Buried With Honor April 21, 2025 Archaeologists Discover a 4,000-Year-Old Tomb With a False Door at Egypt's Ancient Saqqara Necropolis September 2, 2026 Archaeologists Excavating a Monastery in Spain Identified the Remains of a 14th-Century Queen—and Multiple Skeletons Buried in the Wrong Graves June 3, 2026 Why Were These Ancient Adults Buried in Jars on the Island of Corsica? April 15, 2021 Meilan Solly is a senior associate digital editor at Smithsonian magazine, where she oversees the online history section and writes about everything from archaeology to the British royal family. Solly’s specialties are Tudor England, Renaissance and modern art, and World War II.\", \"repair_errors\": []}"
+              }
+            ],
+            "response_format": {
+              "type": "json_object"
+            },
+            "max_completion_tokens": 4096
+          }
+        }
+      ]
+    }
+  ],
+  "articles": [
+    {
+      "id": "chan_chan",
+      "source_url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+      "input_chars": 5234,
+      "truncated": false,
+      "status": "error",
+      "extraction_status": "request_failed",
+      "error": "核查没有完成（RuntimeError）。RateLimited: Model request failed. groq openai/gpt-oss-120b: RateLimitError The fixed_rules baseline was not substituted.",
+      "extraction_diagnostics": [
+        {
+          "attempt": 1,
+          "stage": "request",
+          "error": "RateLimited"
+        }
+      ],
+      "candidates": []
+    }
+  ],
+  "stopped_on": "chan_chan"
+}

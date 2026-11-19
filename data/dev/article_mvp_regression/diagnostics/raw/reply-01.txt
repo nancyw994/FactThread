@@ -1,0 +1,166 @@
+We need to extract atomic claims from the article. Provide JSON with list of claims each with id, source_quote (exact substring), normalized_claim, category, missing_context (list), verification_scope.
+
+We must not search, just parse article.
+
+Let's read article and identify statements that are checkable facts, opinions, predictions, needs_context.
+
+We'll go through sentences.
+
+Article text:
+
+"Unsealed for the First Time in 600 Years, This Tomb in Peru Was Just Declared the ‘Discovery of the Decade’ Archaeologists excavating Chan Chan, the capital of the pre-Inca Chimú civilization, found an undisturbed mausoleum that held the remains of at least 38 individuals, as well as a trove of rich funerary goods Meilan Solly | Senior Associate Digital Editor, History Some 600 years ago, members of the pre-Inca Chimú civilization buried more than three dozen people in a mausoleum near modern-day Trujillo, Peru. The dead were interred alongside a rich array of grave goods, including metal weapons, copper and gold artifacts, ornate jewelry, and colorful textiles—suggesting that they were high-status individuals, perhaps even royalty. The mausoleum remained largely intact until this year, when excavations uncovered its entrance beneath layers of sand, soil and stone at Chan Chan , a UNESCO World Heritage Site that was once the Chimú capital. The tomb dates to during or just before the Inca conquest of the region in the mid-15th century, making its survival, untouched by colonial and contemporary looters alike, even more impressive. As lead archaeologist Jorge Meneses tells BBC News , the find marks “the first time that Peruvian archaeologists have been able to come across an almost intact [funerary] platform, with unaltered contents, a platform that was designed for an elite individual, whose main chamber has remained sealed for almost 600 years.” Previously, “what was known about elite burials in Chimú society came from looted platforms, private collections and museum holdings,” Meneses tells El País ’ Renzo Gómez Vega. “There was no scientific data on the individuals and their corresponding artifacts and associations.” The Chimú thrived in what is now northern Peru between roughly 900 and 1470. The civilization was the “first true engineering society in the New World,” devising a network of irrigation canals that enabled its people to thrive in a desert valley, hydraulic engineer Charles Ortloff told Smithsonian magazine ’s Bruce Hathaway in 2009. Chimú kings lived in walled palaces , with each ruler building a new royal compound upon their accession. Many of Chan Chan’s surviving palaces feature funerary platforms where rulers were laid to rest with members of their retinue. Fun fact: The Chimú capital The newly discovered mausoleum is located in Chan Chan’s Utzh An complex. A staircase leads down into the tomb’s central chamber, which measures roughly 4 feet wide and 16 feet deep, according to the state‑run Andina news agency. Inside this main room, archaeologists identified the remains of a single individual whose skull bore traces of a red pigment, possibly cinnabar , a crystalline form of mercury sulfide. Some of the skeleton’s bones are missing, leading the researchers to posit that the remains were later moved or reburied. This was a common practice among Andean societies at the time, with communities continuing to interact with and even worship the bodies of their loved ones and leaders after death. Two rooms flank the central chamber on either side. One was virtually empty, while the other held roughly 20 sets of human remains, as well as miscellaneous artifacts. Archaeologists found an additional 17 skeletons while excavating the funerary platform, bringing the total number of people buried there to at least 38. Much about the tomb remains unknown, from the individuals’ ages and genders to the circumstances of their deaths. “What is clear to us so far is that these people were part of the elite or were associated with the elite,” Henry Luis Gayoso , an official with the Peruvian Ministry of Culture, tells the New York Times ’ Alan Yuhas. Gabriel Prieto , an anthropologist at the University of Florida who wasn’t involved in the research, tells the Times that the find is “the discovery of the decade in terms of it’s the very first time that, as archaeologists, we are able to see an elite Chimú burial.” Researchers hope that the undisturbed tomb will shed light on Chimú funerary practices and social hierarchies at a time of great upheaval. The discovery also underscores how much of the Chimú capital remains unexplored. To date, archaeologists have excavated “no more than 7 percent of Chan Chan’s total area,” Meneses tells El País . “Evidently, the citadel has much more to tell.”"
+
+We need to extract atomic claims.
+
+Let's list possible claims:
+
+1. Archaeologists excavating Chan Chan found an undisturbed mausoleum that held the remains of at least 38 individuals, as well as a trove of rich funerary goods.
+
+Source quote: "Archaeologists excavating Chan Chan, the capital of the pre-Inca Chimú civilization, found an undisturbed mausoleum that held the remains of at least 38 individuals, as well as a trove of rich funerary goods"
+
+Category: checkable_fact (number of individuals, undisturbed mausoleum). verification_scope: external_fact.
+
+Missing_context: none.
+
+2. Some 600 years ago, members of the pre-Inca Chimú civilization buried more than three dozen people in a mausoleum near modern-day Trujillo, Peru.
+
+Quote: "Some 600 years ago, members of the pre-Inca Chimú civilization buried more than three dozen people in a mausoleum near modern-day Trujillo, Peru."
+
+Category: checkable_fact (date, number). verification_scope external_fact.
+
+Missing_context: none.
+
+3. The dead were interred alongside a rich array of grave goods, including metal weapons, copper and gold artifacts, ornate jewelry, and colorful textiles—suggesting that they were high-status individuals, perhaps even royalty.
+
+Quote: "The dead were interred alongside a rich array of grave goods, including metal weapons, copper and gold artifacts, ornate jewelry, and colorful textiles—suggesting that they were high-status individuals, perhaps even royalty."
+
+This includes suggestion (opinion) about status. The part "The dead were interred alongside ... metal weapons..." is factual. The "suggesting that they were high-status individuals, perhaps even royalty" is an interpretation (opinion). Might split.
+
+Claim A: The dead were interred alongside a rich array of grave goods, including metal weapons, copper and gold artifacts, ornate jewelry, and colorful textiles.
+
+Claim B: The grave goods suggest that the interred individuals were high-status individuals, perhaps even royalty. That's an opinion/interpretation.
+
+We'll treat A as checkable_fact. B as opinion (or maybe needs_context? It's an inference). Category: opinion.
+
+4. The mausoleum remained largely intact until this year, when excavations uncovered its entrance beneath layers of sand, soil and stone at Chan Chan, a UNESCO World Heritage Site that was once the Chimú capital.
+
+Quote: "The mausoleum remained largely intact until this year, when excavations uncovered its entrance beneath layers of sand, soil and stone at Chan Chan , a UNESCO World Heritage Site that was once the Chimú capital."
+
+Category: checkable_fact (intact until this year, location). verification external_fact.
+
+5. The tomb dates to during or just before the Inca conquest of the region in the mid-15th century.
+
+Quote: "The tomb dates to during or just before the Inca conquest of the region in the mid-15th century"
+
+Category: checkable_fact (date). verification external_fact.
+
+6. As lead archaeologist Jorge Meneses tells BBC News, the find marks “the first time that Peruvian archaeologists have been able to come across an almost intact [funerary] platform, with unaltered contents, a platform that was designed for an elite individual, whose main chamber has remained sealed for almost 600 years.”
+
+Quote: "As lead archaeologist Jorge Meneses tells BBC News , the find marks “the first time that Peruvian archaeologists have been able to come across an almost intact [funerary] platform, with unaltered contents, a platform that was designed for an elite individual, whose main chamber has remained sealed for almost 600 years.”"
+
+Category: claim about "first time" - checkable_fact? It's a claim about historical record. Could be checkable_fact (could be verified). We'll treat as checkable_fact.
+
+Missing_context: maybe need definition of "first time". But okay.
+
+7. Previously, “what was known about elite burials in Chimú society came from looted platforms, private collections and museum holdings,” Meneses tells El País.
+
+Quote: "Previously, “what was known about elite burials in Chimú society came from looted platforms, private collections and museum holdings,” Meneses tells El País"
+
+Category: checkable_fact (statement about prior knowledge). verification external_fact.
+
+8. “There was no scientific data on the individuals and their corresponding artifacts and associations.” (Attributed to Meneses)
+
+Quote: "“There was no scientific data on the individuals and their corresponding artifacts and associations.”"
+
+Category: checkable_fact (absence of data). verification external_fact.
+
+9. The Chimú thrived in what is now northern Peru between roughly 900 and 1470.
+
+Quote: "The Chimú thrived in what is now northern Peru between roughly 900 and 1470."
+
+Category: checkable_fact.
+
+10. The civilization was the “first true engineering society in the New World,” devising a network of irrigation canals that enabled its people to thrive in a desert valley, hydraulic engineer Charles Ortloff told Smithsonian magazine ’s Bruce Hathaway in 2009.
+
+Quote: "The civilization was the “first true engineering society in the New World,” devising a network of irrigation canals that enabled its people to thrive in a desert valley, hydraulic engineer Charles Ortloff told Smithsonian magazine ’s Bruce Hathaway in 2009."
+
+Category: opinion? The phrase "first true engineering society" is an opinion/claim. Also factual about network of irrigation canals. Could split.
+
+Claim A: The civilization devised a network of irrigation canals that enabled its people to thrive in a desert valley.
+
+Quote part: "devising a network of irrigation canals that enabled its people to thrive in a desert valley"
+
+Category: checkable_fact.
+
+Claim B: The civilization was the “first true engineering society in the New World.” (Attributed to Charles Ortloff). This is an opinion/claim.
+
+11. Chimú kings lived in walled palaces, with each ruler building a new royal compound upon their accession.
+
+Quote: "Chimú kings lived in walled palaces , with each ruler building a new royal compound upon their accession."
+
+Category: checkable_fact.
+
+12. Many of Chan Chan’s surviving palaces feature funerary platforms where rulers were laid to rest with members of their retinue.
+
+Quote: "Many of Chan Chan’s surviving palaces feature funerary platforms where rulers were laid to rest with members of their retinue."
+
+Category: checkable_fact.
+
+13. The newly discovered mausoleum is located in Chan Chan’s Utzh An complex.
+
+Quote: "The newly discovered mausoleum is located in Chan Chan’s Utzh An complex."
+
+Category: checkable_fact.
+
+14. A staircase leads down into the tomb’s central chamber, which measures roughly 4 feet wide and 16 feet deep, according to the state‑run Andina news agency.
+
+Quote: "A staircase leads down into the tomb’s central chamber, which measures roughly 4 feet wide and 16 feet deep, according to the state‑run Andina news agency."
+
+Category: checkable_fact (dimensions).
+
+15. Inside this main room, archaeologists identified the remains of a single individual whose skull bore traces of a red pigment, possibly cinnabar, a crystalline form of mercury sulfide.
+
+Quote: "Inside this main room, archaeologists identified the remains of a single individual whose skull bore traces of a red pigment, possibly cinnabar , a crystalline form of mercury sulfide."
+
+Category: checkable_fact (identification of pigment). The "possibly cinnabar" indicates uncertainty; still claim.
+
+16. Some of the skeleton’s bones are missing, leading the researchers to posit that the remains were later moved or reburied.
+
+Quote: "Some of the skeleton’s bones are missing, leading the researchers to posit that the remains were later moved or reburied."
+
+Category: opinion/prediction? It's a hypothesis. It's a claim about cause. Should be opinion (interpretation). Category: opinion? Or needs_context? It's a hypothesis; we can label as opinion (researchers' speculation). We'll label as opinion.
+
+Missing_context: the evidence for movement.
+
+17. This was a common practice among Andean societies at the time, with communities continuing to interact with and even worship the bodies of their loved ones and leaders after death.
+
+Quote: "This was a common practice among Andean societies at the time, with communities continuing to interact with and even worship the bodies of their loved ones and leaders after death."
+
+Category: opinion? It's a claim about common practice; could be checkable_fact if historically documented. We'll treat as checkable_fact (historical claim). verification external_fact.
+
+18. Two rooms flank the central chamber on either side. One was virtually empty, while the other held roughly 20 sets of human remains, as well as miscellaneous artifacts.
+
+We can split:
+
+Claim: One of the rooms flanking the central chamber was virtually empty.
+
+Quote: "One was virtually empty"
+
+But need context: "Two rooms flank the central chamber on either side. One was virtually empty". We'll keep as claim.
+
+Claim: The other room held roughly 20 sets of human remains, as well as miscellaneous artifacts.
+
+Quote: "the other held roughly 20 sets of human remains, as well as miscellaneous artifacts."
+
+Category: checkable_fact.
+
+19. Archaeologists found an additional 17 skeletons while excavating the funerary platform, bringing the total number of people buried there to at least 38.
+
+Quote: "Archaeologists found an additional 17 skeletons while excavating the funerary platform, bringing the total number of people buried there to at least 38."
+
+Category: checkable_fact.
+
+20. “What is clear to us so far is that these people were part of the elite or were associated with the elite,” Henry Luis Gayoso, an official with the Peruvian Ministry of Culture, tells the New York Times.
+
+Quote: "“What is clear to us so far is that these people were part of the elite or were associated with the elite,” Henry Luis Gayoso , an official with the Peruvian Ministry of Culture, tells the New York Times"
+

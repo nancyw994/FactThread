@@ -1,0 +1,1644 @@
+{
+  "pipeline_version": "source-selection-4",
+  "cache_version": "page-body-v1",
+  "budgets": {
+    "max_queries": 2,
+    "max_candidates": 5,
+    "max_pages": 3
+  },
+  "paid_fallback": false,
+  "openrouter_fallback": false,
+  "claims": [
+    {
+      "id": "chan_chan_c1",
+      "claim": "Archaeologists found the remains of at least 38 people in a mausoleum at Chan Chan.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "Archaeologists found remains least 38 people mausoleum Chan Chan",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "Archaeologists found remains least 38 people mausoleum Chan Chan",
+          "url": "https://curiosmos.com/chan-chan-burial-platform-38-chimu-burials/",
+          "title": "Chan Chan Burial Platform Reveals 38 Chimú Burials - Curiosmos",
+          "snippet": "Sep 17, 2026 · What can a Chan Chan burial platform preserve after six centuries of rain, wind and the attention of people looking for treasure? At Chan Chan, on Peru’s northern coast, archaeologists have uncovered a nearly intact funerary platform containing the remains of 38 people and a set of chambers that may reveal how Chimú society organised status ..."
+        },
+        {
+          "query": "Archaeologists found remains least 38 people mausoleum Chan Chan",
+          "url": "https://www.ancient-origins.net/news-history-archaeology/chimu-burial-chan-chan-00103169",
+          "title": "Chan Chan Burial Reveals 38 High-Status Chimú Individuals",
+          "snippet": "The remains of 38 prominent individuals have been discovered thanks to a perfectly preserved grave site at Chan Chan in northern Peru. Many antiquities that were used in rituals have also been uncovered."
+        },
+        {
+          "query": "Archaeologists found remains least 38 people mausoleum Chan Chan",
+          "url": "https://www.heritagedaily.com/2026/09/excavations-reveal-elite-chan-chan-funerary-platform/159207",
+          "title": "Excavations reveal elite Chan Chan funerary platform",
+          "snippet": "Sep 8, 2026 · Archaeologists at Peru’s ancient city of Chan Chan have discovered a remarkably intact funerary platform containing the remains of 38 people and an array of high-status grave goods, offering a rare glimpse into the burial practices of the powerful Chimú elite more than 600 years ago."
+        },
+        {
+          "query": "Archaeologists found remains least 38 people mausoleum Chan Chan",
+          "url": "https://www.foxnews.com/travel/ancient-burial-site-packed-treasures-38-bodies-discovered-after-centuries",
+          "title": "Chan Chan, Peru, burial complex holds 38 bodies, possible ...",
+          "snippet": "5 days ago · Archaeologists in Peru have uncovered a 600-year-old burial complex holding 38 bodies — including one skeleton whose unusual position has raised questions about the possibility of human sacrifice."
+        },
+        {
+          "query": "Archaeologists found remains least 38 people mausoleum Chan Chan",
+          "url": "https://www.popularmechanics.com/science/archaeology/a73931445/chan-chan-tomb-skull/",
+          "title": "Archaeologists Found a Blood-Red Skull in a Tomb Sealed for ...",
+          "snippet": "Sep 30, 2026 · After more than a century of excavation at the site of the ancient city of Chan Chan, in Northern Peru, archaeologists finally found something the looters missed. It was a gold-laden..."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://curiosmos.com/chan-chan-burial-platform-38-chimu-burials/",
+          "title": "Chan Chan Burial Platform Reveals 38 Chimú Burials - Curiosmos",
+          "query": "Archaeologists found remains least 38 people mausoleum Chan Chan"
+        },
+        {
+          "url": "https://www.ancient-origins.net/news-history-archaeology/chimu-burial-chan-chan-00103169",
+          "title": "Chan Chan Burial Reveals 38 High-Status Chimú Individuals",
+          "query": "Archaeologists found remains least 38 people mausoleum Chan Chan"
+        },
+        {
+          "url": "https://www.heritagedaily.com/2026/09/excavations-reveal-elite-chan-chan-funerary-platform/159207",
+          "title": "Excavations reveal elite Chan Chan funerary platform",
+          "query": "Archaeologists found remains least 38 people mausoleum Chan Chan"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://curiosmos.com/chan-chan-burial-platform-38-chimu-burials/",
+          "final_url": "https://curiosmos.com/chan-chan-burial-platform-38-chimu-burials/",
+          "title": "One moment, please...",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "c19a192dff1f2561798a1b02a03e787d3cea382f0730e35cc94c2fb388bcd8cb",
+          "page_cache": "hit",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://www.ancient-origins.net/news-history-archaeology/chimu-burial-chan-chan-00103169",
+          "final_url": "https://www.ancient-origins.net/news-history-archaeology/chimu-burial-chan-chan-00103169",
+          "title": "Chan Chan Burial Reveals 38 High-Status Chimú Individuals | Ancient Origins",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "839ffe0fdf2310d587eaf94d4ff27ab944a716ae618b503099d512d55b5c3302",
+          "page_cache": "hit",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://www.heritagedaily.com/2026/09/excavations-reveal-elite-chan-chan-funerary-platform/159207",
+          "final_url": "https://www.heritagedaily.com/2026/09/excavations-reveal-elite-chan-chan-funerary-platform/159207",
+          "title": "Excavations reveal elite Chan Chan funerary platform",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "2d3f332af5f27d01ccaa99be5b8ce39d25ca712c4e2378bb074f81616f996f35",
+          "page_cache": "hit",
+          "error": null,
+          "passage": {
+            "source_id": "src_20c95ec06b36",
+            "url": "https://www.heritagedaily.com/2026/09/excavations-reveal-elite-chan-chan-funerary-platform/159207",
+            "start": 1954,
+            "end": 2238,
+            "quote": "Archaeologists at Peru’s ancient city of Chan Chan have discovered a remarkably intact funerary platform containing the remains of 38 people and an array of high-status grave goods, offering a rare glimpse into the burial practices of the powerful Chimú elite more than 600 years ago."
+          }
+        }
+      ],
+      "passages": [
+        {
+          "source_id": "src_20c95ec06b36",
+          "url": "https://www.heritagedaily.com/2026/09/excavations-reveal-elite-chan-chan-funerary-platform/159207",
+          "start": 1954,
+          "end": 2238,
+          "quote": "Archaeologists at Peru’s ancient city of Chan Chan have discovered a remarkably intact funerary platform containing the remains of 38 people and an array of high-status grave goods, offering a rare glimpse into the burial practices of the powerful Chimú elite more than 600 years ago."
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "src_20c95ec06b36",
+          "url": "https://www.heritagedaily.com/2026/09/excavations-reveal-elite-chan-chan-funerary-platform/159207",
+          "title": "Excavations reveal elite Chan Chan funerary platform"
+        }
+      ],
+      "evidence_found": true,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": true,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "ok",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [],
+      "pipeline_version": "source-selection-4",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:06.189690+00:00",
+      "sources_selected_at": "2026-11-18T06:11:50.022330+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "chan_chan_c2",
+      "claim": "The tomb’s central chamber was about 4 feet wide and 16 feet deep.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "tomb’s central chamber about 4 feet wide 16 feet deep",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "tomb’s central chamber about 4 feet wide 16 feet deep",
+          "url": "https://en.wikipedia.org/wiki/Chamber_tomb",
+          "title": "Chamber tomb - Wikipedia",
+          "snippet": "A chamber tomb is a tomb for burial used in many different cultures. In the case of individual burials, the chamber is thought to signify a higher status for the interred than a simple grave."
+        },
+        {
+          "query": "tomb’s central chamber about 4 feet wide 16 feet deep",
+          "url": "https://en.wikipedia.org/wiki/Shaft_and_chamber_tomb",
+          "title": "Shaft and chamber tomb - Wikipedia",
+          "snippet": "A shaft and chamber tomb is a type of chamber tomb used by some ancient peoples for burial of the dead. They consist of a shaft dug into the outcrops of rock with a square or round chamber excavated at the bottom where the dead were placed."
+        },
+        {
+          "query": "tomb’s central chamber about 4 feet wide 16 feet deep",
+          "url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+          "title": "Unsealed for the First Time in 600 Years, This Tomb in Peru ...",
+          "snippet": "Sep 14, 2026 · The newly discovered mausoleum is located in Chan Chan’s Utzh An complex. A staircase leads down into the tomb’s central chamber, which measures roughly 4 feet wide and 16 feet..."
+        },
+        {
+          "query": "tomb’s central chamber about 4 feet wide 16 feet deep",
+          "url": "https://www.prehistoricsociety.org/sites/prehistoricsociety.org/files/resources/ps-intros-neo-4-chambered-tombs.pdf",
+          "title": "PS Intros Neo 4-Chambered tombs_amended - The Prehistoric Society",
+          "snippet": "Chambered tombs are a type of burial monument constructed during the Early Neolithic period (major phase of use: c. 3800 – 3400 BC). They have an internal megalithic structure which consists of 'chambers' concealed beneath a mound of earth (barrow) or stone (cairn)."
+        },
+        {
+          "query": "tomb’s central chamber about 4 feet wide 16 feet deep",
+          "url": "https://www.wikiwand.com/en/Chamber_tomb",
+          "title": "Chamber tomb - Wikiwand",
+          "snippet": "A chamber tomb is a tomb for burial used in many different cultures. In the case of individual burials, the chamber is thought to signify a higher status for the interred than a simple grave."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Chamber_tomb",
+          "title": "Chamber tomb - Wikipedia",
+          "query": "tomb’s central chamber about 4 feet wide 16 feet deep"
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Shaft_and_chamber_tomb",
+          "title": "Shaft and chamber tomb - Wikipedia",
+          "query": "tomb’s central chamber about 4 feet wide 16 feet deep"
+        },
+        {
+          "url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+          "title": "Unsealed for the First Time in 600 Years, This Tomb in Peru ...",
+          "query": "tomb’s central chamber about 4 feet wide 16 feet deep"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Chamber_tomb",
+          "final_url": "https://en.wikipedia.org/wiki/Chamber_tomb",
+          "title": "Chamber tomb - Wikipedia",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "38adbef725acd6735ac030006a72991962995dac2abc22b882d4fb52ffbdf9ed",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Shaft_and_chamber_tomb",
+          "final_url": "https://en.wikipedia.org/wiki/Shaft_and_chamber_tomb",
+          "title": "Shaft and chamber tomb - Wikipedia",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "59e1156b2a7f74883b24ad452ef22e6312a3c6cd8c528af241c4de562be3de49",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+          "final_url": "https://www.smithsonianmag.com/smart-news/unsealed-for-the-first-time-in-600-years-this-tomb-in-peru-was-just-declared-the-discovery-of-the-decade-180989497/",
+          "title": "Unsealed for the First Time in 600 Years, This Tomb in Peru ...",
+          "fetch_status": "fetch_failed",
+          "http_status": 403,
+          "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "page_cache": "fetched",
+          "error": "HTTP 403",
+          "passage": null
+        }
+      ],
+      "passages": [],
+      "sources": [],
+      "evidence_found": false,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": false,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "passage_not_found",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [
+        "No fetched passage was available to judge. The claim is not treated as false."
+      ],
+      "pipeline_version": "source-selection-4",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:11.026759+00:00",
+      "sources_selected_at": "2026-11-18T06:13:33.115698+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "chan_chan_c3",
+      "claim": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total area.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "Archaeologists have excavated no more than 7 percent Chan Chan’s total area",
+          "status": "search_unavailable",
+          "error": "The configured DuckDuckGo search failed (DNSError: DNSError('error sending request for url (https://wt.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=Archaeologists%20have%20excavated%20no%20more%20than%207%20percent%20Chan%20Chan%E2%80%99s%20total%20area) > error resolving DNS > DNS error: no records found for Query { name: Name(\"wt.wikipedia.org.acasmart.jh.edu.\"), query_type: A, query_class: IN }')). A paid search service was not enabled."
+        },
+        {
+          "query": "Archaeologists have excavated no more than 7 percent of Chan Chan’s total area",
+          "status": "search_unavailable",
+          "error": "The configured DuckDuckGo search failed (DNSError: DNSError('error sending request for url (https://wt.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=Archaeologists%20have%20excavated%20no%20more%20than%207%20percent%20of%20Chan%20Chan%E2%80%99s%20total%20area) > error resolving DNS > DNS error: no records found for Query { name: Name(\"wt.wikipedia.org.acasmart.jh.edu.\"), query_type: A, query_class: IN }')). A paid search service was not enabled."
+        }
+      ],
+      "candidates": [],
+      "selected": [],
+      "fetches": [],
+      "passages": [],
+      "sources": [],
+      "evidence_found": false,
+      "page_fetch_succeeded": false,
+      "relevant_passage_found": false,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "search_unavailable",
+      "fetch_status": "not_run",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [
+        "The configured DuckDuckGo search failed (DNSError: DNSError('error sending request for url (https://wt.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=Archaeologists%20have%20excavated%20no%20more%20than%207%20percent%20Chan%20Chan%E2%80%99s%20total%20area) > error resolving DNS > DNS error: no records found for Query { name: Name(\"wt.wikipedia.org.acasmart.jh.edu.\"), query_type: A, query_class: IN }')). A paid search service was not enabled.",
+        "The claim is not treated as false."
+      ],
+      "pipeline_version": "source-selection-4",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:13.597974+00:00",
+      "sources_selected_at": "2026-11-18T06:11:55.679020+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "heatwave_c1",
+      "claim": "The researchers’ CS-LIM used 64 years of real-world sea-surface temperature and height data.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "researchers’ CS-LIM used 64 years real-world sea-surface temperature height data",
+          "status": "search_unavailable",
+          "error": "The configured DuckDuckGo search failed (DNSError: DNSError('error sending request for url (https://wt.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=researchers%E2%80%99%20CS-LIM%20used%2064%20years%20real-world%20sea-surface%20temperature%20height%20data) > error resolving DNS > DNS error: no records found for Query { name: Name(\"wt.wikipedia.org.acasmart.jh.edu.\"), query_type: A, query_class: IN }')). A paid search service was not enabled."
+        },
+        {
+          "query": "The researchers’ CS-LIM used 64 years of real-world sea-surface temperature and height data",
+          "status": "search_unavailable",
+          "error": "The configured DuckDuckGo search failed (DNSError: DNSError('error sending request for url (https://wt.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=The%20researchers%E2%80%99%20CS-LIM%20used%2064%20years%20of%20real-world%20sea-surface%20temperature%20and%20height%20data) > error resolving DNS > DNS error: no records found for Query { name: Name(\"wt.wikipedia.org.acasmart.jh.edu.\"), query_type: A, query_class: IN }')). A paid search service was not enabled."
+        }
+      ],
+      "candidates": [],
+      "selected": [],
+      "fetches": [],
+      "passages": [],
+      "sources": [],
+      "evidence_found": false,
+      "page_fetch_succeeded": false,
+      "relevant_passage_found": false,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "search_unavailable",
+      "fetch_status": "not_run",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [
+        "The configured DuckDuckGo search failed (DNSError: DNSError('error sending request for url (https://wt.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=researchers%E2%80%99%20CS-LIM%20used%2064%20years%20real-world%20sea-surface%20temperature%20height%20data) > error resolving DNS > DNS error: no records found for Query { name: Name(\"wt.wikipedia.org.acasmart.jh.edu.\"), query_type: A, query_class: IN }')). A paid search service was not enabled.",
+        "The claim is not treated as false."
+      ],
+      "pipeline_version": "source-selection-4",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:17.684575+00:00",
+      "sources_selected_at": "2026-11-18T06:11:58.740901+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "heatwave_c2",
+      "claim": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "Winter-starting Northeast Pacific marine heatwaves last longer because ENSO impacts ocean reemergence",
+          "status": "search_unavailable",
+          "error": "The configured DuckDuckGo search failed (DNSError: DNSError('error sending request for url (https://wt.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=Winter-starting%20Northeast%20Pacific%20marine%20heatwaves%20last%20longer%20because%20ENSO%20impacts%20ocean%20reemergence) > error resolving DNS > DNS error: no records found for Query { name: Name(\"wt.wikipedia.org.acasmart.jh.edu.\"), query_type: A, query_class: IN }')). A paid search service was not enabled."
+        },
+        {
+          "query": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence",
+          "url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+          "title": "Severity and persistence of Northeast Pacific marine ...",
+          "snippet": "Jul 28, 2026 · Apart from ENSO influence, local processes such as “ocean memory” reemergence also play a role in generating warm ocean conditions. Marine heatwaves that start in the winter last longer due to the combination of ENSO impact and the reemergence process, which gives the heatwave staying power."
+        },
+        {
+          "query": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence",
+          "url": "https://www.nature.com/articles/s43247-026-03442-x",
+          "title": "Persistent Northeast Pacific marine heatwaves are sensitive ...",
+          "snippet": "Apr 15, 2026 · Northeast Pacific marine heatwaves occur year-round but are shaped by seasonally-varying dynamics including El Niño-Southern Oscillation (ENSO) and North Pacific atmosphere-ocean..."
+        },
+        {
+          "query": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence",
+          "url": "https://oceanvines.org/news/2026-07-31-marine-heatwave-forecast-seabed2030",
+          "title": "NOAA flags the seasonal fingerprints behind Northeast Pacific ...",
+          "snippet": "Jul 31, 2026 · In the Northeast Pacific, the researchers report that marine heatwaves that start in winter tend to last longer because ENSO impacts can reinforce reemergence, giving warm anomalies staying power. Summer-starting heatwaves, by contrast, can become more intense but usually end faster."
+        },
+        {
+          "query": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence",
+          "url": "https://communities.springernature.com/posts/northeast-pacific-marine-heatwaves-why-do-we-care-and-what-did-we-find",
+          "title": "Northeast Pacific marine heatwaves, why do we care and what ...",
+          "snippet": "Jul 4, 2026 · Persistent marine heatwave events in the Northeast Pacific preferentially begin in winter, with El Niño-Southern Oscillation and re-emergence influencing duration, according to empirical dynamical modelling of the Northeast Pacific."
+        },
+        {
+          "query": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence",
+          "url": "https://www.cesm.ucar.edu/sites/default/files/2026-02/2026-cesm-cvcwg-txu.pdf",
+          "title": "Sensitivity of Northeast Pacific Marine Heatwaves to",
+          "snippet": "Northeast Pacific marine heatwaves occur year-round but winter-onset events are more frequent. ENSO teleconnections. Seasonal ocean memory, including reemergence-like behavior, contributes to wintertime persistence and recurrence of marine heatwaves."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+          "title": "Severity and persistence of Northeast Pacific marine ...",
+          "query": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence"
+        },
+        {
+          "url": "https://www.nature.com/articles/s43247-026-03442-x",
+          "title": "Persistent Northeast Pacific marine heatwaves are sensitive ...",
+          "query": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence"
+        },
+        {
+          "url": "https://oceanvines.org/news/2026-07-31-marine-heatwave-forecast-seabed2030",
+          "title": "NOAA flags the seasonal fingerprints behind Northeast Pacific ...",
+          "query": "Winter-starting Northeast Pacific marine heatwaves last longer because of ENSO impacts and ocean reemergence"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+          "final_url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+          "title": "Severity and persistence of Northeast Pacific marine heatwaves vary by season: NOAA Physical Sciences Laboratory",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "e5db86cb9fcfebd01d9bda55663e8e1d79e50ae5bc201a5276f7cad4475d89a7",
+          "page_cache": "hit",
+          "error": null,
+          "passage": {
+            "source_id": "src_5c6955100671",
+            "url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+            "start": 5193,
+            "end": 5887,
+            "quote": "The researchers found that different regions of the Northeast Pacific respond to the different ENSO\n “flavors.” For example, an El Niño in the Central Pacific can help trigger a marine heatwave in the Gulf of\n Alaska, while a La Niña in the Eastern Pacific can contribute to one in the Central North Pacific.\n Apart from ENSO influence, local processes such as “ocean memory” reemergence also play a role in generating\n warm ocean conditions.\n Marine heatwaves that start in the winter last longer due to the combination of ENSO impact and the\n reemergence process, which gives the heatwave staying power. Ones that start in the summer can be much more\n intense, but they generally end quickly."
+          }
+        },
+        {
+          "url": "https://www.nature.com/articles/s43247-026-03442-x",
+          "final_url": "https://www.nature.com/articles/s43247-026-03442-x?error=cookies_not_supported&code=fa35583b-4b07-4ce2-9741-cb0df4870520",
+          "title": "Persistent Northeast Pacific marine heatwaves are sensitive to the seasonality of tropical and North Pacific dynamics | Communications Earth & Environment",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "410bd011a1a0415749fb9656100f6a18692cb9225b93233f5d069c49300dc051",
+          "page_cache": "hit",
+          "error": null,
+          "passage": {
+            "source_id": "src_1f7113aa3f42",
+            "url": "https://www.nature.com/articles/s43247-026-03442-x?error=cookies_not_supported&code=fa35583b-4b07-4ce2-9741-cb0df4870520",
+            "start": 27768,
+            "end": 28509,
+            "quote": "In this section, given the CS-LIM’s ability to reproduce observed seasonality of Northeast Pacific MHWs in different regions, as well as their location-dependent lead-lag relationships with both ENSO variability and North Pacific memory, we will use it to diagnose how seasonality in ocean dynamics, both in and between the tropical and North Pacific basins, impacts the intensification and development of persistent Northeast Pacific MHW events. We focus on long-lasting winter-onset events exceeding 1 σ for at least 5 months, since such MHW events have occurred more frequently in winter than in other seasons (Fig.  4a ), and the ENSO teleconnections as well as the reemergence-like behaviors may be stronger in winter (Figs.  5 and 6 )."
+          }
+        },
+        {
+          "url": "https://oceanvines.org/news/2026-07-31-marine-heatwave-forecast-seabed2030",
+          "final_url": "https://oceanvines.org/news/2026-07-31-marine-heatwave-forecast-seabed2030",
+          "title": "NOAA flags the seasonal fingerprints behind… | OceanVines",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "5e861df024d49a93140f0562c5ac110e0c636f2fab134729a08097b44cf31df8",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": {
+            "source_id": "src_26dba67fb8fd",
+            "url": "https://oceanvines.org/news/2026-07-31-marine-heatwave-forecast-seabed2030",
+            "start": 1677,
+            "end": 2190,
+            "quote": "The core takeaway from the PSL summary is that two driver sets can combine — large-scale tropical dynamics such as ENSO, and local processes such as subsurface heat storage and reemergence (often described as an “ocean memory”). In the Northeast Pacific, the researchers report that marine heatwaves that start in winter tend to last longer because ENSO impacts can reinforce reemergence, giving warm anomalies staying power. Summer-starting heatwaves, by contrast, can become more intense but usually end faster."
+          }
+        }
+      ],
+      "passages": [
+        {
+          "source_id": "src_5c6955100671",
+          "url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+          "start": 5193,
+          "end": 5887,
+          "quote": "The researchers found that different regions of the Northeast Pacific respond to the different ENSO\n “flavors.” For example, an El Niño in the Central Pacific can help trigger a marine heatwave in the Gulf of\n Alaska, while a La Niña in the Eastern Pacific can contribute to one in the Central North Pacific.\n Apart from ENSO influence, local processes such as “ocean memory” reemergence also play a role in generating\n warm ocean conditions.\n Marine heatwaves that start in the winter last longer due to the combination of ENSO impact and the\n reemergence process, which gives the heatwave staying power. Ones that start in the summer can be much more\n intense, but they generally end quickly."
+        },
+        {
+          "source_id": "src_1f7113aa3f42",
+          "url": "https://www.nature.com/articles/s43247-026-03442-x?error=cookies_not_supported&code=fa35583b-4b07-4ce2-9741-cb0df4870520",
+          "start": 27768,
+          "end": 28509,
+          "quote": "In this section, given the CS-LIM’s ability to reproduce observed seasonality of Northeast Pacific MHWs in different regions, as well as their location-dependent lead-lag relationships with both ENSO variability and North Pacific memory, we will use it to diagnose how seasonality in ocean dynamics, both in and between the tropical and North Pacific basins, impacts the intensification and development of persistent Northeast Pacific MHW events. We focus on long-lasting winter-onset events exceeding 1 σ for at least 5 months, since such MHW events have occurred more frequently in winter than in other seasons (Fig.  4a ), and the ENSO teleconnections as well as the reemergence-like behaviors may be stronger in winter (Figs.  5 and 6 )."
+        },
+        {
+          "source_id": "src_26dba67fb8fd",
+          "url": "https://oceanvines.org/news/2026-07-31-marine-heatwave-forecast-seabed2030",
+          "start": 1677,
+          "end": 2190,
+          "quote": "The core takeaway from the PSL summary is that two driver sets can combine — large-scale tropical dynamics such as ENSO, and local processes such as subsurface heat storage and reemergence (often described as an “ocean memory”). In the Northeast Pacific, the researchers report that marine heatwaves that start in winter tend to last longer because ENSO impacts can reinforce reemergence, giving warm anomalies staying power. Summer-starting heatwaves, by contrast, can become more intense but usually end faster."
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "src_5c6955100671",
+          "url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+          "title": "Severity and persistence of Northeast Pacific marine heatwaves vary by season: NOAA Physical Sciences Laboratory"
+        },
+        {
+          "source_id": "src_1f7113aa3f42",
+          "url": "https://www.nature.com/articles/s43247-026-03442-x?error=cookies_not_supported&code=fa35583b-4b07-4ce2-9741-cb0df4870520",
+          "title": "Persistent Northeast Pacific marine heatwaves are sensitive to the seasonality of tropical and North Pacific dynamics | Communications Earth & Environment"
+        },
+        {
+          "source_id": "src_26dba67fb8fd",
+          "url": "https://oceanvines.org/news/2026-07-31-marine-heatwave-forecast-seabed2030",
+          "title": "NOAA flags the seasonal fingerprints behind… | OceanVines"
+        }
+      ],
+      "evidence_found": true,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": true,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "ok",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [],
+      "pipeline_version": "source-selection-4",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:20.694064+00:00",
+      "sources_selected_at": "2026-11-18T06:12:01.717932+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "heatwave_c3",
+      "claim": "Summer-starting marine heatwaves can be more intense but generally end quickly.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "Summer-starting marine heatwaves can more intense but generally end quickly",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "Summer-starting marine heatwaves can more intense but generally end quickly",
+          "url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+          "title": "Severity and persistence of Northeast Pacific marine ...",
+          "snippet": "Jul 28, 2026 · Marine heatwaves that start in the winter last longer due to the combination of ENSO impact and the reemergence process, which gives the heatwave staying power. Ones that start in the summer can be much more intense, but they generally end quickly."
+        },
+        {
+          "query": "Summer-starting marine heatwaves can more intense but generally end quickly",
+          "url": "https://www.nature.com/articles/s43247-024-01806-9",
+          "title": "A global overview of marine heatwaves in a changing climateMarine Heatwaves : NOAA Physical Sciences LaboratoryOcean dynamics shape marine heatwaves and their ... - NatureIn hot water: exploring marine heatwaves - NOAA ResearchPersistent Northeast Pacific marine heatwaves are sensitive ...Marine Heatwaves | National Oceanography Centre",
+          "snippet": "Nov 20, 2024 · The MHW in the boreal summer of 2003 emerges as an extremely intense event, irrespective of the presence of a trend signal. Apr 20, 2022 · Marine heatwaves are periods of persistent anomalously warm ocean temperatures, which can have significant impacts on marine life as well as coastal communities and economies. Feb 18, 2026 · Marine heatwaves have become more frequent and intense "
+        },
+        {
+          "query": "Summer-starting marine heatwaves can more intense but generally end quickly",
+          "url": "https://psl.noaa.gov/marine-heatwaves/",
+          "title": "Marine Heatwaves : NOAA Physical Sciences Laboratory",
+          "snippet": "Apr 20, 2022 · Marine heatwaves are periods of persistent anomalously warm ocean temperatures, which can have significant impacts on marine life as well as coastal communities and economies."
+        },
+        {
+          "query": "Summer-starting marine heatwaves can more intense but generally end quickly",
+          "url": "https://www.nature.com/articles/s41467-026-69509-7",
+          "title": "Ocean dynamics shape marine heatwaves and their ... - Nature",
+          "snippet": "Feb 18, 2026 · Marine heatwaves have become more frequent and intense under anthropogenic warming, posing increasing threats to marine ecosystems and coastal societies, necessitating a better..."
+        },
+        {
+          "query": "Summer-starting marine heatwaves can more intense but generally end quickly",
+          "url": "https://research.noaa.gov/in-hot-water-exploring-marine-heatwaves/",
+          "title": "In hot water: exploring marine heatwaves - NOAA Research",
+          "snippet": "May 22, 2024 · Marine heatwaves can endure for varying periods, from days to years, affecting not only surface waters but also the bottom of the ocean. A map that depicts current marine heatwave conditions for April and May 2024."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+          "title": "Severity and persistence of Northeast Pacific marine ...",
+          "query": "Summer-starting marine heatwaves can more intense but generally end quickly"
+        },
+        {
+          "url": "https://www.nature.com/articles/s43247-024-01806-9",
+          "title": "A global overview of marine heatwaves in a changing climateMarine Heatwaves : NOAA Physical Sciences LaboratoryOcean dynamics shape marine heatwaves and their ... - NatureIn hot water: exploring marine heatwaves - NOAA ResearchPersistent Northeast Pacific marine heatwaves are sensitive ...Marine Heatwaves | National Oceanography Centre",
+          "query": "Summer-starting marine heatwaves can more intense but generally end quickly"
+        },
+        {
+          "url": "https://research.noaa.gov/in-hot-water-exploring-marine-heatwaves/",
+          "title": "In hot water: exploring marine heatwaves - NOAA Research",
+          "query": "Summer-starting marine heatwaves can more intense but generally end quickly"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+          "final_url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+          "title": "Severity and persistence of Northeast Pacific marine heatwaves vary by season: NOAA Physical Sciences Laboratory",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "e5db86cb9fcfebd01d9bda55663e8e1d79e50ae5bc201a5276f7cad4475d89a7",
+          "page_cache": "hit",
+          "error": null,
+          "passage": {
+            "source_id": "src_5c6955100671",
+            "url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+            "start": 5193,
+            "end": 5887,
+            "quote": "The researchers found that different regions of the Northeast Pacific respond to the different ENSO\n “flavors.” For example, an El Niño in the Central Pacific can help trigger a marine heatwave in the Gulf of\n Alaska, while a La Niña in the Eastern Pacific can contribute to one in the Central North Pacific.\n Apart from ENSO influence, local processes such as “ocean memory” reemergence also play a role in generating\n warm ocean conditions.\n Marine heatwaves that start in the winter last longer due to the combination of ENSO impact and the\n reemergence process, which gives the heatwave staying power. Ones that start in the summer can be much more\n intense, but they generally end quickly."
+          }
+        },
+        {
+          "url": "https://www.nature.com/articles/s43247-024-01806-9",
+          "final_url": "https://www.nature.com/articles/s43247-024-01806-9?error=cookies_not_supported&code=0c0aec15-2213-44ee-bf9f-5a10838d5fb5",
+          "title": "A global overview of marine heatwaves in a changing climate | Communications Earth & Environment",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "2488b54385d6c7c6bddb6cc53ee0460a12df5c496833b6b1167c59a2591d6e2b",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://research.noaa.gov/in-hot-water-exploring-marine-heatwaves/",
+          "final_url": "https://research.noaa.gov/in-hot-water-exploring-marine-heatwaves/",
+          "title": "In hot water: exploring marine heatwaves - NOAA Research",
+          "fetch_status": "fetch_failed",
+          "http_status": 403,
+          "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "page_cache": "fetched",
+          "error": "HTTP 403",
+          "passage": null
+        }
+      ],
+      "passages": [
+        {
+          "source_id": "src_5c6955100671",
+          "url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+          "start": 5193,
+          "end": 5887,
+          "quote": "The researchers found that different regions of the Northeast Pacific respond to the different ENSO\n “flavors.” For example, an El Niño in the Central Pacific can help trigger a marine heatwave in the Gulf of\n Alaska, while a La Niña in the Eastern Pacific can contribute to one in the Central North Pacific.\n Apart from ENSO influence, local processes such as “ocean memory” reemergence also play a role in generating\n warm ocean conditions.\n Marine heatwaves that start in the winter last longer due to the combination of ENSO impact and the\n reemergence process, which gives the heatwave staying power. Ones that start in the summer can be much more\n intense, but they generally end quickly."
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "src_5c6955100671",
+          "url": "https://psl.noaa.gov/news/2026/nepmarineheatwaves.html",
+          "title": "Severity and persistence of Northeast Pacific marine heatwaves vary by season: NOAA Physical Sciences Laboratory"
+        }
+      ],
+      "evidence_found": true,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": true,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "ok",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [],
+      "pipeline_version": "source-selection-4",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:22.428337+00:00",
+      "sources_selected_at": "2026-11-18T06:13:33.220972+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "lucy_c1",
+      "claim": "Lucy passed about 650 miles from Donaldjohanson on April 20, 2025.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "Lucy passed about 650 miles Donaldjohanson April 20 2025",
+          "status": "search_unavailable",
+          "error": "The configured DuckDuckGo search failed (DNSError: DNSError('error sending request for url (https://wt.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=Lucy%20passed%20about%20650%20miles%20Donaldjohanson%20April%2020%202025) > error resolving DNS > DNS error: no records found for Query { name: Name(\"wt.wikipedia.org.acasmart.jh.edu.\"), query_type: A, query_class: IN }')). A paid search service was not enabled."
+        },
+        {
+          "query": "Lucy passed about 650 miles from Donaldjohanson on April 20, 2025",
+          "status": "search_unavailable",
+          "error": "The configured DuckDuckGo search failed (DNSError: DNSError('error sending request for url (https://wt.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=Lucy%20passed%20about%20650%20miles%20from%20Donaldjohanson%20on%20April%2020%2C%202025) > error resolving DNS > DNS error: no records found for Query { name: Name(\"wt.wikipedia.org.acasmart.jh.edu.\"), query_type: A, query_class: IN }')). A paid search service was not enabled."
+        }
+      ],
+      "candidates": [],
+      "selected": [],
+      "fetches": [],
+      "passages": [],
+      "sources": [],
+      "evidence_found": false,
+      "page_fetch_succeeded": false,
+      "relevant_passage_found": false,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "search_unavailable",
+      "fetch_status": "not_run",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [
+        "The configured DuckDuckGo search failed (DNSError: DNSError('error sending request for url (https://wt.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=Lucy%20passed%20about%20650%20miles%20Donaldjohanson%20April%2020%202025) > error resolving DNS > DNS error: no records found for Query { name: Name(\"wt.wikipedia.org.acasmart.jh.edu.\"), query_type: A, query_class: IN }')). A paid search service was not enabled.",
+        "The claim is not treated as false."
+      ],
+      "pipeline_version": "source-selection-4",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:24.413639+00:00",
+      "sources_selected_at": "2026-11-18T06:12:07.061528+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "lucy_c2",
+      "claim": "Donaldjohanson rotates end-over-end once every 10.5 Earth days and wobbles around its long axis every 26.5 days.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "Donaldjohanson rotates end-over-end once every 10.5 Earth days wobbles around long axis every 26.5 days",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "Donaldjohanson rotates end-over-end once every 10.5 Earth days wobbles around long axis every 26.5 days",
+          "url": "https://en.wikipedia.org/wiki/52246_Donaldjohanson",
+          "title": "52246 Donaldjohanson - Wikipedia",
+          "snippet": "It slowly rotates end-over-end once every 253 hours (10.5 days), and wobbles back and forth around its long axis once every 637 hours (26.5 days). The slow, tumbling rotation is believed to have been caused by the YORP effect, which is a gradual torque exerted by sunlight."
+        },
+        {
+          "query": "Donaldjohanson rotates end-over-end once every 10.5 Earth days wobbles around long axis every 26.5 days",
+          "url": "https://phys.org/news/2026-06-asteroid-donaldjohanson-rotates-lucy-flyby.html",
+          "title": "Asteroid Donaldjohanson wobbles as it rotates, Lucy flyby reveals",
+          "snippet": "Jun 18, 2026 · Rather than rolling through space in a steady pattern, Donaldjohanson turns on two axes, rotating end over end once every 10.5 Earth days while wobbling around its..."
+        },
+        {
+          "query": "Donaldjohanson rotates end-over-end once every 10.5 Earth days wobbles around long axis every 26.5 days",
+          "url": "https://svs.gsfc.nasa.gov/5628",
+          "title": "NASA SVS | Lucy Observations of Asteroid Donaldjohanson",
+          "snippet": "Jun 18, 2026 · Instead of spinning around a single axis, it is in a tumbling, non-principal axis rotation. It completes one rotation roughly every 10.5 days while rotating around another axis approximately every 26.4 days, creating a slow, uneven wobble."
+        },
+        {
+          "query": "Donaldjohanson rotates end-over-end once every 10.5 Earth days wobbles around long axis every 26.5 days",
+          "url": "https://earthsky.org/space/asteroid-wobbles-in-space-donaldjohanson-lucy/",
+          "title": "Peanut-shaped asteroid wobbles in 2 directions - EarthSky",
+          "snippet": "Jun 25, 2026 · Donaldjohanson is a small asteroid, about 1/2 mile (800 m) across, in the main asteroid belt between Mars and Jupiter. NASA’s Lucy spacecraft confirmed it is oblong and peanut-shaped in 2025. And..."
+        },
+        {
+          "query": "Donaldjohanson rotates end-over-end once every 10.5 Earth days wobbles around long axis every 26.5 days",
+          "url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+          "title": "NASA’s Lucy Reveals Wobbling, Peanut-Shaped Asteroid",
+          "snippet": "Jun 18, 2026 · Paper authors reported that the asteroid rotates end-over-end once every 10.5 Earth days, and wobbles back and forth around its long axis once every 26.5 days. The media could not be loaded, either because the server or network failed or because the format is not supported."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://en.wikipedia.org/wiki/52246_Donaldjohanson",
+          "title": "52246 Donaldjohanson - Wikipedia",
+          "query": "Donaldjohanson rotates end-over-end once every 10.5 Earth days wobbles around long axis every 26.5 days"
+        },
+        {
+          "url": "https://phys.org/news/2026-06-asteroid-donaldjohanson-rotates-lucy-flyby.html",
+          "title": "Asteroid Donaldjohanson wobbles as it rotates, Lucy flyby reveals",
+          "query": "Donaldjohanson rotates end-over-end once every 10.5 Earth days wobbles around long axis every 26.5 days"
+        },
+        {
+          "url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+          "title": "NASA’s Lucy Reveals Wobbling, Peanut-Shaped Asteroid",
+          "query": "Donaldjohanson rotates end-over-end once every 10.5 Earth days wobbles around long axis every 26.5 days"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://en.wikipedia.org/wiki/52246_Donaldjohanson",
+          "final_url": "https://en.wikipedia.org/wiki/52246_Donaldjohanson",
+          "title": "52246 Donaldjohanson - Wikipedia",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "bb8be581c89c980cf110d111d3908316a829a92d739aa28b2ef66d1001e4ee35",
+          "page_cache": "hit",
+          "error": null,
+          "passage": {
+            "source_id": "src_e970044d43a5",
+            "url": "https://en.wikipedia.org/wiki/52246_Donaldjohanson",
+            "start": 9462,
+            "end": 10151,
+            "quote": "Instead of rotating around a single axis , Donaldjohanson wobbles chaotically. It slowly rotates end-over-end once every 253 hours (10.5 days) , and wobbles back and forth around its long axis once every 637 hours (26.5 days) . The slow, tumbling rotation is believed to have been caused by the YORP effect , which is a gradual torque exerted by sunlight. Donaldjohanson is a member of the Erigone family , a collisional family of asteroids with physical and orbital properties similar to 163 Erigone . Donaldjohanson and the Erigone family are believed to have formed within the last 270 million years, in the aftermath of a catastrophic collision between two once-larger asteroids. [ 2 ]"
+          }
+        },
+        {
+          "url": "https://phys.org/news/2026-06-asteroid-donaldjohanson-rotates-lucy-flyby.html",
+          "final_url": "https://phys.org/news/2026-06-asteroid-donaldjohanson-rotates-lucy-flyby.html",
+          "title": "Asteroid Donaldjohanson wobbles as it rotates, Lucy flyby reveals",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "4e4683470ff282df8c14abe9dd9cd38e9820bb531be4790bcb16a89815199a16",
+          "page_cache": "hit",
+          "error": null,
+          "passage": {
+            "source_id": "src_4fe4500d9e9c",
+            "url": "https://phys.org/news/2026-06-asteroid-donaldjohanson-rotates-lucy-flyby.html",
+            "start": 1518,
+            "end": 1904,
+            "quote": "Southwest Research Institute (SwRI) scientists studying the inner main-belt asteroid Donaldjohanson have found that its rotation wobbles. Rather than rolling through space in a steady pattern, Donaldjohanson turns on two axes, rotating end over end once every 10.5 Earth days while wobbling around its horizontal axis every 26.5 days. The findings are published in the journal Science ."
+          }
+        },
+        {
+          "url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+          "final_url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+          "title": "NASA's Lucy Reveals Wobbling, Peanut-Shaped Asteroid - NASA Science",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "2cf73dc716483a6115929f6dc3029306c81f9e0c7185131e93aa0a167eecced7",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": {
+            "source_id": "src_1e00a0bcd6cc",
+            "url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+            "start": 8838,
+            "end": 9297,
+            "quote": "With Earth-based telescopes, observers saw fluctuations in the light Donaldjohanson reflects, regular patterns of peaks and valleys, typical of an elongated object rotating once every 10.5 Earth days. But Lucy’s data revealed another pattern: Donaldjohanson appears to be rotating like a wobbly top. Paper authors reported that the asteroid rotates end-over-end once every 10.5 Earth days, and wobbles back and forth around its long axis once every 26.5 days."
+          }
+        }
+      ],
+      "passages": [
+        {
+          "source_id": "src_e970044d43a5",
+          "url": "https://en.wikipedia.org/wiki/52246_Donaldjohanson",
+          "start": 9462,
+          "end": 10151,
+          "quote": "Instead of rotating around a single axis , Donaldjohanson wobbles chaotically. It slowly rotates end-over-end once every 253 hours (10.5 days) , and wobbles back and forth around its long axis once every 637 hours (26.5 days) . The slow, tumbling rotation is believed to have been caused by the YORP effect , which is a gradual torque exerted by sunlight. Donaldjohanson is a member of the Erigone family , a collisional family of asteroids with physical and orbital properties similar to 163 Erigone . Donaldjohanson and the Erigone family are believed to have formed within the last 270 million years, in the aftermath of a catastrophic collision between two once-larger asteroids. [ 2 ]"
+        },
+        {
+          "source_id": "src_4fe4500d9e9c",
+          "url": "https://phys.org/news/2026-06-asteroid-donaldjohanson-rotates-lucy-flyby.html",
+          "start": 1518,
+          "end": 1904,
+          "quote": "Southwest Research Institute (SwRI) scientists studying the inner main-belt asteroid Donaldjohanson have found that its rotation wobbles. Rather than rolling through space in a steady pattern, Donaldjohanson turns on two axes, rotating end over end once every 10.5 Earth days while wobbling around its horizontal axis every 26.5 days. The findings are published in the journal Science ."
+        },
+        {
+          "source_id": "src_1e00a0bcd6cc",
+          "url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+          "start": 8838,
+          "end": 9297,
+          "quote": "With Earth-based telescopes, observers saw fluctuations in the light Donaldjohanson reflects, regular patterns of peaks and valleys, typical of an elongated object rotating once every 10.5 Earth days. But Lucy’s data revealed another pattern: Donaldjohanson appears to be rotating like a wobbly top. Paper authors reported that the asteroid rotates end-over-end once every 10.5 Earth days, and wobbles back and forth around its long axis once every 26.5 days."
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "src_e970044d43a5",
+          "url": "https://en.wikipedia.org/wiki/52246_Donaldjohanson",
+          "title": "52246 Donaldjohanson - Wikipedia"
+        },
+        {
+          "source_id": "src_4fe4500d9e9c",
+          "url": "https://phys.org/news/2026-06-asteroid-donaldjohanson-rotates-lucy-flyby.html",
+          "title": "Asteroid Donaldjohanson wobbles as it rotates, Lucy flyby reveals"
+        },
+        {
+          "source_id": "src_1e00a0bcd6cc",
+          "url": "https://science.nasa.gov/missions/lucy/nasas-lucy-reveals-wobbling-peanut-shaped-asteroid/",
+          "title": "NASA's Lucy Reveals Wobbling, Peanut-Shaped Asteroid - NASA Science"
+        }
+      ],
+      "evidence_found": true,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": true,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "ok",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [],
+      "pipeline_version": "source-selection-4",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:26.673254+00:00",
+      "sources_selected_at": "2026-11-18T06:12:09.049228+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "lucy_c3",
+      "claim": "Iron-rich clays on Donaldjohanson indicate that liquid water was present briefly in the distant past.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "Iron-rich clays Donaldjohanson indicate liquid water present briefly distant past",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "Iron-rich clays Donaldjohanson indicate liquid water present briefly distant past",
+          "url": "https://svs.gsfc.nasa.gov/5628",
+          "title": "NASA SVS | Lucy Observations of Asteroid Donaldjohanson",
+          "snippet": "Jun 18, 2026 · These clays, which are similar to those found in carbon-rich meteorites such as QUE 97990, indicate that water was briefly present in the asteroid during the distant past."
+        },
+        {
+          "query": "Iron-rich clays Donaldjohanson indicate liquid water present briefly distant past",
+          "url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+          "title": "NASA’s Lucy Uncovers Ancient Water Clues: Exciting!",
+          "snippet": "Jun 30, 2026 · NASA’s Lucy Uncovers Ancient Water Clues by identifying iron-rich clays on asteroid Donaldjohanson during an April 2025 flyby. These specific minerals confirm liquid water briefly existed on the object’s parent body, revealing a complex evolutionary history for this primitive inner main belt fragment."
+        },
+        {
+          "query": "Iron-rich clays Donaldjohanson indicate liquid water present briefly distant past",
+          "url": "https://scitechdaily.com/nasas-lucy-uncovers-ancient-water-clues-on-a-weirdly-wobbling-asteroid/",
+          "title": "NASA’s Lucy Uncovers Ancient Water Clues on a Weirdly ...",
+          "snippet": "Jun 27, 2026 · As Lucy sped past Donaldjohanson at roughly 30,000 mph, its instruments detected iron-rich clay minerals on the asteroid’s surface. These minerals could only have formed in the presence of liquid water sometime in the distant past."
+        },
+        {
+          "query": "Iron-rich clays Donaldjohanson indicate liquid water present briefly distant past",
+          "url": "https://scienow.com/lucy-flyby-reveals-wobbling-asteroid-donaldjohanson-holds-evidence-of-ancient-water",
+          "title": "Lucy Flyby Reveals Wobbling Asteroid Donaldjohanson Holds ...",
+          "snippet": "Jun 27, 2026 · NASA's Lucy spacecraft reveals asteroid Donaldjohanson's complex wobble, peanut shape, and iron-rich clays indicating past liquid water on its parent body."
+        },
+        {
+          "query": "Iron-rich clays Donaldjohanson indicate liquid water present briefly distant past",
+          "url": "https://www.iflscience.com/nasas-lucy-mission-finds-evidence-of-ancient-water-on-asteroid-donaldjohanson-83848",
+          "title": "NASA's Lucy Mission Finds Evidence Of Ancient Water On ...",
+          "snippet": "Jun 19, 2026 · There is evidence in surface minerals, such as the presence of iron-bearing phyllosilicates, that indicate this bygone space rock had liquid water."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://svs.gsfc.nasa.gov/5628",
+          "title": "NASA SVS | Lucy Observations of Asteroid Donaldjohanson",
+          "query": "Iron-rich clays Donaldjohanson indicate liquid water present briefly distant past"
+        },
+        {
+          "url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+          "title": "NASA’s Lucy Uncovers Ancient Water Clues: Exciting!",
+          "query": "Iron-rich clays Donaldjohanson indicate liquid water present briefly distant past"
+        },
+        {
+          "url": "https://scitechdaily.com/nasas-lucy-uncovers-ancient-water-clues-on-a-weirdly-wobbling-asteroid/",
+          "title": "NASA’s Lucy Uncovers Ancient Water Clues on a Weirdly ...",
+          "query": "Iron-rich clays Donaldjohanson indicate liquid water present briefly distant past"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://svs.gsfc.nasa.gov/5628",
+          "final_url": "https://svs.gsfc.nasa.gov/5628",
+          "title": "NASA SVS | Lucy Observations of Asteroid Donaldjohanson",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "b2347f71b8866013eb617d73cd813a90a6d3add76ee76c56d985068517df65fe",
+          "page_cache": "hit",
+          "error": null,
+          "passage": {
+            "source_id": "src_6e89b89d84e0",
+            "url": "https://svs.gsfc.nasa.gov/5628",
+            "start": 6309,
+            "end": 6738,
+            "quote": "Lucy-DJ-QUE97990-Spectra.png (3840x3000) [3.8 MB]\n During its April 20, 2025 encounter with the main belt asteroid Donaldjohanson, NASA’s Lucy spacecraft discovered evidence for iron-rich clays on the surface of the asteroid using its infrared spectrometer. These clays, which are similar to those found in carbon-rich meteorites such as QUE 97990, indicate that water was briefly present in the asteroid during the distant past."
+          }
+        },
+        {
+          "url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+          "final_url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+          "title": "NASA’s Lucy Uncovers Ancient Water Clues: Exciting! - NASA Space News",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "b3907965ec47b9f5315eef976709572d6b3a96d4c7801429db7b4434762afa35",
+          "page_cache": "hit",
+          "error": null,
+          "passage": {
+            "source_id": "src_1fcc55b30fd8",
+            "url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+            "start": 3106,
+            "end": 3408,
+            "quote": "NASA’s Lucy Uncovers Ancient Water Clues by identifying iron-rich clays on asteroid Donaldjohanson during an April 2025 flyby. These specific minerals confirm liquid water briefly existed on the object’s parent body, revealing a complex evolutionary history for this primitive inner main belt fragment."
+          }
+        },
+        {
+          "url": "https://scitechdaily.com/nasas-lucy-uncovers-ancient-water-clues-on-a-weirdly-wobbling-asteroid/",
+          "final_url": "https://scitechdaily.com/nasas-lucy-uncovers-ancient-water-clues-on-a-weirdly-wobbling-asteroid/",
+          "title": "NASA’s Lucy Uncovers Ancient Water Clues on a Weirdly ...",
+          "fetch_status": "fetch_failed",
+          "http_status": 403,
+          "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "page_cache": "fetched",
+          "error": "HTTP 403",
+          "passage": null
+        }
+      ],
+      "passages": [
+        {
+          "source_id": "src_6e89b89d84e0",
+          "url": "https://svs.gsfc.nasa.gov/5628",
+          "start": 6309,
+          "end": 6738,
+          "quote": "Lucy-DJ-QUE97990-Spectra.png (3840x3000) [3.8 MB]\n During its April 20, 2025 encounter with the main belt asteroid Donaldjohanson, NASA’s Lucy spacecraft discovered evidence for iron-rich clays on the surface of the asteroid using its infrared spectrometer. These clays, which are similar to those found in carbon-rich meteorites such as QUE 97990, indicate that water was briefly present in the asteroid during the distant past."
+        },
+        {
+          "source_id": "src_1fcc55b30fd8",
+          "url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+          "start": 3106,
+          "end": 3408,
+          "quote": "NASA’s Lucy Uncovers Ancient Water Clues by identifying iron-rich clays on asteroid Donaldjohanson during an April 2025 flyby. These specific minerals confirm liquid water briefly existed on the object’s parent body, revealing a complex evolutionary history for this primitive inner main belt fragment."
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "src_6e89b89d84e0",
+          "url": "https://svs.gsfc.nasa.gov/5628",
+          "title": "NASA SVS | Lucy Observations of Asteroid Donaldjohanson"
+        },
+        {
+          "source_id": "src_1fcc55b30fd8",
+          "url": "https://nasaspacenews.com/2026/06/lucy-uncovers-ancient-water/",
+          "title": "NASA’s Lucy Uncovers Ancient Water Clues: Exciting! - NASA Space News"
+        }
+      ],
+      "evidence_found": true,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": true,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "ok",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [],
+      "pipeline_version": "source-selection-4",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:29.223678+00:00",
+      "sources_selected_at": "2026-11-18T06:13:33.276359+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "dengue_c1",
+      "claim": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "Americas reported 4.6 million dengue cases 2,400 deaths 2023 followed 13 million cases 8,200 deaths 2024",
+          "status": "search_unavailable",
+          "error": "The configured DuckDuckGo search failed (DNSError: DNSError('error sending request for url (https://wt.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=Americas%20reported%204.6%20million%20dengue%20cases%202%2C400%20deaths%202023%20followed%2013%20million%20cases%208%2C200%20deaths%202024) > error resolving DNS > DNS error: no records found for Query { name: Name(\"wt.wikipedia.org.acasmart.jh.edu.\"), query_type: A, query_class: IN }')). A paid search service was not enabled."
+        },
+        {
+          "query": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024",
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing ...",
+          "snippet": "Mar 18, 2025 · In the Americas region, 4.6 million cases and 2,400 deaths were reported in 2023, followed by 13 million cases and 8,200 deaths in 2024. As of March 6, more than 760,000 dengue cases have been reported in 2025, which is a 15% increase compared to the previous 5-year average."
+        },
+        {
+          "query": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024",
+          "url": "https://www.dengue.com/dengue-cases-soared-record-highs-americas-region-during-2024",
+          "title": "Americas region 2024 dengue record unprecedented outbreak ...",
+          "snippet": "The causes and impact of the 2024 record-breaking dengue outbreak in the Americas region. The response to the crisis and the lessons learnt."
+        },
+        {
+          "query": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024",
+          "url": "https://www.who.int/emergencies/disease-outbreak-news/item/2024-DON518",
+          "title": "Dengue - Global situation - World Health Organization (WHO)",
+          "snippet": "May 30, 2024 · Currently, 90 countries have known active dengue transmission in 2024, not all of which have been captured in formal reporting. In addition, many endemic countries do not have strong detection and reporting mechanisms, so the true burden of dengue globally is underestimated."
+        },
+        {
+          "query": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024",
+          "url": "https://www.usnews.com/news/national-news/articles/2024-06-26/what-to-know-cdc-warns-of-increased-risk-of-dengue-infections-in-u-s",
+          "title": "What to Know: CDC Warns of ‘Increased Risk’ of Dengue ...How climate change made 2024 the deadliest year of dengueGlobal upsurge in dengue in 2024 - The LancetEPI-WIN digest 12 - Dengue: current epidemiological situation ...",
+          "snippet": "Jun 26, 2024 · Dengue resurged globally after the COVID-19 pandemic, according to the CDC. In 2023, more than 4.6 million cases and 4,000 deaths were reported in the Americas. Nov 6, 2024 · There have been record numbers of cases of the disease this year, with the global incidence surpassing 2023, which was itself a record breaking year.1 The disease is endemic in many low and middle income countr"
+        },
+        {
+          "query": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024",
+          "url": "https://www.bmj.com/content/387/bmj.q2391",
+          "title": "How climate change made 2024 the deadliest year of dengue",
+          "snippet": "Nov 6, 2024 · There have been record numbers of cases of the disease this year, with the global incidence surpassing 2023, which was itself a record breaking year.1 The disease is endemic in many low and middle income countries, but 2024 has seen many cases in many higher income countries."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing ...",
+          "query": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024"
+        },
+        {
+          "url": "https://www.dengue.com/dengue-cases-soared-record-highs-americas-region-during-2024",
+          "title": "Americas region 2024 dengue record unprecedented outbreak ...",
+          "query": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024"
+        },
+        {
+          "url": "https://www.who.int/emergencies/disease-outbreak-news/item/2024-DON518",
+          "title": "Dengue - Global situation - World Health Organization (WHO)",
+          "query": "The Americas reported 4.6 million dengue cases and 2,400 deaths in 2023, followed by 13 million cases and 8,200 deaths in 2024"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "final_url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing Recommendations in the United States | HAN | CDC",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "2f92167e08820246efe6ecbf689e5c24914bd26e3d698eead147564768282e60",
+          "page_cache": "hit",
+          "error": null,
+          "passage": {
+            "source_id": "src_7e2197ed7531",
+            "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+            "start": 3914,
+            "end": 4658,
+            "quote": "Globally, dengue cases have increased substantially in the last 5 years , with the most pronounced increases occurring in the Americas. In the Americas region , 4.6 million cases and 2,400 deaths were reported in 2023, followed by 13 million cases and 8,200 deaths in 2024. As of March 6, more than 760,000 dengue cases have been reported in 2025, which is a 15% increase compared to the previous 5-year average. Epidemics in the Americas region are expected to increase both travel-associated cases and the possibility of local transmission in the continental United States in areas with competent mosquito vectors. Spring and summer travel in the United States overlaps with the months of increased seasonal dengue activity in many countries."
+          }
+        },
+        {
+          "url": "https://www.dengue.com/dengue-cases-soared-record-highs-americas-region-during-2024",
+          "final_url": "https://www.dengue.com/dengue-cases-soared-record-highs-americas-region-during-2024",
+          "title": "Americas region 2024 dengue record unprecedented outbreak | Dengue.com",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "a80a651d924a144eaa7343d157ad8e2c0155c360762812b241b5a4f66cb0d08b",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": {
+            "source_id": "src_00dd71be857c",
+            "url": "https://www.dengue.com/dengue-cases-soared-record-highs-americas-region-during-2024",
+            "start": 1315,
+            "end": 1634,
+            "quote": "Dengue cases in the Americas skyrocketed to over 11 million by August of 2024, more than doubling the 4.6 million cases reported during the whole of 2023. 1,2 This unprecedented surge prompted Pan American Health Organization (PAHO) Director Jarbas Barbosa to declare that \"an emergency situation\" had been reached. 2,3"
+          }
+        },
+        {
+          "url": "https://www.who.int/emergencies/disease-outbreak-news/item/2024-DON518",
+          "final_url": "https://www.who.int/emergencies/disease-outbreak-news/item/2024-DON518",
+          "title": "Dengue - Global situation",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "da19636b20b383bcc3db509ab803528124f7067dfcc0b6c83d2e1bbecbdfbd50",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        }
+      ],
+      "passages": [
+        {
+          "source_id": "src_7e2197ed7531",
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "start": 3914,
+          "end": 4658,
+          "quote": "Globally, dengue cases have increased substantially in the last 5 years , with the most pronounced increases occurring in the Americas. In the Americas region , 4.6 million cases and 2,400 deaths were reported in 2023, followed by 13 million cases and 8,200 deaths in 2024. As of March 6, more than 760,000 dengue cases have been reported in 2025, which is a 15% increase compared to the previous 5-year average. Epidemics in the Americas region are expected to increase both travel-associated cases and the possibility of local transmission in the continental United States in areas with competent mosquito vectors. Spring and summer travel in the United States overlaps with the months of increased seasonal dengue activity in many countries."
+        },
+        {
+          "source_id": "src_00dd71be857c",
+          "url": "https://www.dengue.com/dengue-cases-soared-record-highs-americas-region-during-2024",
+          "start": 1315,
+          "end": 1634,
+          "quote": "Dengue cases in the Americas skyrocketed to over 11 million by August of 2024, more than doubling the 4.6 million cases reported during the whole of 2023. 1,2 This unprecedented surge prompted Pan American Health Organization (PAHO) Director Jarbas Barbosa to declare that \"an emergency situation\" had been reached. 2,3"
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "src_7e2197ed7531",
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing Recommendations in the United States | HAN | CDC"
+        },
+        {
+          "source_id": "src_00dd71be857c",
+          "url": "https://www.dengue.com/dengue-cases-soared-record-highs-americas-region-during-2024",
+          "title": "Americas region 2024 dengue record unprecedented outbreak | Dengue.com"
+        }
+      ],
+      "evidence_found": true,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": true,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "ok",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [],
+      "pipeline_version": "source-selection-4",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:33.144155+00:00",
+      "sources_selected_at": "2026-11-18T06:12:13.483368+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "dengue_c2",
+      "claim": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "March 6 2025 more than 760,000 dengue cases had reported Americas 15 percent above previous five-year average",
+          "status": "search_unavailable",
+          "error": "The configured DuckDuckGo search failed (DNSError: DNSError('error sending request for url (https://wt.wikipedia.org/w/api.php?action=opensearch&profile=fuzzy&limit=1&search=March%206%202025%20more%20than%20760%2C000%20dengue%20cases%20had%20reported%20Americas%2015%20percent%20above%20previous%20five-year%20average) > error resolving DNS > DNS error: no records found for Query { name: Name(\"wt.wikipedia.org.acasmart.jh.edu.\"), query_type: A, query_class: IN }')). A paid search service was not enabled."
+        },
+        {
+          "query": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average",
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing ...",
+          "snippet": "Mar 18, 2025 · As of March 6, more than 760,000 dengue cases have been reported in 2025, which is a 15% increase compared to the previous 5-year average. Epidemics in the Americas region are expected to increase both travel-associated cases and the possibility of local transmission in the continental United States in areas with competent mosquito vectors."
+        },
+        {
+          "query": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average",
+          "url": "https://www.nyc.gov/assets/doh/downloads/pdf/han/advisory/2025/han-advisory-8-dengue-virus.pdf",
+          "title": "DATE: March 21, 2025 - NYC.gov",
+          "snippet": "• Globally, dengue cases have increased substantially in the last 5 years, especially in the Americas region, where countries reported record-breaking numbers of dengue cases in 2024."
+        },
+        {
+          "query": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average",
+          "url": "https://www.paho.org/sites/default/files/2026/02/2026-18-feb-phe-epi-update-dengue-enfinal1.pdf",
+          "title": "Summary of the situation in the Americas Region",
+          "snippet": "During 2025, circulation of all four dengue virus serotypes was identified in the Americas Region. Brazil, Colombia, Costa Rica, El Salvador, Mexico, Panama, and Puerto Rico reported simultaneous circulation of all four serotypes (DENV-1, DENV-2, DENV-3, and DENV-4)."
+        },
+        {
+          "query": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average",
+          "url": "https://www.paho.org/sites/default/files/2026/02/2026-18-feb-phe-epi-update-dengue-enfinal.pdf",
+          "title": "Epidemiological Update Dengue in the Americas Region",
+          "snippet": "Feb 18, 2026 · 2025, 145,251 suspected dengue cases were reported. Of the total number of reported cases, 2 ,001 were laboratory confirmed, including 84 deaths. The incidence rate was 110 per 10"
+        },
+        {
+          "query": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average",
+          "url": "https://www.who.int/publications/i/item/who-wer10140-285-289",
+          "title": "Global dengue update - World Health Organization (WHO)",
+          "snippet": "Oct 9, 2026 · Key drivers of dengue transmission include rapid urbanization and climate change, both of which are resulting in an increase in permissive environments for mosquitoes, as well as expanded global travel and trade, moving the virus, mosquitoes and infected humans across borders."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing ...",
+          "query": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average"
+        },
+        {
+          "url": "https://www.nyc.gov/assets/doh/downloads/pdf/han/advisory/2025/han-advisory-8-dengue-virus.pdf",
+          "title": "DATE: March 21, 2025 - NYC.gov",
+          "query": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average"
+        },
+        {
+          "url": "https://www.paho.org/sites/default/files/2026/02/2026-18-feb-phe-epi-update-dengue-enfinal1.pdf",
+          "title": "Summary of the situation in the Americas Region",
+          "query": "As of March 6, 2025, more than 760,000 dengue cases had been reported in the Americas, 15 percent above the previous five-year average"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "final_url": "https://www.cdc.gov/han/php/notices/han00523.html",
+          "title": "Ongoing Risk of Dengue Virus Infections and Updated Testing Recommendations in the United States | HAN | CDC",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "2f92167e08820246efe6ecbf689e5c24914bd26e3d698eead147564768282e60",
+          "page_cache": "hit",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://www.nyc.gov/assets/doh/downloads/pdf/han/advisory/2025/han-advisory-8-dengue-virus.pdf",
+          "final_url": "https://www.nyc.gov/assets/doh/downloads/pdf/han/advisory/2025/han-advisory-8-dengue-virus.pdf",
+          "title": "DATE: March 21, 2025 - NYC.gov",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "c1301db930195697a877c2e11b56d10d747edff0227753f04e557ddcfa343fe8",
+          "page_cache": "hit",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://www.paho.org/sites/default/files/2026/02/2026-18-feb-phe-epi-update-dengue-enfinal1.pdf",
+          "final_url": "https://www.paho.org/sites/default/files/2026/02/2026-18-feb-phe-epi-update-dengue-enfinal1.pdf",
+          "title": "Summary of the situation in the Americas Region",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "2cebea078e299f423bcad1c4cf47227d44f87ea7812bdf343244f2d3872a1609",
+          "page_cache": "fetched",
+          "error": null,
+          "passage": null
+        }
+      ],
+      "passages": [],
+      "sources": [],
+      "evidence_found": false,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": false,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "passage_not_found",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [
+        "No fetched passage was available to judge. The claim is not treated as false."
+      ],
+      "pipeline_version": "source-selection-4",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:35.291390+00:00",
+      "sources_selected_at": "2026-11-18T06:12:16.789187+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    },
+    {
+      "id": "dengue_c3",
+      "claim": "Puerto Rico reported 6,291 dengue cases in 2024; 3,292 required hospitalization and 13 people died.",
+      "human_label": null,
+      "human_basis": null,
+      "queries": [
+        {
+          "query": "Puerto Rico reported 6,291 dengue cases 2024 3,292 required hospitalization 13 people died",
+          "status": "ok",
+          "error": null
+        }
+      ],
+      "candidates": [
+        {
+          "query": "Puerto Rico reported 6,291 dengue cases 2024 3,292 required hospitalization 13 people died",
+          "url": "https://www.cdc.gov/mmwr/volumes/74/wr/mm7405a1.htm",
+          "title": "Dengue Outbreak and Response — Puerto Rico, 2024 | MMWR",
+          "snippet": "Feb 20, 2025 · During 2024, Puerto Rico reported 6,291 dengue cases and surpassed the epidemic threshold, prompting declaration of a local public health emergency. Approximately one half of patients (52.3%) were hospitalized, 264 (4.2%) had severe dengue cases, and 11 (0.2%) persons died."
+        },
+        {
+          "query": "Puerto Rico reported 6,291 dengue cases 2024 3,292 required hospitalization 13 people died",
+          "url": "https://www.cdc.gov/mmwr/volumes/74/wr/pdfs/mm7405a1-H.pdf",
+          "title": "MMWR, Dengue Outbreak and Response Puerto Rico, 2024",
+          "snippet": "During 2024, Puerto Rico reported 6,291 dengue cases and surpassed the epidemic threshold, prompting declaration of a local public health emergency. Approximately one half of patients (52.3%) were hospitalized, 264 (4.2%) had severe dengue cases, and 11 (0.2%) persons died."
+        },
+        {
+          "query": "Puerto Rico reported 6,291 dengue cases 2024 3,292 required hospitalization 13 people died",
+          "url": "https://www.annemergmed.com/article/S0196-0644(25)00205-7/fulltext",
+          "title": "Dengue Outbreak and Response—Puerto Rico, 2024",
+          "snippet": "In 2024, a total of 6,291 dengue cases (191.4 per 100,000 population) were reported in Puerto Rico. Cases remained above the epidemic threshold throughout 2024 and were particularly high after the start of the rainy season in May."
+        },
+        {
+          "query": "Puerto Rico reported 6,291 dengue cases 2024 3,292 required hospitalization 13 people died",
+          "url": "https://reliefweb.int/report/puerto-rico-united-states-america/morbidity-and-mortality-weekly-report-dengue-outbreak-and-response-puerto-rico-2024-february-20-2025",
+          "title": "Morbidity and Mortality Weekly Report: Dengue Outbreak and ...",
+          "snippet": "Feb 20, 2025 · During 2024, Puerto Rico reported 6,291 dengue cases and surpassed the epidemic threshold, prompting declaration of a local public health emergency. Approximately one half of..."
+        },
+        {
+          "query": "Puerto Rico reported 6,291 dengue cases 2024 3,292 required hospitalization 13 people died",
+          "url": "https://www.sciencedirect.com/science/article/pii/S0196064425002057",
+          "title": "Dengue Outbreak and Response—Puerto Rico, 2024 - ScienceDirect",
+          "snippet": "Jul 1, 2025 · In 2024, a total of 6,291 dengue cases (191.4 per 100,000 population) were reported in Puerto Rico. Cases remained above the epidemic threshold throughout 2024 and were particularly high after the start of the rainy season in May."
+        }
+      ],
+      "selected": [
+        {
+          "url": "https://www.cdc.gov/mmwr/volumes/74/wr/mm7405a1.htm",
+          "title": "Dengue Outbreak and Response — Puerto Rico, 2024 | MMWR",
+          "query": "Puerto Rico reported 6,291 dengue cases 2024 3,292 required hospitalization 13 people died"
+        },
+        {
+          "url": "https://www.cdc.gov/mmwr/volumes/74/wr/pdfs/mm7405a1-H.pdf",
+          "title": "MMWR, Dengue Outbreak and Response Puerto Rico, 2024",
+          "query": "Puerto Rico reported 6,291 dengue cases 2024 3,292 required hospitalization 13 people died"
+        },
+        {
+          "url": "https://www.annemergmed.com/article/S0196-0644(25)00205-7/fulltext",
+          "title": "Dengue Outbreak and Response—Puerto Rico, 2024",
+          "query": "Puerto Rico reported 6,291 dengue cases 2024 3,292 required hospitalization 13 people died"
+        }
+      ],
+      "fetches": [
+        {
+          "url": "https://www.cdc.gov/mmwr/volumes/74/wr/mm7405a1.htm",
+          "final_url": "https://www.cdc.gov/mmwr/volumes/74/wr/mm7405a1.htm",
+          "title": "Dengue Outbreak and Response — Puerto Rico, 2024 | MMWR",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "2a12eb80abd343019a2799c72303689a073dfe29b23e81ec598f2baffc656d4f",
+          "page_cache": "hit",
+          "error": null,
+          "passage": {
+            "source_id": "src_d67af708ef7f",
+            "url": "https://www.cdc.gov/mmwr/volumes/74/wr/mm7405a1.htm",
+            "start": 1826,
+            "end": 2162,
+            "quote": "During 2024, Puerto Rico reported 6,291 dengue cases and surpassed the epidemic threshold, prompting declaration of a local public health emergency. Approximately one half of patients (52.3%) were hospitalized, 264 (4.2%) had severe dengue cases, and 11 (0.2%) persons died. Persons aged 10–19 years accounted for 28.4% of severe cases."
+          }
+        },
+        {
+          "url": "https://www.cdc.gov/mmwr/volumes/74/wr/pdfs/mm7405a1-H.pdf",
+          "final_url": "https://www.cdc.gov/mmwr/volumes/74/wr/pdfs/mm7405a1-H.pdf",
+          "title": "MMWR, Dengue Outbreak and Response Puerto Rico, 2024",
+          "fetch_status": "ok",
+          "http_status": 200,
+          "content_sha256": "4c5466b1fc42793be836659d0f44a4ae28eba0f47a5bd326d1315d6d24a47a5a",
+          "page_cache": "hit",
+          "error": null,
+          "passage": null
+        },
+        {
+          "url": "https://www.annemergmed.com/article/S0196-0644(25)00205-7/fulltext",
+          "final_url": "https://www.annemergmed.com/article/S0196-0644(25)00205-7/fulltext",
+          "title": "Dengue Outbreak and Response—Puerto Rico, 2024",
+          "fetch_status": "fetch_failed",
+          "http_status": 403,
+          "content_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "page_cache": "fetched",
+          "error": "HTTP 403",
+          "passage": null
+        }
+      ],
+      "passages": [
+        {
+          "source_id": "src_d67af708ef7f",
+          "url": "https://www.cdc.gov/mmwr/volumes/74/wr/mm7405a1.htm",
+          "start": 1826,
+          "end": 2162,
+          "quote": "During 2024, Puerto Rico reported 6,291 dengue cases and surpassed the epidemic threshold, prompting declaration of a local public health emergency. Approximately one half of patients (52.3%) were hospitalized, 264 (4.2%) had severe dengue cases, and 11 (0.2%) persons died. Persons aged 10–19 years accounted for 28.4% of severe cases."
+        }
+      ],
+      "sources": [
+        {
+          "source_id": "src_d67af708ef7f",
+          "url": "https://www.cdc.gov/mmwr/volumes/74/wr/mm7405a1.htm",
+          "title": "Dengue Outbreak and Response — Puerto Rico, 2024 | MMWR"
+        }
+      ],
+      "evidence_found": true,
+      "page_fetch_succeeded": true,
+      "relevant_passage_found": true,
+      "sufficient_evidence_found": null,
+      "verdict": null,
+      "search_status": "ok",
+      "fetch_status": "ok",
+      "judge_status": "not_run",
+      "citation_passed": null,
+      "limitations": [],
+      "pipeline_version": "source-selection-4",
+      "cache_version": "page-body-v1",
+      "created_at": "2026-11-18T05:39:37.791099+00:00",
+      "sources_selected_at": "2026-11-18T06:13:33.337087+00:00",
+      "provider": null,
+      "model": null,
+      "article_source_url": null,
+      "named_sources": [],
+      "key_evidence_obtained": null
+    }
+  ],
+  "evaluation": {
+    "search_completed": 12,
+    "evidence_acquired": 7,
+    "judge_completed": 0,
+    "judge_accuracy": null,
+    "end_to_end_matches": 0,
+    "end_to_end_rate": "0/12",
+    "key_evidence_obtained": 0,
+    "claims": [
+      {
+        "id": "chan_chan_c1",
+        "search_status": "ok",
+        "fetch_status": "ok",
+        "evidence_found": true,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "chan_chan_c2",
+        "search_status": "ok",
+        "fetch_status": "passage_not_found",
+        "evidence_found": false,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "chan_chan_c3",
+        "search_status": "search_unavailable",
+        "fetch_status": "not_run",
+        "evidence_found": false,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "heatwave_c1",
+        "search_status": "search_unavailable",
+        "fetch_status": "not_run",
+        "evidence_found": false,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "heatwave_c2",
+        "search_status": "ok",
+        "fetch_status": "ok",
+        "evidence_found": true,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "heatwave_c3",
+        "search_status": "ok",
+        "fetch_status": "ok",
+        "evidence_found": true,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "lucy_c1",
+        "search_status": "search_unavailable",
+        "fetch_status": "not_run",
+        "evidence_found": false,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "lucy_c2",
+        "search_status": "ok",
+        "fetch_status": "ok",
+        "evidence_found": true,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "lucy_c3",
+        "search_status": "ok",
+        "fetch_status": "ok",
+        "evidence_found": true,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "dengue_c1",
+        "search_status": "ok",
+        "fetch_status": "ok",
+        "evidence_found": true,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "dengue_c2",
+        "search_status": "ok",
+        "fetch_status": "passage_not_found",
+        "evidence_found": false,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      },
+      {
+        "id": "dengue_c3",
+        "search_status": "ok",
+        "fetch_status": "ok",
+        "evidence_found": true,
+        "judge_status": "not_run",
+        "verdict": null,
+        "human_label": null,
+        "judge_correct": null,
+        "citation_passed": null,
+        "key_evidence_obtained": null,
+        "end_to_end_match": null
+      }
+    ]
+  }
+}

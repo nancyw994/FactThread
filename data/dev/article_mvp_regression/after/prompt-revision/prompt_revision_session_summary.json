@@ -1,0 +1,54 @@
+{
+  "route": {
+    "provider": "groq",
+    "model": "openai/gpt-oss-120b",
+    "allow_paid": false,
+    "allow_openrouter_fallback": false,
+    "output_cap": 8192,
+    "output_parameter": "max_completion_tokens"
+  },
+  "prompt_version": "sha256:e52cb13057888cc38bba9f73e2e6ac7fd229593d848a6b16829203269ade1f77",
+  "baseline_file": "baselines/chan_chan_groq_gpt-oss-120b_8192.json",
+  "before_prompt_snapshot": "baselines/extract_claims_prompt_before_revision.md",
+  "chan_comparison": "after/prompt-revision/chan_chan_before_after_comparison.json",
+  "chan_revised_record": "after/prompt-revision/20261118T194855.244118Z/chan_chan.json",
+  "batch_manifest": "after/prompt-revision/20261118T195515.210655Z/manifest.json",
+  "batch": {
+    "heatwave": {
+      "status": "completed",
+      "http_status": 200,
+      "input_chars": 6885,
+      "parsed": 22,
+      "accepted": 16,
+      "rejected": 6,
+      "finish_reason": "stop",
+      "cache_reused": false,
+      "cache_file": "cache/extractions/ffc8312c98cfcb29f3023e635ee6bc0bfd9f09d1d93ab0a64263fc299ccca11d.json"
+    },
+    "lucy": {
+      "status": "paused_rate_limited",
+      "http_status": 429,
+      "retry_after_seconds": 13,
+      "attempts": 1,
+      "cache_reused": false
+    },
+    "dengue": {
+      "status": "not_run_pending_rate_limit"
+    }
+  },
+  "cache_policy": {
+    "key_fields": [
+      "provider",
+      "model",
+      "prompt_version",
+      "output_cap",
+      "input_sha256"
+    ],
+    "matching_prior_cache_hits": 0,
+    "note": "The prompt hash changed, so prior extraction outputs did not match; completed Heatwave output is saved for reuse under the new identity."
+  },
+  "search_run": false,
+  "judge_run": false,
+  "automatic_budget_increase": false,
+  "automatic_provider_switch": false
+}
