@@ -64,7 +64,7 @@ class CheckPageTests(unittest.TestCase):
         self.assertEqual(done["citations"][0]["quote"], SENTENCE)
         self.assertEqual(done["citations"][0]["title"], "RFC 2606")
         self.assertIn("rfc-editor.org/rfc/rfc2606", done["citations"][0]["url"])
-        self.assertEqual(done["citations"][0]["role_label"], "原始文档")
+        self.assertEqual(done["citations"][0]["role_label"], "外部页面（原始文档）")
         self.assertTrue(done["citations"][0]["cited"])
         self.assertNotIn("snippet that the judge must not see", json.dumps(done))
         self.assertTrue(any("不是完整文档" in line for line in done["scope"]))
@@ -266,8 +266,8 @@ class CheckPageTests(unittest.TestCase):
         self.assertNotIn("judge_requests", json.dumps(hidden))
         self.assertIsNone(view["explanation"])
         self.assertLess(len(view["citations"][0]["excerpt"]), len(quote.strip()))
-        self.assertEqual(view["citations"][0]["role_label"], "原始文档")
-        self.assertEqual(view["citations"][1]["role_label"], "辅助材料")
+        self.assertEqual(view["citations"][0]["role_label"], "外部页面（原始文档）")
+        self.assertEqual(view["citations"][1]["role_label"], "外部页面")
         self.assertEqual(view["limitations"], [])
         self.assertFalse(view["paid_fallback"])
         failed = check_server.public_view(
@@ -289,10 +289,10 @@ class CheckPageTests(unittest.TestCase):
                 "passages": [{"source_id": "src_wiki", "url": "https://en.wikipedia.org/wiki/Example.com", "quote": "A short overview."}],
             }
         )
-        self.assertEqual(failed["reads"][0]["role_label"], "原始文档")
+        self.assertEqual(failed["reads"][0]["role_label"], "外部页面（原始文档）")
         self.assertIn("HTTP 404", failed["reads"][0]["detail"])
-        self.assertEqual(failed["reads"][1]["role_label"], "辅助材料")
-        self.assertEqual(failed["citations"][0]["role_label"], "辅助材料")
+        self.assertEqual(failed["reads"][1]["role_label"], "外部页面")
+        self.assertEqual(failed["citations"][0]["role_label"], "外部页面")
 
     def test_the_page_has_no_label_or_confidence_field(self) -> None:
         page = (ROOT / "web" / "check.html").read_text(encoding="utf-8")
