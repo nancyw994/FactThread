@@ -504,3 +504,60 @@ class TypographicBoundaryTests(unittest.TestCase):
     def test_case_folded_first_letter_does_not_match_inside_word(self):
         from extract_claims import find_quote_ranges
         self.assertEqual(find_quote_ranges("It was too late to leave.", "Ate to leave"), [])
+
+
+class NormalizationFidelityTests(unittest.TestCase):
+    def _run(self, article: str, quote: str, normalized: str) -> dict:
+        item = claim(quote)
+        item["normalized_claim"] = normalized
+
+        def complete(text, repair):
+            return {"claims": [item]}
+
+        return ex.extract_claims(article, complete)["claims"][0]
+
+    def test_dropped_so_called_falls_back_to_source(self) -> None:
+        quote = "Flights were grounded in the longest so-called ground stop since 2001."
+        row = self._run("Intro. " + quote, quote, "Flights were grounded in the longest ground stop since 2001.")
+        self.assertEqual(row["normalized_claim"], quote)
+        self.assertIn(ex._HEDGE_FALLBACK, row["normalization_notes"])
+
+    def test_dropped_described_as_falls_back_to_source(self) -> None:
+        quote = 'The network was offline after what the agency described as "routine maintenance."'
+        row = self._run("Intro. " + quote, quote, "The network was offline after routine maintenance.")
+        self.assertEqual(row["normalized_claim"], quote)
+
+    def test_kept_hedge_is_not_rewritten(self) -> None:
+        quote = "The suspect allegedly stole 3 cars."
+        normalized = "The suspect is alleged to have stolen 3 cars."
+        row = self._run("Intro. " + quote, quote, normalized)
+        self.assertEqual(row["normalized_claim"], normalized)
+        self.assertNotIn(ex._HEDGE_FALLBACK, row["normalization_notes"])
+
+    def test_continued_direct_quote_needs_speaker(self) -> None:
+        article = ('“Women deserve answers,” said HHS Secretary Robert F. Kennedy, Jr. '
+                   '“This study links two chemicals to a higher risk of cancer and demands more work.')
+        quote = "This study links two chemicals to a higher risk of cancer"
+        row = self._run(article, quote, quote + ".")
+        self.assertIn(ex._SPEAKER_GAP, row["missing_context"])
+
+    def test_quote_mark_on_next_paragraph_is_not_a_direct_quote(self) -> None:
+        quote = "1 in 10 paid all cash, a record high."
+        article = 'Buyers are older, and ' + quote + '\n"Inheritances drive this," said Jo Lee.'
+        row = self._run(article, quote, quote)
+        self.assertNotIn(ex._SPEAKER_GAP, row["missing_context"])
+
+    def test_dangling_pronoun_subject_is_flagged(self) -> None:
+        quote = "while for those who paid all-cash it was 54"
+        row = self._run("The median age was 40, " + quote + ".", quote, quote)
+        self.assertIn(ex._DANGLING_SUBJECT_GAP, row["missing_context"])  # "it" has no stated referent
+        row = self._run("Buyers aged. They were also older.", "They were also older.", "They were also older.")
+        self.assertIn(ex._DANGLING_SUBJECT_GAP, row["missing_context"])
+
+    def test_relative_number_without_baseline_is_flagged(self) -> None:
+        quote = "For PFOS, the rate was 93% higher."
+        row = self._run("Intro. " + quote, quote, quote)
+        self.assertIn(ex._BASELINE_GAP, row["missing_context"])
+        quote = "The rate was 93% higher than in the lowest group."
+        row = self._run("Intro. " + quote, quote, quote)
+        self.assertNotIn(ex._BASELINE_GAP, row["missing_context"])

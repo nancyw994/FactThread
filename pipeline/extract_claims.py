@@ -107,6 +107,54 @@ _NAMED_ATTRIBUTION = re.compile(
 )
 _SPEAKER_GAP = "直接引语未在规范化声明中标注说话人"
 _NORMALIZATION_FALLBACK = "模型规范化改变了时态/确定程度，已回退为原文措辞"
+_HEDGE_FALLBACK = "模型规范化删去了原文的限定或转述措辞，已回退为原文措辞"
+# Distancing / hedging markers whose removal turns a reported or qualified
+# statement into a flat assertion. Matched as whole words, case-insensitive.
+_HEDGE = re.compile(
+    r"\b(?:so[- ]called|described as|alleged(?:ly)?|reported(?:ly)?|purported(?:ly)?|"
+    r"supposed(?:ly)?|apparent(?:ly)?|claimed|unverified|unconfirmed|"
+    r"without (?:providing |presenting |offering |citing )?(?:any )?evidence|"
+    r"(?:did not|didn't) (?:provide|present|offer|cite) (?:any )?evidence)\b",
+    re.IGNORECASE,
+)
+_HEDGE_STEMS = (
+    ("so", r"\bso[- ]called\b"),
+    ("describ", r"\bdescrib"),
+    ("alleg", r"\balleg"),
+    ("report", r"\breport"),
+    ("purport", r"\bpurport"),
+    ("suppos", r"\bsuppos"),
+    ("apparent", r"\bapparent"),
+    ("claim", r"\bclaim"),
+    ("unverified", r"\bunverified|\bnot (?:been )?verified"),
+    ("unconfirmed", r"\bunconfirmed|\bnot (?:been )?confirmed"),
+)
+
+
+def _hedge_stem(marker: str) -> str:
+    """Pattern that must still appear in the normalized claim for this marker."""
+    lowered = marker.lower()
+    if "evidence" in lowered:
+        return r"\bevidence\b"
+    for prefix, pattern in _HEDGE_STEMS:
+        if lowered.startswith(prefix):
+            return pattern
+    return re.escape(lowered)
+
+
+_DANGLING_SUBJECT_GAP = "声明以指代不明的代词开头，需要说明所指对象"
+_DANGLING_SUBJECT = re.compile(
+    r"^\W*(?:(?:and|but|while|whereas|so|or)\s+)?(?:for\s+[^,]{1,60},?\s+)?"
+    r"(?:it|they|this|that|these|those)\s+(?:is|was|are|were|has|have|had|will|would|remains?|remained)\b",
+    re.IGNORECASE,
+)
+_BASELINE_GAP = "比较性数字缺少比较基准（与什么相比）"
+_RELATIVE_NUMBER = re.compile(
+    r"\b\d+(?:\.\d+)?\s*(?:%|percent|times|x)\s+(?:higher|lower|more|less|greater|smaller|larger|faster|slower)\b"
+    r"|\b(?:twice|three times|four times|half)\s+as\s+(?:high|low|many|much|likely|large)\b",
+    re.IGNORECASE,
+)
+_BASELINE_MARKER = re.compile(r"\b(?:than|compared (?:with|to)|relative to|versus|vs\.?|over the|from the)\b", re.IGNORECASE)
 _QUOTE_TYPOGRAPHY_NOTE = "引文与原文仅大小写/标点不同，已替换为原文精确片段"
 _QUOTE_EQUIVALENTS = {
     '"': '[\"“”]', "“": '[\"“”]', "”": '[\"“”]',
@@ -499,6 +547,9 @@ def _finalize(article: str, claim: dict[str, Any]) -> dict[str, Any]:
     if source_modality - normalized_modality:
         normalized = quote
         normalization_notes.append(_NORMALIZATION_FALLBACK)
+    if any(not re.search(_hedge_stem(m.group(0)), normalized, re.IGNORECASE) for m in _HEDGE.finditer(quote)):
+        normalized = quote
+        normalization_notes.append(_HEDGE_FALLBACK)
     # The quote above is now the exact article substring, so preserve the
     # resolver's ranges (including duplicate exact occurrences).
     offset = source_ranges[0][0] if source_ranges else 0
@@ -617,10 +668,32 @@ def _quote_has_unattributed_speaker(article: str, ranges: list[list[int]], quote
         right = quote_end
         while left > 0 and article[left - 1].isspace(): left -= 1
         while right < len(article) and article[right].isspace(): right += 1
-        is_quoted = (includes_open and includes_close) or (
-            left > 0 and right < len(article)
-            and article[left - 1] in opening and article[right] in closing
+        quote_open = {'"', "“", "「", "『"}
+        quote_close = {'"', "”", "」", "』"}
+        # Adjacent delimiters count only within the same line: a quote mark
+        # across a line break belongs to a neighbouring paragraph.
+        left_inline, right_inline = quote_start, quote_end
+        while left_inline > 0 and article[left_inline - 1] in " \t": left_inline -= 1
+        while right_inline < len(article) and article[right_inline] in " \t": right_inline += 1
+        inner = article[quote_start:quote_end]
+        straight_odd = inner.count('"') % 2 == 1
+        curly_opens = sum(inner.count(c) for c in "“「『")
+        curly_closes = sum(inner.count(c) for c in "”」』")
+        # A delimiter inside the quote only marks a direct-quote boundary when
+        # it is unpaired there; a balanced inner pair is a quoted term.
+        opens_quote = (left_inline > 0 and article[left_inline - 1] in quote_open) or (
+            article[quote_start] in quote_open
+            and (straight_odd if article[quote_start] == '"' else curly_opens > curly_closes)
         )
+        closes_quote = (right_inline < len(article) and article[right_inline] in quote_close) or (
+            article[quote_end - 1] in quote_close
+            and (straight_odd if article[quote_end - 1] == '"' else curly_closes > curly_opens)
+        )
+        if includes_open and includes_close and not (straight_odd or curly_opens != curly_closes):
+            opens_quote = article[quote_start] in quote_open and article[quote_end - 1] in quote_close
+        # Either delimiter is enough: a direct quote that runs across several
+        # sentences has its opening mark on the first and closing on the last.
+        is_quoted = opens_quote or closes_quote
         if not is_quoted:
             continue
         # Look at the quote's own sentence and its immediate neighbors. This
@@ -635,7 +708,9 @@ def _quote_has_unattributed_speaker(article: str, ranges: list[list[int]], quote
         paragraph_end = article.find("\n\n", quote_end)
         if paragraph_end < 0:
             paragraph_end = len(article)
-        context_spans = spans[max(0, sentence_index - 1):sentence_index + 2]
+        # Two sentences back: abbreviations such as "F." or "Jr." in a
+        # speaker's name split the attribution sentence.
+        context_spans = spans[max(0, sentence_index - 2):sentence_index + 2]
         context = " ".join(article[max(a, paragraph_start):min(b, paragraph_end)] for a, b in context_spans)
         if not _ATTRIBUTION.search(context):
             continue
@@ -677,6 +752,22 @@ def claim_context_gaps(source_quote: str, normalized_claim: str) -> list[str]:
     for gap in headline_context_gaps(source_quote, normalized_claim):
         if gap not in gaps:
             gaps.append(gap)
+    for gap in referent_context_gaps(normalized_claim):
+        if gap not in gaps:
+            gaps.append(gap)
+    return gaps
+
+
+def referent_context_gaps(normalized_claim: str) -> list[str]:
+    """Flag claims whose subject or comparison baseline is not stated.
+
+    Only flags; never fills in a referent the claim itself does not give.
+    """
+    gaps = []
+    if _DANGLING_SUBJECT.search(normalized_claim):
+        gaps.append(_DANGLING_SUBJECT_GAP)
+    if _RELATIVE_NUMBER.search(normalized_claim) and not _BASELINE_MARKER.search(normalized_claim):
+        gaps.append(_BASELINE_GAP)
     return gaps
 
 

@@ -34,7 +34,7 @@ TYPE_LABELS = {
 }
 EXTRACTION_RESPONSE_FORMAT = {"type": "json_object"}
 ARTICLE_MODEL = os.environ.get("FACTTHREAD_ARTICLE_MODEL", "openai/gpt-oss-120b").strip()
-EXTRACTION_CODE_VERSION = "article-extraction-3"
+EXTRACTION_CODE_VERSION = "article-extraction-4"
 PROMPT_VERSION = "article-claims-v2"
 
 
