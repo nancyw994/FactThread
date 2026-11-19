@@ -1,0 +1,114 @@
+{
+  "baseline_commit": "7eedc74",
+  "before": {
+    "chan_chan": {
+      "raw_reply": "data/dev/article_mvp_regression/after/chan-16384-once/20261119T061032.258640Z/raw_reply.txt",
+      "finish_reason": "stop",
+      "status_counts": {
+        "completed": 1
+      },
+      "claim_status_counts": {
+        "ready": 19,
+        "skipped": 7,
+        "needs_context": 1
+      },
+      "needs_context_count": 1,
+      "accepted": 27,
+      "rejected": 0,
+      "uncovered_sentence_count": 0,
+      "flags": {
+        "mid_sentence_quote": 0,
+        "unattributed_quotation": 0,
+        "normalization_fallback": 0
+      },
+      "normalization_fallback_notes": [],
+      "quote_position_notes": []
+    },
+    "heatwave": {
+      "raw_reply": "data/dev/article_mvp_regression/after/remaining-16384/20261119T065418.025619Z/raw/heatwave-attempt-1.txt",
+      "finish_reason": "stop",
+      "status_counts": {
+        "completed": 1
+      },
+      "claim_status_counts": {
+        "ready": 12,
+        "skipped": 4,
+        "needs_context": 1
+      },
+      "needs_context_count": 1,
+      "accepted": 17,
+      "rejected": 0,
+      "uncovered_sentence_count": 0,
+      "flags": {
+        "mid_sentence_quote": 0,
+        "unattributed_quotation": 0,
+        "normalization_fallback": 0
+      },
+      "normalization_fallback_notes": [],
+      "quote_position_notes": []
+    }
+  },
+  "after": {
+    "chan_chan": {
+      "raw_reply": "data/dev/article_mvp_regression/after/chan-16384-once/20261119T061032.258640Z/raw_reply.txt",
+      "finish_reason": "stop",
+      "status_counts": {
+        "completed": 1
+      },
+      "claim_status_counts": {
+        "ready": 18,
+        "skipped": 7,
+        "needs_context": 2
+      },
+      "needs_context_count": 2,
+      "accepted": 27,
+      "rejected": 0,
+      "uncovered_sentence_count": 5,
+      "flags": {
+        "mid_sentence_quote": 5,
+        "unattributed_quotation": 2,
+        "normalization_fallback": 0
+      },
+      "normalization_fallback_notes": [],
+      "quote_position_notes": [
+        "引文从句中开始，可能省略了该句前面的限定或分句",
+        "引文从句中开始，可能省略了该句前面的限定或分句",
+        "引文从句中开始，可能省略了该句前面的限定或分句",
+        "引文从句中开始，可能省略了该句前面的限定或分句",
+        "引文从句中开始，可能省略了该句前面的限定或分句"
+      ]
+    },
+    "heatwave": {
+      "raw_reply": "data/dev/article_mvp_regression/after/remaining-16384/20261119T065418.025619Z/raw/heatwave-attempt-1.txt",
+      "finish_reason": "stop",
+      "status_counts": {
+        "completed": 1
+      },
+      "claim_status_counts": {
+        "ready": 13,
+        "skipped": 4
+      },
+      "needs_context_count": 0,
+      "accepted": 17,
+      "rejected": 0,
+      "uncovered_sentence_count": 31,
+      "flags": {
+        "mid_sentence_quote": 6,
+        "unattributed_quotation": 0,
+        "normalization_fallback": 1
+      },
+      "normalization_fallback_notes": [
+        "模型规范化改变了时态/确定程度，已回退为原文措辞"
+      ],
+      "quote_position_notes": [
+        "引文从句中开始，可能省略了该句前面的限定或分句",
+        "引文从句中开始，可能省略了该句前面的限定或分句",
+        "引文从句中开始，可能省略了该句前面的限定或分句",
+        "引文从句中开始，可能省略了该句前面的限定或分句",
+        "引文从句中开始，可能省略了该句前面的限定或分句",
+        "引文从句中开始，可能省略了该句前面的限定或分句"
+      ]
+    }
+  },
+  "scope": "saved raw replies through local parser/filter/finalize code; prompt effect not measured"
+}
