@@ -118,6 +118,18 @@ class SearchEvidenceTests(unittest.TestCase):
         self.assertIn("archive", queries[0])
         self.assertIn("offline", queries[0])
 
+    def test_numeric_claim_queries_keep_subject_relation_measure_and_time(self) -> None:
+        claim = "In the Americas, reported dengue cases increased from 4.6 million in 2023 to 13 million in 2024."
+        queries = search_evidence.build_queries(claim)
+        self.assertEqual(len(queries), 2)
+        for query in queries:
+            self.assertIn("dengue", query)
+            self.assertIn("cases", query)
+            self.assertIn("increased", query)
+            self.assertIn("2023", query)
+            self.assertIn("2024", query)
+        self.assertTrue(any("Americas" in query for query in queries))
+
     def test_a_missing_search_service_is_not_a_refutation(self) -> None:
         def search(query: str, limit: int) -> tuple[list[dict[str, str]], str | None]:
             return [], "No search service is available. A paid search service was not enabled."

@@ -37,7 +37,7 @@ OUT = ROOT / "data" / "dev" / "search" / "last_search.json"
 MAX_QUERIES = 2
 MAX_CANDIDATES = 5
 MAX_PAGES = 3
-PIPELINE_VERSION = "source-selection-2"
+PIPELINE_VERSION = "source-selection-4"
 CACHE_VERSION = "page-body-v1"
 DEFAULT_PROVIDER = "groq"
 DEFAULT_MODEL = "openai/gpt-oss-120b"
@@ -61,38 +61,16 @@ SearchFn = Callable[[str, int], tuple[list[dict[str, str]], str | None]]
 
 
 def build_queries(claim: str, *, limit: int = MAX_QUERIES) -> list[str]:
-    """Build compact searches from the claim's entities, relation, and object."""
+    """Build a full-context and a compact search while retaining the claim's roles."""
     text = _SPACE.sub(" ", claim).strip().rstrip(".")
     words = text.split()
     if not words:
         return []
     stop = {"the", "a", "an", "at", "in", "on", "of", "for", "to", "and", "or", "by", "with", "from", "was", "were", "is", "are", "be", "been", "being", "it", "its", "this", "that", "these", "those", "as", "which", "who", "what", "when", "where", "how"}
-    content = [word for word in words if word.strip(".,;:()[]\"'").lower() not in stop]
-    first = " ".join(words[:12])
-    queries = [first]
-    relation = re.compile(r"\b(?:dedicat\w*|host\w*|invent\w*|creat\w*|caus\w*|allow\w*|enabl\w*|result\w*|attribut\w*|deriv\w*|own\w*|locat\w*|serv\w*|us\w*|produc\w*|issu\w*|releas\w*|publish\w*|reserv\w*|led|lead\w*|develop\w*|mov\w*|launch\w*|build\w*|establish\w*|represent\w*)\b", re.I)
-    match = relation.search(text)
-    if match:
-        tokens = re.findall(r"[\w.-]+(?:['’][\w-]+)?", text, flags=re.UNICODE)
-        second = " ".join(word for word in tokens if word.lower() not in stop)
-        if match.group(0).lower() not in second.lower():
-            second = f"{second} {match.group(0)}"
-    else:
-        second = " ".join(word for word in words if _distinctive(word))
-        if not second or second == first:
-            second = " ".join(content[-8:])
-    if second and second != first:
-        queries = [second, first]
-    return queries[:limit]
-
-
-def _distinctive(word: str) -> bool:
-    bare = word.strip(".,;:()[]\"'")
-    if not bare:
-        return False
-    if any(character.isdigit() for character in bare) or "." in bare or ":" in bare:
-        return True
-    return len(bare) > 1 and bare.isupper()
+    content = [word.strip(".,;:()[]\"'") for word in words if word.strip(".,;:()[]\"'").lower() not in stop]
+    compact = " ".join(content)
+    queries = [compact, text] if compact and compact != text else [text]
+    return list(dict.fromkeys(query for query in queries if query))[:limit]
 
 
 def configured_search(query: str, limit: int) -> tuple[list[dict[str, str]], str | None]:
