@@ -92,6 +92,21 @@ _MEASURE = re.compile(
     r"(?:\b\d+(?:\.\d+)?\s?%\b|\b(?:by|from|to)\s+\d|\b(?:rate|count|number|share|percentage|score|measure|metric|index|volume)\b)",
     re.IGNORECASE,
 )
+_ATTRIBUTION = re.compile(
+    r"\b(?:say|says|said|tells|told|telling|write|writes|wrote|written|"
+    r"explain|explains|explained|add|adds|added|note|notes|noted|"
+    r"report|reports|reported|claim|claims|claimed|according to)\b",
+    re.I,
+)
+_NAMED_ATTRIBUTION = re.compile(
+    r"\b(?P<speaker>(?:[A-Z][A-Za-z’'-]+)(?:\s+[A-Z][A-Za-z’'-]+){0,3})\s+"
+    r"(?:says?|said|tells|told|telling|writes?|wrote|explains?|explained|adds?|added|notes?|noted|"
+    r"reports?|reported|claims?|claimed)\b"
+    r"|\baccording to\s+(?P<according_speaker>(?:[A-Z][A-Za-z’'-]+)(?:\s+[A-Z][A-Za-z’'-]+){0,3})",
+    re.I,
+)
+_SPEAKER_GAP = "直接引语未在规范化声明中标注说话人"
+_NORMALIZATION_FALLBACK = "模型规范化改变了时态/确定程度，已回退为原文措辞"
 
 Complete = Callable[[str, list[str] | None], Any]
 
@@ -169,6 +184,12 @@ def extract_claims(text: str, complete: Complete) -> dict[str, Any]:
             }
         if isinstance(output, list):
             output = {"claims": output}
+        finish_reason = output.get("finish_reason") if isinstance(output, dict) else None
+        if isinstance(output, dict) and output.get("provider_parse_error"):
+            message = str(output.get("error") or "model response contains no complete JSON object with a claims list")
+            return {"claims": [], "rejected": [], "status": "parse_failed", "error": message,
+                    "attempts": attempts + [{"attempt": attempt_number, "stage": "parse", "error": message,
+                                             "finish_reason": finish_reason}]}
         if isinstance(output, dict) and output.get("status") in {"request_failed", "parse_failed"}:
             status = output["status"]
             message = str(output.get("error") or status)
@@ -184,16 +205,25 @@ def extract_claims(text: str, complete: Complete) -> dict[str, Any]:
             "accepted_count": len(accepted),
             "rejected_count": len(rejected),
             "rejection_reasons": [error for item in rejected for error in item["errors"]],
+            **({"finish_reason": finish_reason} if finish_reason is not None else {}),
         })
         if accepted and not rejected:
             break
         if parsed_count == 0 and not rejected:
-            return {"claims": [], "rejected": [], "status": "empty", "attempts": attempts}
+            return {"claims": [], "rejected": [],
+                    "status": "incomplete" if finish_reason not in (None, "stop") else "empty",
+                    "attempts": attempts}
         errors = [error for item in rejected for error in item["errors"]]
         if not errors:
             errors = ["no claims were returned"]
     numbered = _number(accepted)
-    status = "filtered_empty" if not numbered and rejected else "completed_with_rejections" if rejected else "completed"
+    # The exposed claims are from the last filter attempt. Earlier truncated
+    # replies are useful diagnostics, but must not make a successful repair
+    # look partial.
+    final_finish_reason = attempts[-1].get("finish_reason") if attempts else None
+    status = "incomplete" if final_finish_reason not in (None, "stop") else (
+        "filtered_empty" if not numbered and rejected else "completed_with_rejections" if rejected else "completed"
+    )
     return {"claims": numbered, "rejected": rejected, "status": status, "attempts": attempts}
 
 
@@ -390,6 +420,7 @@ def _finalize(article: str, claim: dict[str, Any]) -> dict[str, Any]:
     quote = claim["source_quote"]
     normalized = correct_attribution(quote, str(claim.get("normalized_claim") or quote).strip())
     normalization_gaps: list[str] = []
+    normalization_notes: list[str] = []
     source_numbers = _NUMBER.findall(quote)
     claim_numbers = _NUMBER.findall(normalized)
     if any(number not in claim_numbers for number in source_numbers):
@@ -398,12 +429,12 @@ def _finalize(article: str, claim: dict[str, Any]) -> dict[str, Any]:
     claim_ordinals = {match.group(0).lower() for match in _ORDINAL.finditer(normalized)}
     if claim_ordinals - source_ordinals:
         normalized = quote
-        normalization_gaps.append("规范化声明添加了原文没有的顺序限定")
+        normalization_notes.append("模型添加了原文没有的顺序限定，已回退为原文措辞")
     source_modality = {match.group(0).lower() for match in _MODALITY.finditer(quote)}
     normalized_modality = {match.group(0).lower() for match in _MODALITY.finditer(normalized)}
     if source_modality - normalized_modality:
         normalized = quote
-        normalization_gaps.append("规范化声明未保留原文的时态、否定或确定程度")
+        normalization_notes.append(_NORMALIZATION_FALLBACK)
     source_ranges = find_quote_ranges(article, quote)
     offset = source_ranges[0][0] if source_ranges else 0
     resolved_claims = [resolve_exam(article, span[0], normalized) for span in source_ranges] or [normalized]
@@ -436,6 +467,9 @@ def _finalize(article: str, claim: dict[str, Any]) -> dict[str, Any]:
     for gap in claim_context_gaps(quote, normalized):
         if gap not in missing:
             missing.append(gap)
+    if _quote_has_unattributed_speaker(article, source_ranges, quote, normalized):
+        if _SPEAKER_GAP not in missing:
+            missing.append(_SPEAKER_GAP)
     absence = is_absence(focused, "")
     status, status_reason = assign_status(fact_type, scope, missing, absence, ref_state)
     return {
@@ -449,7 +483,104 @@ def _finalize(article: str, claim: dict[str, Any]) -> dict[str, Any]:
         "status_reason": status_reason,
         "document_ref": document_ref,
         "missing_context": missing,
+        "normalization_notes": normalization_notes,
+        "extraction_notes": _quote_position_notes(article, source_ranges),
     }
+
+
+def sentence_spans(text: str) -> list[tuple[int, int]]:
+    """Simple deterministic sentence spans used only for extraction review diagnostics."""
+    spans = []
+    start = 0
+    for match in re.finditer(r"[.!?](?:[\"'”’)]*)\s+|\n+", text):
+        end = match.end()
+        left, right = start, end
+        while left < right and text[left].isspace(): left += 1
+        while right > left and text[right - 1].isspace(): right -= 1
+        if left < right: spans.append((left, right))
+        start = end
+    left, right = start, len(text)
+    while left < right and text[left].isspace(): left += 1
+    while right > left and text[right - 1].isspace(): right -= 1
+    if left < right: spans.append((left, right))
+    return spans
+
+
+def uncovered_sentences(article: str, claims: list[dict[str, Any]], rejected: list[dict[str, Any]] | None = None) -> list[dict[str, Any]]:
+    covered = []
+    for claim in claims:
+        covered.extend(claim.get("source_ranges") or find_quote_ranges(article, str(claim.get("source_quote") or "")))
+    for item in rejected or []:
+        claim = item.get("claim")
+        if isinstance(claim, dict):
+            covered.extend(find_quote_ranges(article, str(claim.get("source_quote") or "")))
+    result = []
+    for start, end in sentence_spans(article):
+        if not any(a < end and start < b for a, b in covered):
+            result.append({"start": start, "end": end, "text": article[start:end]})
+    return result
+
+
+def _quote_position_notes(article: str, ranges: list[list[int]]) -> list[str]:
+    for start, _ in ranges:
+        sentence_start = max((m.end() for m in re.finditer(r"[.!?](?:[\"'”’)]*)\s+|\n+", article[:start])), default=0)
+        prefix = article[sentence_start:start].strip()
+        # A quote or bracket immediately before the quoted words is a sentence
+        # boundary marker, not omitted source text. Newlines are boundaries in
+        # sentence_spans above; flattened headings remain intentionally opaque.
+        if prefix.strip("\"'“”‘’「」『』([{<（【《〈"):
+            return ["引文从句中开始，可能省略了该句前面的限定或分句"]
+    return []
+
+
+def _quote_has_unattributed_speaker(article: str, ranges: list[list[int]], quote: str, normalized: str) -> bool:
+    if not ranges:
+        return False
+    for start, end in ranges:
+        quote_start, quote_end = start, end
+        # The model may quote the delimiters as part of source_quote. Normalize
+        # only the bounds used for detection; preserve the stored source quote.
+        opening = {'"', "'", "“", "‘", "「", "『", "(", "[", "{"}
+        closing = {'"', "'", "”", "’", "」", "』", ")", "]", "}"}
+        while quote_start < quote_end and article[quote_start].isspace():
+            quote_start += 1
+        while quote_end > quote_start and article[quote_end - 1].isspace():
+            quote_end -= 1
+        includes_open = quote_start < quote_end and article[quote_start] in opening
+        includes_close = quote_start < quote_end and article[quote_end - 1] in closing
+        left = quote_start
+        right = quote_end
+        while left > 0 and article[left - 1].isspace(): left -= 1
+        while right < len(article) and article[right].isspace(): right += 1
+        is_quoted = (includes_open and includes_close) or (
+            left > 0 and right < len(article)
+            and article[left - 1] in opening and article[right] in closing
+        )
+        if not is_quoted:
+            continue
+        # Look at the quote's own sentence and its immediate neighbors. This
+        # catches continued direct quotes attributed in the same paragraph
+        # without borrowing an unrelated speaker from elsewhere in the article.
+        spans = sentence_spans(article)
+        sentence_index = next((i for i, (a, b) in enumerate(spans) if a < quote_end and quote_start < b), None)
+        if sentence_index is None:
+            continue
+        paragraph_break = article.rfind("\n\n", 0, quote_start)
+        paragraph_start = paragraph_break + 2 if paragraph_break >= 0 else 0
+        paragraph_end = article.find("\n\n", quote_end)
+        if paragraph_end < 0:
+            paragraph_end = len(article)
+        context_spans = spans[max(0, sentence_index - 1):sentence_index + 2]
+        context = " ".join(article[max(a, paragraph_start):min(b, paragraph_end)] for a, b in context_spans)
+        if not _ATTRIBUTION.search(context):
+            continue
+        if _ATTRIBUTION.search(normalized):
+            continue
+        named_attributions = _NAMED_ATTRIBUTION.finditer(context)
+        speakers = [match.group("speaker") or match.group("according_speaker") for match in named_attributions]
+        if not any(speaker and speaker in normalized for speaker in speakers):
+            return True
+    return False
 
 
 def causal_context_gaps(source_quote: str, normalized_claim: str) -> list[str]:

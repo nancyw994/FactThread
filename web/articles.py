@@ -34,6 +34,8 @@ TYPE_LABELS = {
 }
 EXTRACTION_RESPONSE_FORMAT = {"type": "json_object"}
 ARTICLE_MODEL = os.environ.get("FACTTHREAD_ARTICLE_MODEL", "openai/gpt-oss-120b").strip()
+EXTRACTION_CODE_VERSION = "article-extraction-2"
+PROMPT_VERSION = "article-claims-v2"
 
 
 def _configured_output_limit() -> int:
@@ -67,7 +69,13 @@ def provider_extract(text: str, repair_errors: list[str] | None) -> dict[str, An
         response_format=EXTRACTION_RESPONSE_FORMAT,
         max_completion_tokens=EXTRACTION_MAX_COMPLETION_TOKENS,
     )
-    return _parse_extract(result["content"])
+    finish_reason = result.get("finish_reason")
+    try:
+        parsed = _parse_extract(result["content"])
+        parsed["finish_reason"] = finish_reason
+        return parsed
+    except extract_claims.ExtractionParseError as exc:
+        return {"claims": [], "provider_parse_error": True, "error": str(exc), "finish_reason": finish_reason}
 
 
 # Retain the old hook name for existing callers while making provider selection explicit.
@@ -94,6 +102,18 @@ def _parse_extract(raw: str) -> dict[str, Any]:
 
 def _sha(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()[:16]
+
+
+def _extraction_fingerprint() -> str:
+    config = {
+        "prompt_sha256": hashlib.sha256(PROMPT.read_bytes()).hexdigest(),
+        "prompt_version": PROMPT_VERSION,
+        "model": ARTICLE_MODEL,
+        "max_completion_tokens": EXTRACTION_MAX_COMPLETION_TOKENS,
+        "response_format": EXTRACTION_RESPONSE_FORMAT,
+        "code_version": EXTRACTION_CODE_VERSION,
+    }
+    return hashlib.sha256(json.dumps(config, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
 
 
 class ArticleBook:
@@ -131,6 +151,7 @@ class ArticleBook:
         article_text = _article(text)
         source_url = _source_url(article_source_url)
         digest = _sha(article_text)
+        fingerprint = _extraction_fingerprint()
         with self.lock:
             existing = next(
                 (
@@ -139,6 +160,7 @@ class ArticleBook:
                     if item["text_sha"] == digest
                     and _canonical_url(item.get("article_source_url")) == _canonical_url(source_url)
                     and item["status"] in {"extracted", "done"}
+                    and item.get("extraction_fingerprint") == fingerprint
                 ),
                 None,
             )
@@ -149,12 +171,14 @@ class ArticleBook:
             "id": article_id,
             "text": article_text,
             "text_sha": digest,
+            "extraction_fingerprint": fingerprint,
             "article_source_url": source_url,
             "status": "running",
             "phase": "extract",
             "error": None,
             "extraction_status": None,
             "extraction_diagnostics": [],
+            "uncovered_sentences": [],
             "candidates": [],
             "selection": [],
             "records": {},
@@ -229,6 +253,7 @@ class ArticleBook:
                 "error": article.get("error"),
                 "extraction_status": article.get("extraction_status"),
                 "extraction_diagnostics": list(article.get("extraction_diagnostics") or []),
+                "uncovered_sentences": list(article.get("uncovered_sentences") or []),
                 "text_sha": article["text_sha"],
                 "article_source_url": article.get("article_source_url"),
                 "candidates": list(article.get("candidates") or []),
@@ -265,6 +290,7 @@ class ArticleBook:
             "error": shown_article.get("error"),
             "extraction_status": shown_article.get("extraction_status"),
             "extraction_diagnostics": shown_article.get("extraction_diagnostics") or [],
+            "uncovered_sentences": shown_article.get("uncovered_sentences") or [],
             "text_sha": shown_article["text_sha"],
             "article_source_url": shown_article.get("article_source_url"),
             "candidates": [_candidate_view(item) for item in shown_article["candidates"]],
@@ -310,6 +336,9 @@ class ArticleBook:
             article["phase"] = None
             article["extraction_status"] = extraction_status
             article["extraction_diagnostics"] = list(extracted.get("attempts") or [])
+            article["uncovered_sentences"] = extract_claims.uncovered_sentences(
+                article["text"], extracted.get("claims") or [], extracted.get("rejected") or []
+            )
         self._save(article)
 
     def _check(self, article: dict[str, Any]) -> None:
@@ -409,6 +438,7 @@ class ArticleBook:
             "id": article["id"],
             "text": article["text"],
             "text_sha": article["text_sha"],
+            "extraction_fingerprint": article.get("extraction_fingerprint"),
             "article_source_url": article.get("article_source_url"),
             "candidates": article.get("candidates") or [],
             "selection": article.get("selection") or [],
@@ -419,6 +449,7 @@ class ArticleBook:
             "error": article.get("error"),
             "extraction_status": article.get("extraction_status"),
             "extraction_diagnostics": article.get("extraction_diagnostics") or [],
+            "uncovered_sentences": article.get("uncovered_sentences") or [],
         }
         path.write_text(json.dumps(stored, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
@@ -463,12 +494,14 @@ class ArticleBook:
                     "id": path.stem,
                     "text": text,
                     "text_sha": digest,
+                    "extraction_fingerprint": saved.get("extraction_fingerprint"),
                     "article_source_url": _source_url(saved.get("article_source_url")),
                     "status": status,
                     "phase": None,
                     "error": saved.get("error"),
                     "extraction_status": saved.get("extraction_status"),
                     "extraction_diagnostics": saved.get("extraction_diagnostics") or [],
+                    "uncovered_sentences": saved.get("uncovered_sentences") or [],
                     "candidates": candidates,
                     "selection": selection,
                     "records": records,
@@ -490,6 +523,8 @@ def _stored_candidate(claim: dict[str, Any]) -> dict[str, Any]:
         "fact_type": claim.get("fact_type") or claim.get("category") or "",
         "missing_context": list(claim.get("missing_context") or []),
         "status_reason": claim.get("status_reason"),
+        "normalization_notes": list(claim.get("normalization_notes") or []),
+        "extraction_notes": list(claim.get("extraction_notes") or []),
     }
 
 
@@ -504,6 +539,8 @@ def _candidate_view(claim: dict[str, Any]) -> dict[str, Any]:
         "fact_type": fact_type,
         "fact_type_label": TYPE_LABELS.get(fact_type, fact_type),
         "missing_context": missing_context,
+        "normalization_notes": list(claim.get("normalization_notes") or []),
+        "extraction_notes": list(claim.get("extraction_notes") or []),
         "context_note": (
             "尚需补充声明中的主体、日期或比较基准。"
             if fact_type == "needs_context" and not missing_context

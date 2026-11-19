@@ -227,9 +227,21 @@
         if (payload.extraction_status === "empty") {
           extractNote.textContent = "合法空结果：模型没有提取到声明。";
           extractNote.hidden = false;
+        } else if (payload.extraction_status === "incomplete") {
+          const reason = (payload.extraction_diagnostics || []).map((item) => item.finish_reason).filter(Boolean).pop();
+          extractNote.textContent = currentCandidates.length
+            ? `模型回复未完整结束（${reason || "未知原因"}）；以下候选是部分结果。`
+            : `模型回复未完整结束（${reason || "未知原因"}），且没有生成可用候选。`;
+          extractNote.hidden = false;
         } else if (payload.extraction_status === "filtered_empty") {
           const count = (payload.extraction_diagnostics || []).reduce((sum, item) => sum + (item.rejected_count || 0), 0);
           extractNote.textContent = `提取到的声明均未通过原文校验（拒收 ${count} 条）。`;
+          extractNote.hidden = false;
+        }
+        const uncovered = payload.uncovered_sentences || [];
+        if (uncovered.length) {
+          const note = `未被任何候选覆盖的句子 ${uncovered.length} 句（不代表都需核查）`;
+          extractNote.textContent = extractNote.hidden ? note : `${extractNote.textContent} ${note}`;
           extractNote.hidden = false;
         }
       }
@@ -282,9 +294,16 @@
         const missing = document.createElement("p");
         missing.className = "meta";
         const gaps = item.missing_context || [];
+        const notes = [...(item.normalization_notes || []), ...(item.extraction_notes || [])];
         missing.textContent = gaps.length
           ? `缺失信息：${gaps.join("；")}`
           : (item.context_note || "缺失信息：无");
+        if (notes.length) {
+          const note = document.createElement("p");
+          note.className = "candidate-note";
+          note.textContent = notes.join("；");
+          card.appendChild(note);
+        }
         card.append(pick, quote, claim, missing);
         list.append(card);
       }

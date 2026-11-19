@@ -31,6 +31,85 @@ def claim(quote: str, category: str = "checkable_fact", normalized: str | None =
 
 
 class QuoteTests(unittest.TestCase):
+    def test_finish_reason_length_is_incomplete_with_partial_claims_and_stop_is_complete(self) -> None:
+        quote = "The archive opened in 2001."
+        partial = ex.extract_claims(quote, lambda text, repair: {
+            "claims": [claim(quote)], "finish_reason": "length"
+        })
+        complete = ex.extract_claims(quote, lambda text, repair: {
+            "claims": [claim(quote)], "finish_reason": "stop"
+        })
+        self.assertEqual(partial["status"], "incomplete")
+        self.assertEqual(partial["claims"][0]["source_quote"], quote)
+        self.assertEqual(partial["attempts"][0]["finish_reason"], "length")
+        self.assertEqual(complete["status"], "completed")
+
+    def test_successful_stop_repair_is_complete_after_truncated_attempt(self) -> None:
+        quote = "The archive opened in 2001."
+        outputs = iter([
+            {"claims": [claim("not in source")], "finish_reason": "length"},
+            {"claims": [claim(quote)], "finish_reason": "stop"},
+        ])
+        result = ex.extract_claims(quote, lambda text, repair: next(outputs))
+        self.assertEqual(result["status"], "completed")
+        self.assertEqual(len(result["claims"]), 1)
+        self.assertEqual([a["finish_reason"] for a in result["attempts"]], ["length", "stop"])
+
+    def test_uncovered_sentence_review_diagnostic_and_full_coverage(self) -> None:
+        article = "The archive opened in 2001. The team catalogued 80 boxes."
+        first = claim("The archive opened in 2001.")
+        self.assertEqual(ex.uncovered_sentences(article, [first]), [{
+            "start": 28, "end": len(article), "text": "The team catalogued 80 boxes."
+        }])
+        second = claim("The team catalogued 80 boxes.")
+        self.assertEqual(ex.uncovered_sentences(article, [first, second]), [])
+
+    def test_mid_sentence_quote_gets_note_but_sentence_start_does_not(self) -> None:
+        article = "Alternatively, a rarer El Niño develops in winter."
+        mid = ex.prepare_claims(article, [claim("a rarer El Niño develops in winter.")])[0]
+        full = ex.prepare_claims(article, [claim(article)])[0]
+        self.assertTrue(mid["extraction_notes"])
+        self.assertEqual(full["extraction_notes"], [])
+        opening_quote = '“A rarer El Niño develops in winter.”'
+        starts_with_quote = ex.prepare_claims(opening_quote, [claim("A rarer El Niño develops in winter.")])[0]
+        self.assertEqual(starts_with_quote["extraction_notes"], [])
+        opening_bracket = "（A rarer El Niño develops in winter.）"
+        starts_with_bracket = ex.prepare_claims(opening_bracket, [claim("A rarer El Niño develops in winter.")])[0]
+        self.assertEqual(starts_with_bracket["extraction_notes"], [])
+        after_line_break = "Heading\nA rarer El Niño develops in winter."
+        line_start = ex.prepare_claims(after_line_break, [claim("A rarer El Niño develops in winter.")])[0]
+        self.assertEqual(line_start["extraction_notes"], [])
+
+    def test_quoted_claim_tells_and_delimiters_are_detected_but_named_speaker_is_not(self) -> None:
+        article = 'Dr. Lee tells the team, “The archive opened in 2001.”'
+        bare = ex.prepare_claims(article, [claim("The archive opened in 2001.")])[0]
+        delimiters_in_quote = ex.prepare_claims(article, [claim('“The archive opened in 2001.”')])[0]
+        attributed = ex.prepare_claims(article, [claim(
+            "The archive opened in 2001.", normalized="Dr. Lee tells the team the archive opened in 2001."
+        )])[0]
+        self.assertIn("直接引语未在规范化声明中标注说话人", bare["missing_context"])
+        self.assertIn("直接引语未在规范化声明中标注说话人", delimiters_in_quote["missing_context"])
+        self.assertNotIn("直接引语未在规范化声明中标注说话人", attributed["missing_context"])
+
+    def test_adjacent_quote_in_same_paragraph_uses_explicit_attribution_only(self) -> None:
+        article = 'Dr. Lee tells the team, “The archive opened in 2001.” “It contains 80 boxes.”'
+        continued = ex.prepare_claims(article, [claim("It contains 80 boxes.")])[0]
+        self.assertIn("直接引语未在规范化声明中标注说话人", continued["missing_context"])
+
+    def test_modality_fallback_is_a_note_not_a_stale_gap_and_number_loss_stays_a_gap(self) -> None:
+        modality_quote = "The team may open the archive in 2028."
+        fallback = ex.prepare_claims(modality_quote, [claim(
+            modality_quote, normalized="The team will open the archive in 2028."
+        )])[0]
+        self.assertEqual(fallback["normalized_claim"], modality_quote)
+        self.assertNotIn("规范化声明未保留原文的时态、否定或确定程度", fallback["missing_context"])
+        self.assertTrue(fallback["normalization_notes"])
+        number_quote = "The team opened the archive in 2028."
+        number_loss = ex.prepare_claims(number_quote, [claim(
+            number_quote, normalized="The team opened the archive."
+        )])[0]
+        self.assertIn("规范化声明未保留原文中的数字或年份", number_loss["missing_context"])
+
     def test_valid_empty_is_distinct_and_does_not_retry(self) -> None:
         calls = []
 
@@ -103,7 +182,8 @@ class QuoteTests(unittest.TestCase):
 
         row = ex.extract_claims(quote, complete)["claims"][0]
         self.assertEqual(row["normalized_claim"], quote)
-        self.assertIn("规范化声明添加了原文没有的顺序限定", row["missing_context"])
+        self.assertNotIn("规范化声明添加了原文没有的顺序限定", row["missing_context"])
+        self.assertIn("模型添加了原文没有的顺序限定，已回退为原文措辞", row["normalization_notes"])
 
     def test_retrieval_gate_is_separate_from_category(self) -> None:
         def complete(text, repair):

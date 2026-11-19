@@ -60,11 +60,52 @@ def _hits(query: str, limit: int) -> tuple[list[dict[str, str]], None]:
 
 
 class ArticleModeTests(unittest.TestCase):
+    def test_incomplete_provider_reply_is_exposed_as_partial_extraction(self) -> None:
+        quote = "Tim Berners-Lee invented the World Wide Web in 1989 while working at CERN."
+        def extract(text: str, repair: list[str] | None) -> dict:
+            return {"claims": [{
+                "source_quote": quote, "normalized_claim": quote,
+                "category": "checkable_fact", "missing_context": [],
+            }], "finish_reason": "length"}
+        book = check_server.article_mode.ArticleBook(view=check_server.public_view, extract=extract)
+        snap = self._wait_snapshot(book, book.start_extract(ARTICLE)["id"])
+        self.assertEqual(snap["status"], "extracted")
+        self.assertEqual(snap["extraction_status"], "incomplete")
+        self.assertEqual(snap["extraction_diagnostics"][0]["finish_reason"], "length")
+        self.assertEqual(len(snap["candidates"]), 1)
+
+    def test_incomplete_zero_candidate_ui_explains_no_usable_candidates(self) -> None:
+        template = (ROOT / "web" / "article.html").read_text(encoding="utf-8")
+        self.assertIn("模型回复未完整结束（${reason || \"未知原因\"}），且没有生成可用候选。", template)
+        self.assertIn("currentCandidates.length", template)
+        self.assertIn("以下候选是部分结果", template)
+
+    def test_extraction_fingerprint_reuses_only_an_exact_config_match(self) -> None:
+        from unittest.mock import patch
+        calls = []
+        quote = "Tim Berners-Lee invented the World Wide Web in 1989 while working at CERN."
+        def extract(text: str, repair: list[str] | None) -> dict:
+            calls.append(text)
+            return {"claims": [{
+                "source_quote": quote, "normalized_claim": quote,
+                "category": "checkable_fact", "missing_context": [],
+            }]}
+        book = check_server.article_mode.ArticleBook(view=check_server.public_view, extract=extract)
+        first = self._wait_snapshot(book, book.start_extract(ARTICLE)["id"])
+        same = book.start_extract(ARTICLE)
+        self.assertEqual(first["id"], same["id"])
+        self.assertEqual(len(calls), 1)
+        with patch.object(check_server.article_mode, "EXTRACTION_CODE_VERSION", "test-next-version"):
+            changed = self._wait_snapshot(book, book.start_extract(ARTICLE)["id"])
+        self.assertNotEqual(first["id"], changed["id"])
+        self.assertEqual(len(calls), 2)
+
     def test_article_extraction_requests_json_object_without_fallbacks(self) -> None:
         from types import SimpleNamespace
         from unittest.mock import patch
 
         observed = {}
+        response = {"content": '{"claims": []}', "finish_reason": "stop", "usage": {}}
 
         def configure_providers(**options):
             observed["provider_options"] = options
@@ -72,15 +113,21 @@ class ArticleModeTests(unittest.TestCase):
         def ask_llm_usage(spec, user, **options):
             observed["response_format"] = options.get("response_format")
             observed["max_completion_tokens"] = options.get("max_completion_tokens")
-            return {"content": '{"claims": []}', "finish_reason": "stop", "usage": {}}
+            return response
 
         fake_client = SimpleNamespace(configure_providers=configure_providers, ask_llm_usage=ask_llm_usage)
         with patch.dict(sys.modules, {"llm_client": fake_client}):
             result = check_server.article_mode.groq_extract(ARTICLE, None)
-        self.assertEqual(result, {"claims": []})
+        self.assertEqual(result, {"claims": [], "finish_reason": "stop"})
         self.assertEqual(observed["provider_options"], {"allow_openrouter_fallback": False, "allow_paid": False})
         self.assertEqual(observed["response_format"], {"type": "json_object"})
         self.assertEqual(observed["max_completion_tokens"], 4096)
+        response["content"] = '{"claims": [{"source_quote": "partial"}]}'
+        response["finish_reason"] = "length"
+        with patch.dict(sys.modules, {"llm_client": fake_client}):
+            partial = check_server.article_mode.groq_extract(ARTICLE, None)
+        self.assertEqual(partial["finish_reason"], "length")
+        self.assertEqual(partial["claims"][0]["source_quote"], "partial")
 
     def test_unparseable_model_text_is_a_failed_extraction(self) -> None:
         with self.assertRaises(check_server.article_mode.extract_claims.ExtractionParseError):
