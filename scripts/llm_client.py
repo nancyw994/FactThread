@@ -1,8 +1,9 @@
 """Call a model with a YAML spec plus free text, and return the reply.
 
-Groq serves openai/gpt-oss-120b on its free tier. Calling OpenRouter is a
-separate switch from allowing a paid model. Free mode sends a model only when
-that provider is confirmed to serve it for free.
+Groq serves openai/gpt-oss-120b on its free tier. Gemini is available by
+explicitly selecting a Gemini model. Calling OpenRouter is a separate switch
+from allowing a paid model. Free mode sends a model only when that provider is
+confirmed to serve it for free.
 """
 
 import os
@@ -14,7 +15,9 @@ import yaml
 
 OPENROUTER_BASE_URL = "https://openrouter.ai/api/v1"
 GROQ_BASE_URL = "https://api.groq.com/openai/v1"
+GEMINI_BASE_URL = "https://generativelanguage.googleapis.com/v1beta/openai/"
 GROQ_MODEL = "openai/gpt-oss-120b"
+GEMINI_FREE_MODEL = "gemini-3.8-flash"
 DEFAULT_MODEL = GROQ_MODEL
 FREE_MODEL = "openrouter/free"  # $0 router; picks an available free model
 # Tried in order by OpenRouter if an explicit paid model is rate-limited or down.
@@ -39,6 +42,8 @@ def confirmed_free(provider: str, model: str) -> bool:
     so it is not confirmed free there.
     """
     if provider == "groq" and model == GROQ_MODEL:
+        return True
+    if provider == "gemini" and model == GEMINI_FREE_MODEL:
         return True
     return provider == "openrouter" and is_free_model(model)
 
@@ -86,6 +91,19 @@ def route_models(model: str) -> list[str]:
 
 def provider_chain(model: str) -> list[dict]:
     """Providers allowed for this model. OpenRouter and paid models are separate switches."""
+    if model.startswith("gemini-"):
+        if not _route_allowed("gemini", model):
+            return []
+        return [
+            {
+                "provider": "gemini",
+                "model": model,
+                "base_url": GEMINI_BASE_URL,
+                "key_name": "GEMINI_API_KEY",
+                "models": [model],
+                "route_reason": "gemini_requested",
+            }
+        ]
     if model == GROQ_MODEL:
         chain = []
         if _route_allowed("groq", model):
@@ -203,7 +221,7 @@ def require_provider_key(model: str = DEFAULT_MODEL) -> None:
         missing.append(f"{target['key_name']} is {status}")
     raise RuntimeError(
         "No model key is configured (" + "; ".join(missing) + "). "
-        "Set GROQ_API_KEY or OPENROUTER_API_KEY."
+        "Set the API key for the selected provider (GROQ_API_KEY, GEMINI_API_KEY, or OPENROUTER_API_KEY)."
     )
 
 
@@ -212,6 +230,7 @@ def ask_llm(
     text: str,
     model: str = DEFAULT_MODEL,
     temperature: float = 0.0,
+    response_format: dict | None = None,
 ) -> str:
     """Send `yaml_spec` (instructions/schema) and `text` (user input) to the model.
 
@@ -223,7 +242,10 @@ def ask_llm(
     else:
         yaml.safe_load(yaml_spec)  # fail early on malformed YAML
 
-    response, _target = _complete(_messages(yaml_spec, text), model=model, temperature=temperature, include_usage=False)
+    response, _target = _complete(
+        _messages(yaml_spec, text), model=model, temperature=temperature,
+        include_usage=False, response_format=response_format,
+    )
     return _message_text(response)
 
 
@@ -246,6 +268,8 @@ def ask_llm_usage(
     text: str,
     model: str = DEFAULT_MODEL,
     temperature: float = 0.0,
+    response_format: dict | None = None,
+    max_completion_tokens: int | None = None,
 ) -> dict:
     """Same call as ask_llm, plus the served model, token usage, cost, and elapsed seconds.
 
@@ -257,7 +281,11 @@ def ask_llm_usage(
         yaml.safe_load(yaml_spec)
 
     started = time.perf_counter()
-    response, target = _complete(_messages(yaml_spec, text), model=model, temperature=temperature, include_usage=True)
+    response, target = _complete(
+        _messages(yaml_spec, text), model=model, temperature=temperature,
+        include_usage=True, response_format=response_format,
+        max_completion_tokens=max_completion_tokens,
+    )
     elapsed = time.perf_counter() - started
     usage_data = _usage_dict(getattr(response, "usage", None))
     cost = usage_data.get("cost")
@@ -273,8 +301,12 @@ def ask_llm_usage(
         "requested_model": target["model"],
         "provider": target["provider"],
         "route_reason": target.get("route_reason"),
+        "http_status": target.get("http_status"),
         "cache_hit": False,
         "usage": usage_data,
+        "rate_limit_headers": target.get("rate_limit_headers") or {},
+        "finish_reason": getattr(response.choices[0], "finish_reason", None),
+        "max_completion_tokens": max_completion_tokens,
         "cost_usd": cost if reported else "unknown",
         "elapsed_s": elapsed,
         "attempts": attempts,
@@ -300,7 +332,9 @@ def _message_text(response: object) -> str:
 def _client(target: dict):
     from openai import OpenAI
 
-    return OpenAI(api_key=target["api_key"], base_url=target["base_url"])
+    # Retry policy is owned by the caller so rate limits and transient errors are recorded once.
+    options = {"api_key": target["api_key"], "base_url": target["base_url"], "max_retries": 0}
+    return OpenAI(**options)
 
 
 class RateLimited(RuntimeError):
@@ -349,12 +383,15 @@ def should_fallback(exc: BaseException) -> bool:
 
 
 def _no_route_message(model: str) -> str:
-    if not ALLOW_PAID and not confirmed_free("groq", model) and not confirmed_free("openrouter", model):
+    if not ALLOW_PAID and not any(
+        confirmed_free(provider, model)
+        for provider in ("groq", "gemini", "openrouter")
+    ):
         return (
             f"{model} is not a confirmed free model. Paid models are not allowed, so it was not called. "
             "The fixed_rules baseline was not substituted."
         )
-    if not ALLOW_OPENROUTER_FALLBACK and model != GROQ_MODEL:
+    if not ALLOW_OPENROUTER_FALLBACK and model != GROQ_MODEL and not model.startswith("gemini-"):
         return (
             f"OpenRouter is not allowed, so {model} was not called. "
             "The fixed_rules baseline was not substituted."
@@ -383,7 +420,7 @@ def available_targets(model: str) -> list[dict]:
     if not ready:
         raise RuntimeError(
             "No model key is configured (" + "; ".join(missing) + "). "
-            "Set GROQ_API_KEY or OPENROUTER_API_KEY."
+            "Set the API key for the selected provider (GROQ_API_KEY, GEMINI_API_KEY, or OPENROUTER_API_KEY)."
         )
     return ready
 
@@ -397,6 +434,65 @@ def _attempt(target: dict) -> dict:
         "ok": False,
         "cost_usd": "unknown",
     }
+
+
+def _redact_provider_value(value):
+    """Keep provider diagnostics while removing credentials and organization IDs."""
+    if isinstance(value, dict):
+        return {
+            key: _redact_provider_value(item)
+            for key, item in value.items()
+            if str(key).lower() not in {"api_key", "authorization", "headers"}
+        }
+    if isinstance(value, list):
+        return [_redact_provider_value(item) for item in value]
+    if isinstance(value, bytes):
+        value = value.decode("utf-8", errors="replace")
+    if isinstance(value, str):
+        value = re.sub(r"(?:gsk_|sk-)[A-Za-z0-9_-]+", "[REDACTED_KEY]", value)
+        value = re.sub(r"AIza[0-9A-Za-z_-]{20,}", "[REDACTED_KEY]", value)
+        value = re.sub(r"org_[A-Za-z0-9]+", "[REDACTED_ORG]", value)
+        value = re.sub(r"(?i)(bearer\s+)[A-Za-z0-9._-]+", r"\1[REDACTED_KEY]", value)
+    return value
+
+
+def _provider_error_details(exc: BaseException) -> dict:
+    body = getattr(exc, "body", None)
+    response = getattr(exc, "response", None)
+    if body is None and response is not None:
+        body = getattr(response, "text", None)
+        if body is None:
+            content = getattr(response, "content", None)
+            body = content if isinstance(content, bytes) else None
+    safe_body = _redact_provider_value(body)
+    error_object = body.get("error") if isinstance(body, dict) else None
+    error_object = error_object if isinstance(error_object, dict) else {}
+    request_parameters = getattr(exc, "factthread_request_parameters", None)
+    return {
+        "http_status": getattr(exc, "status_code", None),
+        "exception_type": type(exc).__name__,
+        "error_type": error_object.get("type") or getattr(exc, "type", None),
+        "error_code": error_object.get("code") or getattr(exc, "code", None),
+        "error_body": safe_body,
+        "error_body_available": body is not None,
+        "rate_limit_headers": _rate_limit_headers(getattr(response, "headers", None)),
+        "request_parameters": _redact_provider_value(request_parameters),
+    }
+
+
+def _rate_limit_headers(headers: object) -> dict[str, str]:
+    if headers is None or not hasattr(headers, "get"):
+        return {}
+    names = (
+        "retry-after",
+        "x-ratelimit-limit-requests",
+        "x-ratelimit-limit-tokens",
+        "x-ratelimit-remaining-requests",
+        "x-ratelimit-remaining-tokens",
+        "x-ratelimit-reset-requests",
+        "x-ratelimit-reset-tokens",
+    )
+    return {name: str(headers.get(name)) for name in names if headers.get(name) is not None}
 
 
 def _fail(message: str, exc: BaseException, attempts: list[dict]):
@@ -420,6 +516,7 @@ def call_with_fallback(model: str, send):
             result = send(client, target)
         except Exception as exc:  # noqa: BLE001 — an allowed provider may follow a failed one
             attempt["error"] = type(exc).__name__
+            attempt.update(_provider_error_details(exc))
             attempts.append(attempt)
             errors.append(f"{target['provider']} {target['model']}: {type(exc).__name__}")
             if index == len(targets) - 1 or not should_fallback(exc):
@@ -435,13 +532,21 @@ def call_with_fallback(model: str, send):
     raise RuntimeError("No model provider was called. The fixed_rules baseline was not substituted.")
 
 
-def _complete(messages: list[dict[str, str]], model: str, temperature: float, include_usage: bool):
+def _complete(
+    messages: list[dict[str, str]], model: str, temperature: float, include_usage: bool,
+    response_format: dict | None = None,
+    max_completion_tokens: int | None = None,
+):
     def send(client, target):
         kwargs = {
             "model": target["model"],
             "temperature": temperature,
             "messages": messages,
         }
+        if response_format is not None:
+            kwargs["response_format"] = response_format
+        if max_completion_tokens is not None:
+            kwargs["max_completion_tokens"] = max_completion_tokens
         extra: dict = {}
         if target["provider"] == "openrouter":
             extra["models"] = target["models"]
@@ -449,7 +554,24 @@ def _complete(messages: list[dict[str, str]], model: str, temperature: float, in
                 extra["usage"] = {"include": True}
         if extra:
             kwargs["extra_body"] = extra
-        return client.chat.completions.create(**kwargs)
+        try:
+            completions = client.chat.completions
+            raw_api = getattr(completions, "with_raw_response", None)
+            if raw_api is None:
+                return completions.create(**kwargs)
+            raw_response = raw_api.create(**kwargs)
+            target["http_status"] = getattr(raw_response, "status_code", None)
+            target["rate_limit_headers"] = _rate_limit_headers(getattr(raw_response, "headers", None))
+            return raw_response.parse()
+        except Exception as exc:
+            try:
+                exc.factthread_request_parameters = {
+                    key: value for key, value in kwargs.items()
+                    if key.lower() not in {"api_key", "authorization", "headers"}
+                }
+            except Exception:
+                pass
+            raise
 
     return call_with_fallback(model, send)
 

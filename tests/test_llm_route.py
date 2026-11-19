@@ -147,6 +147,69 @@ class RouteModelTests(unittest.TestCase):
         self.assertFalse(attempt["cache_hit"])
         self.assertFalse(attempt["ok"])
 
+    def test_usage_call_preserves_finish_reason_and_output_cap(self) -> None:
+        from types import SimpleNamespace
+
+        calls = []
+        usage = SimpleNamespace(model_dump=lambda: {"prompt_tokens": 10, "completion_tokens": 20, "total_tokens": 30})
+        response = SimpleNamespace(
+            choices=[SimpleNamespace(finish_reason="length", message=SimpleNamespace(content="{}", model_extra={}))],
+            usage=usage,
+            model="openai/gpt-oss-120b",
+        )
+        client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(
+            create=lambda **kwargs: (calls.append(kwargs) or response)
+        )))
+        original_lookup, original_client = llm_client.lookup_key, llm_client._client
+        llm_client.lookup_key = lambda name: ("test-key", "ok")
+        llm_client._client = lambda target: client
+        self._flags(openrouter=False, paid=False)
+        try:
+            result = llm_client.ask_llm_usage(
+                {"task": "extract"}, "article",
+                response_format={"type": "json_object"}, max_completion_tokens=4096,
+            )
+        finally:
+            llm_client.lookup_key, llm_client._client = original_lookup, original_client
+        self.assertEqual(result["finish_reason"], "length")
+        self.assertEqual(result["usage"]["completion_tokens"], 20)
+        self.assertEqual(result["max_completion_tokens"], 4096)
+        self.assertEqual(calls[0]["max_completion_tokens"], 4096)
+        self.assertEqual(calls[0]["response_format"], {"type": "json_object"})
+
+    def test_provider_errors_preserve_redacted_body_and_actual_parameters(self) -> None:
+        from types import SimpleNamespace
+
+        class BadRequestError(Exception):
+            status_code = 400
+            type = "invalid_request_error"
+            code = "unsupported_parameter"
+            body = {"error": {"message": "bad parameter", "type": "invalid_request_error", "code": "unsupported_parameter", "api_key": "gsk_secret"}}
+
+        client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(
+            create=lambda **kwargs: (_ for _ in ()).throw(BadRequestError("bad request"))
+        )))
+        original_lookup, original_client = llm_client.lookup_key, llm_client._client
+        llm_client.lookup_key = lambda name: ("test-key", "ok")
+        llm_client._client = lambda target: client
+        self._flags(openrouter=False, paid=False)
+        try:
+            with self.assertRaises(RuntimeError) as caught:
+                llm_client.ask_llm_usage(
+                    {"task": "extract"}, "article",
+                    response_format={"type": "json_object"}, max_completion_tokens=4096,
+                )
+        finally:
+            llm_client.lookup_key, llm_client._client = original_lookup, original_client
+        attempt = caught.exception.attempts[0]
+        self.assertEqual(attempt["http_status"], 400)
+        self.assertEqual(attempt["error_type"], "invalid_request_error")
+        self.assertEqual(attempt["error_code"], "unsupported_parameter")
+        self.assertEqual(attempt["error_body"]["error"]["message"], "bad parameter")
+        self.assertNotIn("api_key", attempt["error_body"]["error"])
+        self.assertEqual(attempt["request_parameters"]["model"], llm_client.DEFAULT_MODEL)
+        self.assertEqual(attempt["request_parameters"]["max_completion_tokens"], 4096)
+
     def test_groq_failure_uses_openrouter_once_when_paid_is_allowed(self) -> None:
         calls: list[str] = []
         original_lookup, original_client = self._patch_keys()
