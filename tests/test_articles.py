@@ -60,6 +60,51 @@ def _hits(query: str, limit: int) -> tuple[list[dict[str, str]], None]:
 
 
 class ArticleModeTests(unittest.TestCase):
+    def test_article_extraction_requests_json_object_without_fallbacks(self) -> None:
+        from types import SimpleNamespace
+        from unittest.mock import patch
+
+        observed = {}
+
+        def configure_providers(**options):
+            observed["provider_options"] = options
+
+        def ask_llm_usage(spec, user, **options):
+            observed["response_format"] = options.get("response_format")
+            observed["max_completion_tokens"] = options.get("max_completion_tokens")
+            return {"content": '{"claims": []}', "finish_reason": "stop", "usage": {}}
+
+        fake_client = SimpleNamespace(configure_providers=configure_providers, ask_llm_usage=ask_llm_usage)
+        with patch.dict(sys.modules, {"llm_client": fake_client}):
+            result = check_server.article_mode.groq_extract(ARTICLE, None)
+        self.assertEqual(result, {"claims": []})
+        self.assertEqual(observed["provider_options"], {"allow_openrouter_fallback": False, "allow_paid": False})
+        self.assertEqual(observed["response_format"], {"type": "json_object"})
+        self.assertEqual(observed["max_completion_tokens"], 4096)
+
+    def test_unparseable_model_text_is_a_failed_extraction(self) -> None:
+        with self.assertRaises(check_server.article_mode.extract_claims.ExtractionParseError):
+            check_server.article_mode._parse_extract("model commentary with no JSON object")
+
+        def parse_failure(text, repair):
+            raise check_server.article_mode.extract_claims.ExtractionParseError("invalid JSON")
+
+        book = check_server.article_mode.ArticleBook(view=check_server.public_view, extract=parse_failure)
+        snap = book.start_extract(ARTICLE)
+        snap = self._wait_snapshot(book, snap["id"])
+        self.assertEqual(snap["status"], "error")
+        self.assertEqual(snap["extraction_status"], "parse_failed")
+
+    @staticmethod
+    def _wait_snapshot(book, article_id):
+        deadline = time.time() + 3
+        while time.time() < deadline:
+            snap = book.snapshot(article_id)
+            if snap["status"] != "running":
+                return snap
+            time.sleep(0.01)
+        raise AssertionError("article extraction did not finish")
+
     def test_extract_shows_quote_claim_type_and_missing_context(self) -> None:
         with self._server() as base:
             job = self._post(base, "/api/articles", {"text": ARTICLE, "allow_paid": True})
@@ -71,6 +116,8 @@ class ArticleModeTests(unittest.TestCase):
         self.assertEqual(len(done["candidates"]), 2)
         first, second = done["candidates"]
         self.assertEqual(first["source_quote"], "Tim Berners-Lee invented the World Wide Web in 1989 while working at CERN.")
+        first_range = first["source_ranges"][0]
+        self.assertEqual(ARTICLE[first_range[0]:first_range[1]], first["source_quote"])
         self.assertIn("1989", first["normalized_claim"])
         self.assertEqual(first["fact_type"], "checkable_fact")
         self.assertEqual(first["fact_type_label"], "可核查事实")
@@ -309,6 +356,40 @@ class ArticleModeTests(unittest.TestCase):
 
         self.assertEqual(len(searches), searched)
         self.assertEqual([item["verdict"] for item in done["claims"]], ["supported", "supported"])
+
+    def test_legacy_saved_article_backfills_duplicate_offsets_and_causal_gaps(self) -> None:
+        import tempfile
+
+        with tempfile.TemporaryDirectory() as folder:
+            root = Path(folder)
+            text = "These measures promoted development. More context. These measures promoted development."
+            quote = "These measures promoted development."
+            article_id = "saved"
+            article_file = root / "articles" / f"{article_id}.json"
+            article_file.parent.mkdir(parents=True)
+            article_file.write_text(json.dumps({
+                "id": article_id,
+                "text": text,
+                "text_sha": check_server.article_mode._sha(text),
+                "candidates": [{
+                    "id": "c1",
+                    "source_quote": quote,
+                    "normalized_claim": quote,
+                    "fact_type": "checkable_fact",
+                    "missing_context": [],
+                }],
+                "selection": [],
+                "records": {},
+                "status": "extracted",
+            }), encoding="utf-8")
+            app = check_server.App(jobs_dir=root / "jobs", cache_dir=root / "cache")
+            snapshot = app.articles.snapshot(article_id)
+            candidate = snapshot["candidates"][0]
+            self.assertEqual(len(candidate["source_ranges"]), 2)
+            self.assertFalse(candidate["default_selected"])
+            self.assertIn("需要明确因果关系所指的行动或变化", candidate["missing_context"])
+            persisted = json.loads(article_file.read_text(encoding="utf-8"))
+            self.assertEqual(persisted["candidates"][0]["source_ranges"], candidate["source_ranges"])
 
     def _server(self, search=None, complete=None, extract=None, getter=None):
         return _Running(search or _hits, complete or _supported, extract=extract, getter=getter)

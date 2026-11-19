@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import threading
 import traceback
 from pathlib import Path
@@ -31,10 +32,26 @@ TYPE_LABELS = {
     "intention": "意图",
     "needs_context": "缺少上下文",
 }
+EXTRACTION_RESPONSE_FORMAT = {"type": "json_object"}
+ARTICLE_MODEL = os.environ.get("FACTTHREAD_ARTICLE_MODEL", "openai/gpt-oss-120b").strip()
 
 
-def groq_extract(text: str, repair_errors: list[str] | None) -> dict[str, Any]:
-    """Extract with the free Groq model. OpenRouter and paid models stay off."""
+def _configured_output_limit() -> int:
+    raw = os.environ.get("FACTTHREAD_ARTICLE_MAX_COMPLETION_TOKENS", "4096").strip()
+    try:
+        value = int(raw)
+    except ValueError as exc:
+        raise RuntimeError("FACTTHREAD_ARTICLE_MAX_COMPLETION_TOKENS must be a positive integer") from exc
+    if value <= 0:
+        raise RuntimeError("FACTTHREAD_ARTICLE_MAX_COMPLETION_TOKENS must be a positive integer")
+    return value
+
+
+EXTRACTION_MAX_COMPLETION_TOKENS = _configured_output_limit()
+
+
+def provider_extract(text: str, repair_errors: list[str] | None) -> dict[str, Any]:
+    """Extract with the explicitly configured model, keeping paid routes off."""
     import sys
 
     scripts = str(ROOT / "scripts")
@@ -44,19 +61,35 @@ def groq_extract(text: str, repair_errors: list[str] | None) -> dict[str, Any]:
 
     llm_client.configure_providers(allow_openrouter_fallback=False, allow_paid=False)
     user = json.dumps({"article": text, "repair_errors": repair_errors or []}, ensure_ascii=False)
-    raw = llm_client.ask_llm({"instructions": PROMPT.read_text(encoding="utf-8")}, user)
-    return _parse_extract(raw)
+    result = llm_client.ask_llm_usage(
+        {"instructions": PROMPT.read_text(encoding="utf-8")}, user,
+        model=ARTICLE_MODEL,
+        response_format=EXTRACTION_RESPONSE_FORMAT,
+        max_completion_tokens=EXTRACTION_MAX_COMPLETION_TOKENS,
+    )
+    return _parse_extract(result["content"])
+
+
+# Retain the old hook name for existing callers while making provider selection explicit.
+groq_extract = provider_extract
 
 
 def _parse_extract(raw: str) -> dict[str, Any]:
-    start, end = raw.find("{"), raw.rfind("}")
-    if start < 0 or end <= start:
-        return {"claims": []}
-    try:
-        parsed = json.loads(raw[start : end + 1])
-    except json.JSONDecodeError:
-        return {"claims": []}
-    return parsed if isinstance(parsed, dict) else {"claims": []}
+    """Find a complete claims object without treating malformed text as empty output."""
+    decoder = json.JSONDecoder()
+    parsed: list[dict[str, Any]] = []
+    for index, char in enumerate(raw):
+        if char != "{":
+            continue
+        try:
+            value, _ = decoder.raw_decode(raw[index:])
+        except json.JSONDecodeError:
+            continue
+        if isinstance(value, dict) and isinstance(value.get("claims"), list):
+            parsed.append(value)
+    if parsed:
+        return parsed[-1]
+    raise extract_claims.ExtractionParseError("model response contains no complete JSON object with a claims list")
 
 
 def _sha(text: str) -> str:
@@ -80,7 +113,7 @@ class ArticleBook:
         rng: Callable[[], float] | None = None,
     ) -> None:
         self.view = view
-        self.extract_complete = extract or groq_extract
+        self.extract_complete = extract or provider_extract
         self.search = search
         self.getter = getter
         self.complete = complete
@@ -120,6 +153,8 @@ class ArticleBook:
             "status": "running",
             "phase": "extract",
             "error": None,
+            "extraction_status": None,
+            "extraction_diagnostics": [],
             "candidates": [],
             "selection": [],
             "records": {},
@@ -192,6 +227,8 @@ class ArticleBook:
                 "status": status,
                 "phase": article.get("phase"),
                 "error": article.get("error"),
+                "extraction_status": article.get("extraction_status"),
+                "extraction_diagnostics": list(article.get("extraction_diagnostics") or []),
                 "text_sha": article["text_sha"],
                 "article_source_url": article.get("article_source_url"),
                 "candidates": list(article.get("candidates") or []),
@@ -226,6 +263,8 @@ class ArticleBook:
             "status": shown_article["status"],
             "phase": shown_article.get("phase"),
             "error": shown_article.get("error"),
+            "extraction_status": shown_article.get("extraction_status"),
+            "extraction_diagnostics": shown_article.get("extraction_diagnostics") or [],
             "text_sha": shown_article["text_sha"],
             "article_source_url": shown_article.get("article_source_url"),
             "candidates": [_candidate_view(item) for item in shown_article["candidates"]],
@@ -250,6 +289,17 @@ class ArticleBook:
             with self.lock:
                 article["status"] = "error"
                 article["error"] = _safe_error(exc)
+                article["extraction_status"] = "request_failed"
+            return
+        extraction_status = str(extracted.get("status") or "completed")
+        if extraction_status in {"request_failed", "parse_failed", "invalid_input"}:
+            with self.lock:
+                article["status"] = "error"
+                article["phase"] = None
+                article["extraction_status"] = extraction_status
+                article["extraction_diagnostics"] = list(extracted.get("attempts") or [])
+                article["error"] = _safe_error(RuntimeError(str(extracted.get("error") or extraction_status)))
+            self._save(article)
             return
         with self.lock:
             article["candidates"] = candidates
@@ -258,6 +308,8 @@ class ArticleBook:
             article["attempt_history"] = {}
             article["status"] = "extracted"
             article["phase"] = None
+            article["extraction_status"] = extraction_status
+            article["extraction_diagnostics"] = list(extracted.get("attempts") or [])
         self._save(article)
 
     def _check(self, article: dict[str, Any]) -> None:
@@ -365,6 +417,8 @@ class ArticleBook:
             "status": article.get("status"),
             "phase": article.get("phase"),
             "error": article.get("error"),
+            "extraction_status": article.get("extraction_status"),
+            "extraction_diagnostics": article.get("extraction_diagnostics") or [],
         }
         path.write_text(json.dumps(stored, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
 
@@ -381,12 +435,31 @@ class ArticleBook:
                     continue
                 selection = saved.get("selection") if isinstance(saved.get("selection"), list) else []
                 records = saved.get("records") if isinstance(saved.get("records"), dict) else {}
+                candidates = saved.get("candidates") if isinstance(saved.get("candidates"), list) else []
+                backfilled_ranges = False
+                # Backfill exact offsets for saved extractions that predate positions.
+                for candidate in candidates:
+                    context_gaps = extract_claims.claim_context_gaps(
+                        str(candidate.get("source_quote") or ""),
+                        str(candidate.get("normalized_claim") or ""),
+                    )
+                    existing_gaps = list(candidate.get("missing_context") or [])
+                    for gap in context_gaps:
+                        if gap not in existing_gaps:
+                            existing_gaps.append(gap)
+                            backfilled_ranges = True
+                    candidate["missing_context"] = existing_gaps
+                    if not candidate.get("source_ranges"):
+                        candidate["source_ranges"] = extract_claims.find_quote_ranges(
+                            text, str(candidate.get("source_quote") or "")
+                        )
+                        backfilled_ranges = True
                 status = saved.get("status") or ("done" if selection else "extracted")
                 # A process that stopped mid-request leaves its last stage checkpoint
                 # available; mark it idle so the user can continue that item.
                 if status == "running":
                     status = "extracted" if saved.get("phase") == "extract" else "done"
-                self.articles[path.stem] = {
+                restored = {
                     "id": path.stem,
                     "text": text,
                     "text_sha": digest,
@@ -394,11 +467,16 @@ class ArticleBook:
                     "status": status,
                     "phase": None,
                     "error": saved.get("error"),
-                    "candidates": saved.get("candidates") if isinstance(saved.get("candidates"), list) else [],
+                    "extraction_status": saved.get("extraction_status"),
+                    "extraction_diagnostics": saved.get("extraction_diagnostics") or [],
+                    "candidates": candidates,
                     "selection": selection,
                     "records": records,
                     "attempt_history": saved.get("attempt_history") if isinstance(saved.get("attempt_history"), dict) else {},
                 }
+                self.articles[path.stem] = restored
+                if backfilled_ranges:
+                    self._save(restored)
             except (OSError, ValueError, TypeError, json.JSONDecodeError):
                 continue
 
@@ -407,6 +485,7 @@ def _stored_candidate(claim: dict[str, Any]) -> dict[str, Any]:
     return {
         "id": claim.get("id"),
         "source_quote": claim.get("source_quote") or "",
+        "source_ranges": list(claim.get("source_ranges") or []),
         "normalized_claim": claim.get("normalized_claim") or "",
         "fact_type": claim.get("fact_type") or claim.get("category") or "",
         "missing_context": list(claim.get("missing_context") or []),
@@ -420,6 +499,7 @@ def _candidate_view(claim: dict[str, Any]) -> dict[str, Any]:
     return {
         "id": claim.get("id"),
         "source_quote": claim.get("source_quote") or "",
+        "source_ranges": list(claim.get("source_ranges") or []),
         "normalized_claim": claim.get("normalized_claim") or "",
         "fact_type": fact_type,
         "fact_type_label": TYPE_LABELS.get(fact_type, fact_type),

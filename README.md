@@ -44,7 +44,11 @@ python3 web/server.py
 
 Open http://127.0.0.1:8000
 
-The agent-started server does **not** inherit a key you exported in another tab. Restart the server in the terminal where you ran `export`. You can also put `OPENROUTER_API_KEY=...` in a gitignored `.env` next to this README.
+The agent-started server does **not** inherit a key you exported in another tab. Restart the server in the terminal where you ran `export`. You can also put provider keys in a gitignored `.env` next to this README.
+
+The article extractor stays on Groq by default. To select Gemini's Flash model, add a rotated `GEMINI_API_KEY` to `.env` or the server environment, set `FACTTHREAD_ARTICLE_MODEL=gemini-3.8-flash` in the server environment, and restart the server. Paid model access remains disabled in article mode. Google's Gemini API tier belongs to the key's project, so confirm that project is on the free tier before sending requests.
+
+Article extraction's output cap defaults to 4096 tokens and can be set with `FACTTHREAD_ARTICLE_MAX_COMPLETION_TOKENS` in the server environment.
 
 CLI without the webpage (local Ollama). Use the venv so `openai` is installed:
 

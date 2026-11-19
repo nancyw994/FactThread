@@ -37,9 +37,26 @@
     .pill.refuted { background: #b42318; }
     .pill.insufficient_evidence { background: #667085; }
     .pill.pending { background: #b54708; }
+    .source-panel { margin: 0.9rem 0; padding: 0.8rem; border: 1px solid var(--line); border-radius: 8px; }
+    #source-text { white-space: pre-wrap; overflow-wrap: anywhere; line-height: 1.8; }
+    .source-mark { cursor: pointer; border-radius: 3px; padding: 0.05em 0.08em; scroll-margin: 6rem; }
+    .source-mark { background: #eef4ff; }
+    .source-label.supported, .state-supported { background: #d1fadf; color: #05603a; }
+    .source-label.refuted, .state-refuted { background: #fee4e2; color: #912018; }
+    .source-label.insufficient_evidence, .state-insufficient_evidence { background: #eaecf0; color: #344054; }
+    .source-label.unchecked, .state-unchecked { background: #e0eaff; color: #1849a9; }
+    .source-label.waiting, .state-waiting { background: #fef0c7; color: #93370d; }
+    .source-label { display: inline-block; vertical-align: super; font: 700 0.66rem/1.2 ui-sans-serif, system-ui, sans-serif; border-radius: 999px; padding: 0.12rem 0.35rem; margin: 0 0.08rem; }
+    .legend { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.65rem 0; }
+    .legend span, .state-badge { display: inline-block; border-radius: 999px; padding: 0.18rem 0.55rem; font-size: 0.78rem; font-weight: 700; }
+    .claim-card { cursor: pointer; scroll-margin: 1rem; }
+    .claim-card:hover, .claim-card:focus { outline: 2px solid var(--blue); }
+    .comparison { margin: 0.55rem 0; padding: 0.6rem 0.75rem; background: #f2f4f7; border-radius: 8px; }
+    .comparison strong { display: block; margin-bottom: 0.25rem; font-size: 0.8rem; color: #475467; }
     .why { font-family: Georgia, "Times New Roman", serif; line-height: 1.55; }
     .src a { color: var(--blue); }
     .error { color: #b42318; background: #fef3f2; border-radius: 8px; padding: 0.7rem 0.9rem; }
+    .extract-note { color: #475467; background: #f2f4f7; border-radius: 8px; padding: 0.7rem 0.9rem; }
     [hidden] { display: none !important; }
   </style>
 </head>
@@ -59,8 +76,18 @@
       </div>
     </form>
     <p id="error" class="error" hidden></p>
+    <p id="extract-note" class="extract-note" role="status" hidden></p>
     <section id="candidates" hidden>
       <h2>候选条目</h2>
+      <div class="source-panel">
+        <h2>原文（高亮可定位声明）</h2>
+        <div class="legend" aria-label="核查状态图例">
+          <span class="state-supported">支持</span><span class="state-refuted">反驳</span>
+          <span class="state-insufficient_evidence">证据不足</span><span class="state-unchecked">未核查</span>
+          <span class="state-waiting">等待处理</span>
+        </div>
+        <div id="source-text"></div>
+      </div>
       <div id="list"></div>
       <div class="row">
         <span class="note">每批最多选择 3 条，按顺序核查。</span>
@@ -86,13 +113,19 @@
     const runButton = document.querySelector("#run");
     const results = document.querySelector("#results");
     const cards = document.querySelector("#cards");
+    const sourceText = document.querySelector("#source-text");
     const resume = document.querySelector("#resume");
     const wait = document.querySelector("#wait");
     const errorBox = document.querySelector("#error");
+    const extractNote = document.querySelector("#extract-note");
     const billing = document.querySelector("#billing");
     let articleId = "";
     let extractedText = "";
     let extractedSourceUrl = "";
+    let currentCandidates = [];
+    let currentClaims = [];
+    let selectedCandidateIds = [];
+    let currentJobStatus = "";
     let submitted = "";
     let submittedSourceUrl = "";
     let timer = 0;
@@ -107,6 +140,7 @@
       submittedSourceUrl = sourceBox.value.trim();
       candidates.hidden = true;
       results.hidden = true;
+      extractNote.hidden = true;
       post("/api/articles", { text: articleBox.value, article_source_url: sourceBox.value });
     });
     articleBox.addEventListener("input", invalidateIfChanged);
@@ -142,6 +176,7 @@
 
     function post(url, body) {
       errorBox.hidden = true;
+      extractNote.hidden = true;
       extractButton.disabled = true;
       runButton.disabled = true;
       resume.disabled = true;
@@ -171,6 +206,7 @@
     }
 
     function render(payload) {
+      currentJobStatus = payload.status || "";
       if (payload.paid_label && payload.openrouter_label) {
         billing.textContent = `${payload.paid_label}${payload.openrouter_label}`;
       }
@@ -183,10 +219,25 @@
           results.hidden = true;
           return;
         }
+        currentCandidates = payload.candidates || [];
+        currentClaims = payload.claims || [];
+        selectedCandidateIds = (payload.selected || []).map((item) => item.candidate_id || item);
         drawCandidates(payload.candidates);
         candidates.hidden = !payload.candidates.length;
+        if (payload.extraction_status === "empty") {
+          extractNote.textContent = "合法空结果：模型没有提取到声明。";
+          extractNote.hidden = false;
+        } else if (payload.extraction_status === "filtered_empty") {
+          const count = (payload.extraction_diagnostics || []).reduce((sum, item) => sum + (item.rejected_count || 0), 0);
+          extractNote.textContent = `提取到的声明均未通过原文校验（拒收 ${count} 条）。`;
+          extractNote.hidden = false;
+        }
       }
+      currentCandidates = payload.candidates || currentCandidates;
+      currentClaims = payload.claims || [];
+      selectedCandidateIds = (payload.selected || []).map((item) => item.candidate_id || item);
       drawClaims(payload.claims || []);
+      drawSource(articleBox.value.trim(), currentCandidates, currentClaims, payload.status);
       results.hidden = !(payload.claims || []).length;
       const pending = (payload.claims || []).some((item) => item.verdict_label === "判断：等待重试" && !item.verdict);
       resume.hidden = !pending && !payload.can_continue;
@@ -209,11 +260,14 @@
         const kept = previous.get(item.id);
         const card = document.createElement("article");
         card.dataset.id = item.id;
+        card.id = `candidate-${item.id}`;
         const pick = document.createElement("label");
         pick.className = "pick";
         const box = document.createElement("input");
         box.type = "checkbox";
-        box.checked = kept ? kept.checked : Boolean(item.default_selected);
+        box.checked = kept
+          ? kept.checked
+          : (selectedCandidateIds.length ? selectedCandidateIds.includes(item.id) : Boolean(item.default_selected));
         const heading = document.createElement("span");
         heading.textContent = item.fact_type_label || item.fact_type || "";
         pick.append(box, heading);
@@ -224,6 +278,7 @@
         const claim = document.createElement("input");
         claim.type = "text";
         claim.value = kept ? kept.claim : (item.normalized_claim || "");
+        claim.setAttribute("aria-label", "核查 claim（可编辑）");
         const missing = document.createElement("p");
         missing.className = "meta";
         const gaps = item.missing_context || [];
@@ -239,9 +294,26 @@
       cards.replaceChildren();
       for (const item of items) {
         const card = document.createElement("article");
+        card.id = `result-${item.candidate_id}`;
+        card.className = "claim-card";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        const state = resultState(item);
+        card.classList.add(`result-${state.code}`);
+        card.addEventListener("click", (event) => {
+          if (event.target.closest("a, button")) return;
+          scrollToSource(item.candidate_id);
+        });
+        card.addEventListener("keydown", (event) => {
+          if (event.key === "Enter" || event.key === " ") { event.preventDefault(); scrollToSource(item.candidate_id); }
+        });
         const title = document.createElement("h2");
-        title.textContent = item.claim || "";
+        title.textContent = `本次核查的规范化 claim：${item.claim || ""}`;
         card.append(title);
+        const stateBadge = document.createElement("span");
+        stateBadge.className = `state-badge state-${state.code}`;
+        stateBadge.textContent = state.label;
+        card.append(stateBadge);
         const stages = document.createElement("p");
         stages.className = "meta";
         const stageNames = [["search", "搜索"], ["fetch", "读取"], ["judge", "判断"]];
@@ -269,12 +341,12 @@
         const retrieval = item.evidence_retrieval || {};
         const retrievalLine = document.createElement("p");
         retrievalLine.className = "meta";
-        retrievalLine.textContent = `抓取：${stateLabel(retrieval.fetch_succeeded)} · 相关段落：${stateLabel(retrieval.relevant_passage_found)} · 足以判断：${stateLabel(retrieval.sufficient_evidence_found)} · 独立来源：${item.independent_source_count ?? 0}`;
+        retrievalLine.textContent = `引用页面数：${item.citation_page_count ?? 0} · ${item.support_scope_label || "尚无引用页面"}`;
         card.append(retrievalLine);
-        for (const read of item.reads || []) {
+        for (const read of item.verdict ? [] : item.reads || []) {
           const row = document.createElement("p");
           row.className = "meta";
-          row.textContent = `${read.role_label || ""}${read.independent === false ? "（不计独立佐证）" : ""} ${read.detail || ""} ${read.url || ""}`;
+          row.textContent = `${read.role_label || ""} ${read.detail || ""} ${read.url || ""}`;
           card.append(row);
         }
         for (const cite of item.citations || []) {
@@ -293,12 +365,10 @@
             source.append(link);
             block.append(source);
           }
-          if (cite.role_label === "输入文章来源") {
-            const tag = document.createElement("div");
-            tag.className = "meta";
-            tag.textContent = "输入文章来源（不计独立佐证）";
-            block.append(tag);
-          }
+          const tag = document.createElement("div");
+          tag.className = "meta";
+          tag.textContent = cite.role_label || "外部页面";
+          block.append(tag);
           card.append(block);
         }
         if (!(item.citations || []).length) {
@@ -349,16 +419,113 @@
       return "待判断";
     }
 
+    const STATES = {
+      supported: { code: "supported", label: "支持", color: "#d1fadf" },
+      refuted: { code: "refuted", label: "反驳", color: "#fee4e2" },
+      insufficient_evidence: { code: "insufficient_evidence", label: "证据不足", color: "#eaecf0" },
+      unchecked: { code: "unchecked", label: "未核查", color: "#e0eaff" },
+      waiting: { code: "waiting", label: "等待处理", color: "#fef0c7" },
+    };
+
+    function resultState(item) {
+      if (item.verdict && STATES[item.verdict]) return STATES[item.verdict];
+      if ((item.verdict_label || "").includes("等待重试") || (currentJobStatus === "running" && selectedCandidateIds.includes(item.candidate_id))) return STATES.waiting;
+      return STATES.unchecked;
+    }
+
+    function drawSource(text, items, claimResults, jobStatus) {
+      sourceText.replaceChildren();
+      const ranges = [];
+      for (const item of items || []) {
+        for (const range of item.source_ranges || []) {
+          const cpStart = Number(range[0]); const cpEnd = Number(range[1]);
+          if (!Number.isInteger(cpStart) || !Number.isInteger(cpEnd) || cpStart < 0 || cpEnd <= cpStart) continue;
+          const start = codePointOffsetToUtf16(text, cpStart); const end = codePointOffsetToUtf16(text, cpEnd);
+          if (end > text.length) continue;
+          if (text.slice(start, end) !== item.source_quote) continue;
+          ranges.push({ start, end, id: item.id });
+        }
+      }
+      const boundaries = [...new Set(ranges.flatMap((range) => [range.start, range.end]))].sort((a, b) => a - b);
+      if (!boundaries.length) { sourceText.textContent = text; return; }
+      let cursor = 0;
+      for (const point of boundaries) {
+        if (point > cursor) sourceText.append(document.createTextNode(text.slice(cursor, point)));
+        const next = boundaries[boundaries.indexOf(point) + 1];
+        if (next === undefined) { cursor = point; continue; }
+        const ids = [...new Set(ranges.filter((range) => range.start <= point && range.end >= next).map((range) => range.id))];
+        const segment = text.slice(point, next);
+        if (!ids.length) sourceText.append(document.createTextNode(segment));
+        else {
+          const states = [...new Map(ids.map((id) => {
+            const state = resultState((claimResults || []).find((claim) => claim.candidate_id === id) || { candidate_id: id });
+            return [state.code, state];
+          })).values()];
+          const mark = document.createElement("mark");
+          mark.className = `source-mark ${states.length > 1 ? "mixed" : states[0].code}`;
+          mark.dataset.candidateIds = ids.join(",");
+          mark.tabIndex = 0;
+          mark.setAttribute("role", "button");
+          mark.setAttribute("aria-label", `${ids.join(", ")}：${states.map((state) => state.label).join("、")}`);
+          if (states.length > 1) {
+            mark.style.setProperty("--mark-a", states[0].color);
+            mark.style.setProperty("--mark-b", states[1].color);
+          }
+          mark.append(document.createTextNode(segment));
+          const label = document.createElement("span");
+          label.className = `source-label ${states[0].code}`;
+          const claims = ids.map((id) => (items || []).find((item) => item.id === id)?.normalized_claim).filter(Boolean);
+          label.textContent = `${ids.join("/")} ${states.map((state) => state.label).join("/")} · 对应 claim：${claims.join("；")}`;
+          mark.append(label);
+          const navigate = () => scrollToResult(ids[0]);
+          mark.addEventListener("click", (event) => { event.stopPropagation(); navigate(); });
+          mark.addEventListener("keydown", (event) => { if (event.key === "Enter" || event.key === " ") { event.preventDefault(); navigate(); } });
+          sourceText.append(mark);
+        }
+        cursor = next;
+      }
+      if (cursor < text.length) sourceText.append(document.createTextNode(text.slice(cursor)));
+    }
+
+    function scrollToResult(candidateId) {
+      const target = document.getElementById(`result-${candidateId}`) || document.getElementById(`candidate-${candidateId}`);
+      target?.scrollIntoView({ behavior: "smooth", block: "center" });
+      target?.focus({ preventScroll: true });
+    }
+
+    function scrollToSource(candidateId) {
+      const target = [...sourceText.querySelectorAll(".source-mark")].find((mark) => mark.dataset.candidateIds.split(",").includes(candidateId));
+      target?.scrollIntoView({ behavior: "smooth", block: "center" });
+      target?.focus({ preventScroll: true });
+    }
+
+    function codePointOffsetToUtf16(text, offset) {
+      let units = 0;
+      let points = 0;
+      for (const character of text) {
+        if (points >= offset) break;
+        units += character.length;
+        points += 1;
+      }
+      return units;
+    }
+
     function invalidateIfChanged() {
       if (!extractedText) return;
       if (articleBox.value.trim() === extractedText && sourceBox.value.trim() === extractedSourceUrl) return;
       articleId = "";
       extractedText = "";
       extractedSourceUrl = "";
+      currentCandidates = [];
+      currentClaims = [];
+      selectedCandidateIds = [];
+      currentJobStatus = "";
       candidates.hidden = true;
       results.hidden = true;
+      extractNote.hidden = true;
       list.replaceChildren();
       cards.replaceChildren();
+      sourceText.replaceChildren();
     }
   </script>
 </body>

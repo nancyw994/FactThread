@@ -95,7 +95,9 @@ def public_view(
     retry_at = _retry_at(record) if pending else None
     cooling = bool(retry_at and retry_at > datetime.now(timezone.utc))
     citations = _citations(record, published=bool(verdict))
-    independent_sources = {item["url"] for item in citations if item.get("independent") and item.get("url")}
+    citation_pages = {_page_key(item.get("url")) for item in citations if item.get("url")}
+    citation_pages.discard(None)
+    cited_roles = {item.get("role") for item in citations}
     fetches = list(record.get("fetches") or [])
     fetched_ok = record.get("page_fetch_succeeded")
     if fetched_ok is None:
@@ -121,7 +123,10 @@ def public_view(
         "evidence_heading": "引用" if verdict else "已获取的证据",
         "reads": _reads(record),
         "citations": citations,
-        "independent_source_count": len(independent_sources),
+        "citation_page_count": len(citation_pages),
+        "support_scope": "input_article_only" if citations and cited_roles <= {"input_article"} else "beyond_input_article",
+        "only_input_article_support": bool(citations) and cited_roles <= {"input_article"},
+        "support_scope_label": "仅由输入文章来源支持" if citations and cited_roles <= {"input_article"} else "引用中含其他页面；不自动视为独立佐证" if citations else "尚无引用页面",
         "evidence_retrieval": {
             "fetch_succeeded": fetched_ok,
             "relevant_passage_found": relevant,
@@ -210,8 +215,7 @@ def _citations(record: dict[str, Any], *, published: bool) -> list[dict[str, Any
                 "url": url,
                 "cited": published,
                 "role": role,
-                "role_label": "输入文章来源" if role == "input_article" else ("原始文档" if role == "original" else "辅助材料"),
-                "independent": not is_input_source,
+                "role_label": _role_label(role),
             }
         )
     return citations
@@ -234,7 +238,7 @@ def _reads(record: dict[str, Any]) -> list[dict[str, Any]]:
         host = str(source.get("host") or "")
         match = next((item for item in fetches if search_evidence._host(item.get("final_url") or item.get("url") or "") == host), None)
         url = str(source.get("url") or "")
-        role = "input_article" if _same_url(url, record.get("article_source_url")) else "original"
+        role = "input_article" if _same_url(url, record.get("article_source_url")) else _evidence_role(url, record)
         rows.append(_read_row(url, match, role, source.get("fetch_status"), source.get("error")))
         if host:
             covered.add(host)
@@ -259,8 +263,7 @@ def _read_row(url: str, fetched: dict[str, Any] | None, role: str, status: Any, 
         "detail": detail,
         "page_cache": (fetched or {}).get("page_cache"),
         "role": role,
-        "role_label": "输入文章来源" if role == "input_article" else ("原始文档" if role == "original" else "辅助材料"),
-        "independent": role != "input_article",
+        "role_label": _role_label(role),
     }
 
 
@@ -280,13 +283,36 @@ def _same_url(left: Any, right: Any) -> bool:
 
 
 def _evidence_role(url: str, record: dict[str, Any]) -> str:
+    input_host = search_evidence._host(record.get("article_source_url") or "")
     host = search_evidence._host(url)
+    if input_host and (host == input_host or host.endswith("." + input_host)):
+        return "same_institution"
     for source in record.get("named_sources") or []:
         if source.get("host") == host and source.get("role", "original") == "original":
             return "original"
     if host == "rfc-editor.org" or host.endswith(".rfc-editor.org") or host == "ietf.org" or host.endswith(".ietf.org"):
         return "original"
     return "auxiliary"
+
+
+def _role_label(role: str) -> str:
+    return {
+        "input_article": "输入文章来源",
+        "same_institution": "同机构其他页面",
+        "original": "外部页面（原始文档）",
+        "auxiliary": "外部页面",
+    }.get(role, "外部页面")
+
+
+def _page_key(url: Any) -> str | None:
+    value = str(url or "").strip()
+    parsed = urlsplit(value)
+    host = (parsed.hostname or "").lower().removeprefix("www.")
+    if parsed.scheme.lower() not in {"http", "https"} or not host:
+        return None
+    port = f":{parsed.port}" if parsed.port else ""
+    path = parsed.path.rstrip("/") or "/"
+    return urlunsplit((parsed.scheme.lower(), host + port, path, "", ""))
 
 
 def _safe_error(exc: BaseException) -> str:
